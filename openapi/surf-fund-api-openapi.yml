@@ -1,0 +1,641 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: backend@cybertinolab.com
+    name: Cyber team
+  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
+  title: Hermod DEX Fund API
+  version: sha-80d3407
+servers:
+- url: /
+tags:
+- description: Explore crypto venture capital. Look up fund profiles with team info and social links, browse their full investment portfolio with round details, and rank funds by tier or portfolio size.
+  name: Fund
+paths:
+  /gateway/v1/fund/detail:
+    get:
+      description: 'Returns a crypto VC fund''s full profile: description, jurisdiction, portfolio count, social links, and team members with roles.
+
+
+        **Included fields:** X accounts, team members, recent research, invested project count.
+
+
+        This does NOT return the list of investments — use `/fund/portfolio` for that.
+
+
+        **Lookup:** by UUID (`id`) or name (`q`). Returns 404 if not found.'
+      operationId: fund-detail
+      parameters:
+      - description: Surf fund UUID. PREFERRED — always use this when available from a previous response (e.g. id from /search/fund). Takes priority over q.
+        explode: false
+        in: query
+        name: id
+        schema:
+          description: Surf fund UUID. PREFERRED — always use this when available from a previous response (e.g. id from /search/fund). Takes priority over q.
+          examples:
+          - ef3b6da9-283d-4080-b3c7-87b1b45924dc
+          type: string
+      - description: Fuzzy fund name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Fuzzy fund name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+          examples:
+          - a16z
+          maxLength: 100
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectResponseFundDetailItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Fund Profile Detail
+      tags:
+      - Fund
+  /gateway/v1/fund/portfolio:
+    get:
+      description: 'Returns investment rounds for a fund''s portfolio, sorted by date (newest first).
+
+
+        A project may appear multiple times if the fund participated in multiple rounds.
+
+
+        **Included fields:** project name, logo, date, raise amount, lead investor status.
+
+
+        **Lookup:** by UUID (`id`) or name (`q`).'
+      operationId: fund-portfolio
+      parameters:
+      - description: Surf fund UUID. PREFERRED — always use this when available from a previous response (e.g. id from /search/fund). Takes priority over q.
+        explode: false
+        in: query
+        name: id
+        schema:
+          description: Surf fund UUID. PREFERRED — always use this when available from a previous response (e.g. id from /search/fund). Takes priority over q.
+          examples:
+          - ef3b6da9-283d-4080-b3c7-87b1b45924dc
+          type: string
+      - description: Fuzzy fund name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Fuzzy fund name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+          examples:
+          - a16z
+          maxLength: 100
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Filter by lead investor status. Omit or leave empty for all investments.
+        explode: false
+        in: query
+        name: is_lead
+        schema:
+          description: Filter by lead investor status. Omit or leave empty for all investments.
+          enum:
+          - 'true'
+          - 'false'
+          - ''
+          examples:
+          - 'true'
+          type: string
+      - description: Only include investments at or after this Unix timestamp (seconds)
+        explode: false
+        in: query
+        name: invested_after
+        schema:
+          description: Only include investments at or after this Unix timestamp (seconds)
+          examples:
+          - 1704067200
+          format: int64
+          type: integer
+      - description: Only include investments before this Unix timestamp (seconds)
+        explode: false
+        in: query
+        name: invested_before
+        schema:
+          description: Only include investments before this Unix timestamp (seconds)
+          examples:
+          - 1735689600
+          format: int64
+          type: integer
+      - description: Field to sort results by
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: invested_at
+          description: Field to sort results by
+          enum:
+          - invested_at
+          - recent_raise
+          - total_raise
+          examples:
+          - recent_raise
+          type: string
+      - description: Sort order
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort order
+          enum:
+          - asc
+          - desc
+          examples:
+          - desc
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseFundPortfolioItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Fund Portfolio
+      tags:
+      - Fund
+  /gateway/v1/fund/ranking:
+    get:
+      description: 'Returns top crypto VC funds ranked by tier or portfolio count.
+
+
+        **Available metrics:** `tier` (lower is better), `portfolio_count` (number of invested projects).'
+      operationId: fund-ranking
+      parameters:
+      - description: Ranking metric. Can be `tier` (lower is better) or `portfolio_count` (number of invested projects).
+        explode: false
+        in: query
+        name: metric
+        required: true
+        schema:
+          description: Ranking metric. Can be `tier` (lower is better) or `portfolio_count` (number of invested projects).
+          enum:
+          - tier
+          - portfolio_count
+          examples:
+          - tier
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseFundSearchItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Fund Ranking
+      tags:
+      - Fund
+components:
+  schemas:
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    DataObjectResponseFundDetailItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseFundDetailItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/FundDetailItem'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    FundXAccountItem:
+      additionalProperties: false
+      properties:
+        display_name:
+          description: Display name
+          type: string
+        followers_count:
+          description: Follower count
+          format: int64
+          type: integer
+        handle:
+          description: X (Twitter) handle without the @ prefix
+          type: string
+        id:
+          description: Numeric X (Twitter) user ID
+          type: string
+        profile_image:
+          description: Profile image URL
+          type: string
+      required:
+      - id
+      - handle
+      - followers_count
+      type: object
+    FundResearchItem:
+      additionalProperties: false
+      properties:
+        id:
+          description: Research ID
+          type: string
+        published_at:
+          description: Publication date (Unix seconds)
+          format: int64
+          type: integer
+        title:
+          description: Research title
+          type: string
+        url:
+          description: Research URL
+          type: string
+      required:
+      - id
+      - title
+      - url
+      - published_at
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    FundLinkItem:
+      additionalProperties: false
+      properties:
+        type:
+          description: Link type like `web`, `twitter`, or `linkedin`
+          type: string
+        value:
+          description: Link URL
+          type: string
+      required:
+      - type
+      - value
+      type: object
+    DataResponseFundSearchItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseFundSearchItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/FundSearchItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    FundDetailItem:
+      additionalProperties: false
+      properties:
+        description:
+          description: Fund description
+          type: string
+        id:
+          description: Surf fund UUID — pass as 'id' parameter to /fund/detail or /fund/portfolio for exact lookup
+          type: string
+        image:
+          description: Fund logo URL
+          type: string
+        invested_projects_count:
+          description: Total number of unique invested projects (a project with multiple funding rounds counts once)
+          format: int64
+          type: integer
+        jurisdiction:
+          description: Fund jurisdiction
+          type: string
+        links:
+          description: Fund links (website, social, etc.)
+          items:
+            $ref: '#/components/schemas/FundLinkItem'
+          type:
+          - array
+          - 'null'
+        members:
+          description: Fund team members
+          items:
+            $ref: '#/components/schemas/FundMemberItem'
+          type:
+          - array
+          - 'null'
+        name:
+          description: Fund name
+          type: string
+        recent_researches:
+          description: Recent research publications
+          items:
+            $ref: '#/components/schemas/FundResearchItem'
+          type:
+          - array
+          - 'null'
+        tier:
+          description: Fund tier ranking (lower is better)
+          format: int64
+          type: integer
+        type:
+          description: Fund type like `VC` or `Accelerator`
+          type: string
+        x_accounts:
+          description: X (Twitter) accounts
+          items:
+            $ref: '#/components/schemas/FundXAccountItem'
+          type:
+          - array
+          - 'null'
+      required:
+      - id
+      - name
+      - tier
+      - links
+      - x_accounts
+      - members
+      - recent_researches
+      - invested_projects_count
+      type: object
+    FundSearchItem:
+      additionalProperties: false
+      properties:
+        id:
+          description: Surf fund UUID — pass as 'id' parameter to /fund/detail or /fund/portfolio for exact lookup
+          type: string
+        image:
+          description: Fund logo URL
+          type: string
+        invested_projects_count:
+          description: Total number of unique invested projects (a project with multiple funding rounds counts once)
+          format: int64
+          type: integer
+        name:
+          description: Fund name
+          type: string
+        tier:
+          description: Fund tier ranking (lower is better)
+          format: int64
+          type: integer
+        top_projects:
+          description: Top invested projects (up to 5)
+          items:
+            $ref: '#/components/schemas/FundPortfolioItem'
+          type:
+          - array
+          - 'null'
+        type:
+          description: Fund type
+          type: string
+      required:
+      - id
+      - name
+      - tier
+      - invested_projects_count
+      - top_projects
+      type: object
+    FundMemberItem:
+      additionalProperties: false
+      properties:
+        avatar:
+          description: Avatar URL
+          type: string
+        name:
+          description: Member name
+          type: string
+        roles:
+          description: Member roles
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      required:
+      - name
+      - roles
+      type: object
+    DataResponseFundPortfolioItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseFundPortfolioItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/FundPortfolioItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    FundPortfolioItem:
+      additionalProperties: false
+      properties:
+        invested_at:
+          description: Investment date (Unix seconds)
+          format: int64
+          type: integer
+        is_lead:
+          description: Whether this fund was the lead investor
+          type: boolean
+        project_id:
+          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup. Prefer over 'q' (fuzzy name search).
+          type: string
+        project_logo:
+          description: Project logo URL
+          type: string
+        project_name:
+          description: Project name
+          type: string
+        project_slug:
+          description: Project slug
+          type: string
+        recent_raise:
+          description: Most recent funding round amount in USD
+          format: double
+          type: number
+        total_raise:
+          description: Total amount raised by the project in USD
+          format: double
+          type: number
+      required:
+      - project_id
+      - project_name
+      - is_lead
+      type: object
+  securitySchemes:
+    AccessToken:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    AdminToken:
+      in: header
+      name: X-Admin-Token
+      type: apiKey
+    InternalKey:
+      in: header
+      name: X-Internal-Key
+      type: apiKey

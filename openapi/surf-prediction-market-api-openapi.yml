@@ -1,0 +1,3761 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: backend@cybertinolab.com
+    name: Cyber team
+  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
+  title: Hermod DEX Prediction Market API
+  version: sha-80d3407
+servers:
+- url: /
+tags:
+- description: Track prediction markets on Polymarket and Kalshi. Browse events and markets, view live prices and odds, analyze trading volume and open interest history, inspect individual trades, and discover top-ranked markets by activity.
+  name: Prediction Market
+paths:
+  /gateway/v1/prediction-market/analytics:
+    get:
+      description: 'Trends, top markets, momentum distribution, and per-market momentum signals for prediction markets.
+
+
+        **Platform-wide totals:** Omit `category` to get aggregated volume/OI/market-count across the entire prediction market (Polymarket + Kalshi combined). Use `platform` to filter to one exchange. This is the recommended way to answer questions like "What is Polymarket''s total volume this week?" or "How does Kalshi volume compare to Polymarket?"
+
+
+        **Category drill-down:** Provide `category` to scope all data to one category (e.g. crypto, politics).
+
+
+        Combines volume/OI time series, top markets by open interest, momentum summary (price/volume signal distribution), and per-market momentum signals (price changes, volume direction, whale flows).
+
+
+        **Note on top_markets:** When both `category` and `platform` are omitted, top markets are ranked globally by open interest. Because Polymarket OI is significantly larger than Kalshi OI, the list will skew heavily toward Polymarket. Use `platform` to get per-platform rankings.
+
+
+        **Use `search` instead if** you want to browse/search individual markets.
+
+
+        **Data refresh:** ~5 minutes.'
+      operationId: prediction-market-analytics
+      parameters:
+      - description: Category to analyze. Omit to get platform-wide totals across all categories.
+        explode: false
+        in: query
+        name: category
+        schema:
+          description: Category to analyze. Omit to get platform-wide totals across all categories.
+          enum:
+          - crypto
+          - culture
+          - economics
+          - financials
+          - politics
+          - stem
+          - sports
+          type: string
+      - description: Filter to one platform
+        explode: false
+        in: query
+        name: platform
+        schema:
+          description: Filter to one platform
+          enum:
+          - polymarket
+          - kalshi
+          type: string
+      - description: 'Window for category trends: `7d`, `30d`, `90d`, `180d`, or `1y`. Bucket size is fixed at 1 day — this endpoint uses `time_range` only and does NOT accept `interval`.'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 30d
+          description: 'Window for category trends: `7d`, `30d`, `90d`, `180d`, or `1y`. Bucket size is fixed at 1 day — this endpoint uses `time_range` only and does NOT accept `interval`.'
+          enum:
+          - 7d
+          - 30d
+          - 90d
+          - 180d
+          - 1y
+          type: string
+      - description: Number of top markets to include
+        explode: false
+        in: query
+        name: top_n
+        schema:
+          default: 10
+          description: Number of top markets to include
+          format: int64
+          maximum: 50
+          minimum: 1
+          type: integer
+      - description: Sort field for momentum markets
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: volume_7d
+          description: Sort field for momentum markets
+          enum:
+          - volume_7d
+          - whale_flow_net_7d
+          - price_change_7d
+          - oi_change_7d
+          type: string
+      - description: Sort direction
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort direction
+          enum:
+          - asc
+          - desc
+          type: string
+      - description: Limit for momentum markets list
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Limit for momentum markets list
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset for momentum markets
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset for momentum markets
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectResponseAnalyticsBody'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Prediction Market Analytics
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/correlations:
+    get:
+      description: 'Returns 30-day Pearson price correlation pairs between Polymarket markets within a category.
+
+
+        Correlation data covers the top 100 markets by 7-day volume globally; lower-volume markets may not have correlation data.
+
+
+        Filter by `condition_id` to find all markets correlated with a specific market, or set `min_correlation` to control the threshold.
+
+
+        The `category` parameter is required.
+
+
+        **Data refresh:** ~5 minutes.'
+      operationId: prediction-market-correlations
+      parameters:
+      - description: Category (correlations are within-category only)
+        explode: false
+        in: query
+        name: category
+        required: true
+        schema:
+          description: Category (correlations are within-category only)
+          enum:
+          - crypto
+          - culture
+          - economics
+          - financials
+          - politics
+          - stem
+          - sports
+          type: string
+      - description: Filter to pairs involving this market
+        explode: false
+        in: query
+        name: condition_id
+        schema:
+          description: Filter to pairs involving this market
+          type: string
+      - description: Minimum absolute correlation
+        explode: false
+        in: query
+        name: min_correlation
+        schema:
+          default: 0.5
+          description: Minimum absolute correlation
+          format: double
+          type: number
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseCorrelationItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Market Correlations
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/kalshi/events:
+    get:
+      description: 'Returns Kalshi events with nested markets, optionally filtered by `event_ticker`.
+
+
+        Each event includes market count and a list of markets.
+
+
+        **Data refresh:** ~30 minutes'
+      operationId: kalshi-events
+      parameters:
+      - description: Event ticker identifier. When omitted, returns top active events by volume. Use GET /v1/search/kalshi?q={keyword} to discover valid tickers.
+        explode: false
+        in: query
+        name: event_ticker
+        schema:
+          description: Event ticker identifier. When omitted, returns top active events by volume. Use GET /v1/search/kalshi?q={keyword} to discover valid tickers.
+          examples:
+          - KXBTC2026250-27JAN01
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseKalshiEvent'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Kalshi Events
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/kalshi/markets:
+    get:
+      description: 'Returns Kalshi markets, optionally filtered by `market_ticker`.
+
+
+        Each market includes price, volume, and status.
+
+
+        **Data refresh:** ~30 minutes'
+      operationId: kalshi-markets
+      parameters:
+      - description: Market ticker identifier. When omitted, returns top active markets by volume. Use GET /v1/search/kalshi?q={keyword} to discover valid tickers.
+        explode: false
+        in: query
+        name: market_ticker
+        schema:
+          description: Market ticker identifier. When omitted, returns top active markets by volume. Use GET /v1/search/kalshi?q={keyword} to discover valid tickers.
+          examples:
+          - KXBTC2026250-27JAN01-250000
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseKalshiMarketItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Kalshi Markets
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/kalshi/open-interest:
+    get:
+      description: 'Daily open interest time series for a Kalshi market.
+
+
+        **Data refresh:** ~30 minutes'
+      operationId: kalshi-open-interest
+      parameters:
+      - description: Market ticker identifier. Use GET /v1/prediction-market/kalshi/markets or GET /v1/search/kalshi?q={keyword} to discover valid tickers.
+        explode: false
+        in: query
+        name: ticker
+        required: true
+        schema:
+          description: Market ticker identifier. Use GET /v1/prediction-market/kalshi/markets or GET /v1/search/kalshi?q={keyword} to discover valid tickers.
+          examples:
+          - KXBTC2026250-27JAN01-250000
+          type: string
+      - description: 'Window of history to return: `7d`, `30d`, `90d`, `180d`, or `1y`. This endpoint uses `time_range` only — it does NOT accept `interval`.'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 30d
+          description: 'Window of history to return: `7d`, `30d`, `90d`, `180d`, or `1y`. This endpoint uses `time_range` only — it does NOT accept `interval`.'
+          enum:
+          - 7d
+          - 30d
+          - 90d
+          - 180d
+          - 1y
+          examples:
+          - 30d
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseKalshiOIPoint'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Kalshi Open Interest History
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/kalshi/orderbooks:
+    get:
+      description: 'Historical orderbook snapshots for a Kalshi market. Returns yes-side bid/ask levels. Timestamps in milliseconds, prices in cents.
+
+
+        Data refresh: ~5 minutes'
+      operationId: kalshi-orderbooks
+      parameters:
+      - description: Kalshi market ticker
+        explode: false
+        in: query
+        name: ticker
+        required: true
+        schema:
+          description: Kalshi market ticker
+          examples:
+          - KXCITRINI-28JUL01
+          type: string
+      - description: Start time in Unix milliseconds. 0 means 7 days ago.
+        explode: false
+        in: query
+        name: start_time
+        schema:
+          description: Start time in Unix milliseconds. 0 means 7 days ago.
+          format: int64
+          type: integer
+      - description: End time in Unix milliseconds. 0 means current time.
+        explode: false
+        in: query
+        name: end_time
+        schema:
+          description: End time in Unix milliseconds. 0 means current time.
+          format: int64
+          type: integer
+      - description: Maximum number of snapshots to return
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 100
+          description: Maximum number of snapshots to return
+          format: int64
+          maximum: 200
+          minimum: 1
+          type: integer
+      - description: Base64 cursor for pagination
+        explode: false
+        in: query
+        name: pagination_key
+        schema:
+          description: Base64 cursor for pagination
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V2KalshiOrderbooksResponse'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Kalshi Orderbook History
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/kalshi/prices:
+    get:
+      description: 'Price time series for a Kalshi market with daily or hourly OHLC data, or latest price from recent trades.
+
+
+        **Data refresh:** ~30 minutes'
+      operationId: kalshi-prices
+      parameters:
+      - description: Market ticker identifier. Use GET /v1/prediction-market/kalshi/markets or GET /v1/search/kalshi?q={keyword} to discover valid tickers.
+        explode: false
+        in: query
+        name: ticker
+        required: true
+        schema:
+          description: Market ticker identifier. Use GET /v1/prediction-market/kalshi/markets or GET /v1/search/kalshi?q={keyword} to discover valid tickers.
+          examples:
+          - KXBTC2026250-27JAN01-250000
+          type: string
+      - description: 'Window of history to return: `7d`, `30d`, `90d`, `180d`, or `1y`. Ignored when `interval=latest`. Distinct from `interval` (which sets bucket size within the window).'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 30d
+          description: 'Window of history to return: `7d`, `30d`, `90d`, `180d`, or `1y`. Ignored when `interval=latest`. Distinct from `interval` (which sets bucket size within the window).'
+          enum:
+          - 7d
+          - 30d
+          - 90d
+          - 180d
+          - 1y
+          examples:
+          - 30d
+          type: string
+      - description: 'Bucket size for each point in the series: `1h` (hourly OHLC), `1d` (daily OHLC), or `latest` (single most-recent trade price). Distinct from `time_range` (window size).'
+        explode: false
+        in: query
+        name: interval
+        schema:
+          default: 1d
+          description: 'Bucket size for each point in the series: `1h` (hourly OHLC), `1d` (daily OHLC), or `latest` (single most-recent trade price). Distinct from `time_range` (window size).'
+          enum:
+          - 1h
+          - 1d
+          - latest
+          examples:
+          - 1d
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseKalshiPricePoint'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Kalshi Price History
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/kalshi/trades:
+    get:
+      description: 'Returns individual trade records for a Kalshi market.
+
+
+        **Filters:** `taker_side`, `min_contracts`, and date range.
+
+
+        **Sort:** `timestamp` or `num_contracts`.
+
+
+        **Data refresh:** real-time'
+      operationId: kalshi-trades
+      parameters:
+      - description: Market ticker identifier. Use GET /v1/prediction-market/kalshi/markets or GET /v1/search/kalshi?q={keyword} to discover valid tickers.
+        explode: false
+        in: query
+        name: ticker
+        required: true
+        schema:
+          description: Market ticker identifier. Use GET /v1/prediction-market/kalshi/markets or GET /v1/search/kalshi?q={keyword} to discover valid tickers.
+          examples:
+          - KXBTC2026250-27JAN01-250000
+          type: string
+      - description: 'Filter by taker side: `yes` or `no`'
+        explode: false
+        in: query
+        name: taker_side
+        schema:
+          description: 'Filter by taker side: `yes` or `no`'
+          enum:
+          - 'yes'
+          - 'no'
+          type: string
+      - description: Minimum notional volume in USD (each contract = $1)
+        explode: false
+        in: query
+        name: min_amount
+        schema:
+          description: Minimum notional volume in USD (each contract = $1)
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+          type: string
+      - description: End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)
+          type: string
+      - description: Field to sort results by
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: timestamp
+          description: Field to sort results by
+          enum:
+          - timestamp
+          - notional_volume_usd
+          examples:
+          - timestamp
+          type: string
+      - description: Sort order
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort order
+          enum:
+          - asc
+          - desc
+          examples:
+          - desc
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 50
+          description: Results per page
+          examples:
+          - 50
+          format: int64
+          maximum: 500
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseKalshiTrade'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Kalshi Trades
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/kalshi/volumes:
+    get:
+      description: 'Daily trading volume time series for a Kalshi market.
+
+
+        **Data refresh:** ~30 minutes'
+      operationId: kalshi-volumes
+      parameters:
+      - description: Market ticker identifier. Use GET /v1/prediction-market/kalshi/markets or GET /v1/search/kalshi?q={keyword} to discover valid tickers.
+        explode: false
+        in: query
+        name: ticker
+        required: true
+        schema:
+          description: Market ticker identifier. Use GET /v1/prediction-market/kalshi/markets or GET /v1/search/kalshi?q={keyword} to discover valid tickers.
+          examples:
+          - KXBTC2026250-27JAN01-250000
+          type: string
+      - description: 'Window of history to return: `7d`, `30d`, `90d`, `180d`, or `1y`. This endpoint uses `time_range` only — it does NOT accept `interval`.'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 30d
+          description: 'Window of history to return: `7d`, `30d`, `90d`, `180d`, or `1y`. This endpoint uses `time_range` only — it does NOT accept `interval`.'
+          enum:
+          - 7d
+          - 30d
+          - 90d
+          - 180d
+          - 1y
+          examples:
+          - 30d
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseKalshiVolumePoint'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Kalshi Volume History
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/matching/daily:
+    get:
+      description: 'Returns daily volume and open interest comparison for a specific Polymarket <> Kalshi matched pair.
+
+
+        Both `polymarket_condition_id` and `kalshi_market_ticker` are required. Use `matching-market-pairs` to discover matched pairs first.
+
+
+        **Volume units:** Polymarket = USD, Kalshi = contracts.'
+      operationId: matching-market-daily
+      parameters:
+      - description: Polymarket condition ID
+        explode: false
+        in: query
+        name: polymarket_condition_id
+        required: true
+        schema:
+          description: Polymarket condition ID
+          examples:
+          - '0x6fefc0438c7598b23531457c8c60541990d0786bd4bd9dfc3eabc8d95c291092'
+          type: string
+      - description: Kalshi market ticker
+        explode: false
+        in: query
+        name: kalshi_market_ticker
+        required: true
+        schema:
+          description: Kalshi market ticker
+          examples:
+          - KXBTC2026250-27JAN01-250000
+          type: string
+      - description: 'Window of daily data to return: `1d`, `7d`, `30d`, `90d`, `180d`, `1y`, or `all`. Bucket size is fixed at 1 day — this endpoint uses `time_range` only and does NOT accept `interval`.'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 30d
+          description: 'Window of daily data to return: `1d`, `7d`, `30d`, `90d`, `180d`, `1y`, or `all`. Bucket size is fixed at 1 day — this endpoint uses `time_range` only and does NOT accept `interval`.'
+          enum:
+          - 1d
+          - 7d
+          - 30d
+          - 90d
+          - 180d
+          - 1y
+          - all
+          examples:
+          - 30d
+          type: string
+      - description: Maximum rows
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 200
+          description: Maximum rows
+          examples:
+          - 200
+          format: int64
+          maximum: 10000
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseMatchedMarketDailyItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Cross-Platform Daily Comparison (Polymarket <> Kalshi)
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/matching/pairs:
+    get:
+      description: 'Cross-platform prediction market pair matcher — finds the same event listed on both Polymarket and Kalshi, with live price spread data. This is prediction-market only (Polymarket and Kalshi). For crypto exchange markets, use `exchange-markets`.
+
+
+        Filter by category, match type, confidence score, or look up a specific market''s cross-platform counterpart via `polymarket_condition_id` or `kalshi_market_ticker`.
+
+
+        Each pair includes current prices and spread percentage for arbitrage analysis. Sort by `spread_pct` to find the widest spreads.
+
+
+        **Data refresh:** ~5 minutes'
+      operationId: matching-market-pairs
+      parameters:
+      - description: Filter by category
+        explode: false
+        in: query
+        name: category
+        schema:
+          description: Filter by category
+          enum:
+          - crypto
+          - culture
+          - economics
+          - financials
+          - politics
+          - stem
+          - sports
+          examples:
+          - politics
+          type: string
+      - description: Filter by match type
+        explode: false
+        in: query
+        name: match_type
+        schema:
+          description: Filter by match type
+          enum:
+          - exact
+          - related
+          examples:
+          - exact
+          type: string
+      - description: Only return pairs where both markets are currently active
+        explode: false
+        in: query
+        name: active_only
+        schema:
+          default: false
+          description: Only return pairs where both markets are currently active
+          type: boolean
+      - description: Minimum confidence score (0-100)
+        explode: false
+        in: query
+        name: min_confidence
+        schema:
+          default: 0
+          description: Minimum confidence score (0-100)
+          format: int64
+          maximum: 100
+          minimum: 0
+          type: integer
+      - description: Find match for this Polymarket market
+        explode: false
+        in: query
+        name: polymarket_condition_id
+        schema:
+          description: Find match for this Polymarket market
+          type: string
+      - description: Find match for this Kalshi market
+        explode: false
+        in: query
+        name: kalshi_market_ticker
+        schema:
+          description: Find match for this Kalshi market
+          type: string
+      - description: Sort field
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: confidence
+          description: Sort field
+          enum:
+          - confidence
+          - polymarket_volume
+          - kalshi_volume
+          - spread_pct
+          type: string
+      - description: Sort order
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort order
+          enum:
+          - asc
+          - desc
+          type: string
+      - description: Maximum rows to return
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Maximum rows to return
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseMatchedMarketPair'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Cross-Platform Prediction Market Matcher (Polymarket <> Kalshi)
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/polymarket/events:
+    get:
+      description: 'Returns Polymarket events with nested markets, optionally filtered by `event_slug`.
+
+
+        Each event includes aggregated status, volume, and a list of markets with `side_a`/`side_b` outcomes.
+
+
+        **Data refresh:** ~30 minutes'
+      operationId: polymarket-events
+      parameters:
+      - description: Polymarket event slug (identifies a multi-outcome question with several nested markets). Known World Cup match sibling slugs are expanded to the canonical match group. Discover slugs via /v1/search/prediction-market?platform=polymarket&q={keyword}. For a single Yes/No market, use /polymarket/markets with market_slug instead — this endpoint only accepts event_slug, not market_slug.
+        explode: false
+        in: query
+        name: event_slug
+        required: true
+        schema:
+          description: Polymarket event slug (identifies a multi-outcome question with several nested markets). Known World Cup match sibling slugs are expanded to the canonical match group. Discover slugs via /v1/search/prediction-market?platform=polymarket&q={keyword}. For a single Yes/No market, use /polymarket/markets with market_slug instead — this endpoint only accepts event_slug, not market_slug.
+          examples:
+          - what-price-will-bitcoin-hit-before-2027
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponsePolymarketEvent'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Polymarket Events
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/polymarket/leaderboard:
+    get:
+      description: 'Returns a ranked leaderboard of Polymarket traders by realized PnL, volume, or trade count.
+
+
+        Sortable by `pnl`, `volume`, or `trade_count`. Each entry includes the wallet address and aggregate trading statistics.
+
+
+        **Data refresh:** ~5 minutes.'
+      operationId: polymarket-leaderboard
+      parameters:
+      - description: Ranking metric
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: pnl
+          description: Ranking metric
+          enum:
+          - pnl
+          - volume
+          - trade_count
+          type: string
+      - description: Sort direction
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort direction
+          enum:
+          - asc
+          - desc
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseLeaderboardItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Polymarket Leaderboard
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/polymarket/markets:
+    get:
+      description: 'Returns Polymarket markets, optionally filtered by `market_slug`.
+
+
+        Each market includes `side_a` and `side_b` outcomes. Current prices are available via `/polymarket/prices` using the `condition_id`.
+
+
+        **Data refresh:** ~30 minutes'
+      operationId: polymarket-markets
+      parameters:
+      - description: Polymarket market slug (identifies a single Yes/No outcome). Discover slugs via /v1/search/prediction-market?platform=polymarket&q={keyword}. For a multi-outcome question (e.g. 'who wins the 2024 election'), use the /polymarket/events endpoint with event_slug instead.
+        explode: false
+        in: query
+        name: market_slug
+        required: true
+        schema:
+          description: Polymarket market slug (identifies a single Yes/No outcome). Discover slugs via /v1/search/prediction-market?platform=polymarket&q={keyword}. For a multi-outcome question (e.g. 'who wins the 2024 election'), use the /polymarket/events endpoint with event_slug instead.
+          examples:
+          - will-bitcoin-dip-to-45000-by-december-31-2026-674-923-755-971-998-525-926-245-316-517-544-589-965-923-986-841-815-224
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponsePolymarketMarketItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Polymarket Markets
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/polymarket/open-interest:
+    get:
+      description: 'Daily open interest time series showing total value locked in a Polymarket market.
+
+
+        **Data refresh:** ~30 minutes'
+      operationId: polymarket-open-interest
+      parameters:
+      - description: Market condition identifier
+        explode: false
+        in: query
+        name: condition_id
+        required: true
+        schema:
+          description: Market condition identifier
+          examples:
+          - '0x6fefc0438c7598b23531457c8c60541990d0786bd4bd9dfc3eabc8d95c291092'
+          type: string
+      - description: 'Window of history to return: `7d`, `30d`, `90d`, `180d`, or `1y`. This endpoint uses `time_range` only — it does NOT accept `interval`.'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 30d
+          description: 'Window of history to return: `7d`, `30d`, `90d`, `180d`, or `1y`. This endpoint uses `time_range` only — it does NOT accept `interval`.'
+          enum:
+          - 7d
+          - 30d
+          - 90d
+          - 180d
+          - 1y
+          examples:
+          - 30d
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponsePolymarketOIPoint'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Polymarket Open Interest History
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/polymarket/orderbooks:
+    get:
+      description: 'Historical orderbook snapshots for a Polymarket token. Returns raw bid/ask depth levels. Timestamps in milliseconds.
+
+
+        Data refresh: ~5 minutes'
+      operationId: polymarket-orderbooks
+      parameters:
+      - description: Token identifier
+        explode: false
+        in: query
+        name: token_id
+        required: true
+        schema:
+          description: Token identifier
+          examples:
+          - '73662070458561467734997715458900555626841827840002814944742182699282770895284'
+          type: string
+      - description: Start time in Unix milliseconds. 0 means 7 days ago.
+        explode: false
+        in: query
+        name: start_time
+        schema:
+          description: Start time in Unix milliseconds. 0 means 7 days ago.
+          format: int64
+          type: integer
+      - description: End time in Unix milliseconds. 0 means current time.
+        explode: false
+        in: query
+        name: end_time
+        schema:
+          description: End time in Unix milliseconds. 0 means current time.
+          format: int64
+          type: integer
+      - description: Maximum number of snapshots to return
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 100
+          description: Maximum number of snapshots to return
+          format: int64
+          maximum: 200
+          minimum: 1
+          type: integer
+      - description: Base64 cursor for pagination
+        explode: false
+        in: query
+        name: pagination_key
+        schema:
+          description: Base64 cursor for pagination
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V2OrderbooksResponse'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Polymarket Orderbook History
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/polymarket/positions:
+    get:
+      description: 'Given a specific wallet address, returns that wallet''s open positions on Polymarket markets.
+
+
+        This is a single-wallet lookup — you must provide the wallet `address`.
+
+
+        **Not what you need?**
+
+        - To discover top/smart wallets across all of Polymarket, use `polymarket-smart-money` (view=positioning for aggregate signals, view=trades for individual whale trades).
+
+        - To find top traders by PnL or volume, use `polymarket-leaderboard`.
+
+
+        **Data refresh:** ~30 minutes'
+      operationId: polymarket-positions
+      parameters:
+      - description: Polymarket proxy wallet address
+        explode: false
+        in: query
+        name: address
+        required: true
+        schema:
+          description: Polymarket proxy wallet address
+          examples:
+          - '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 50
+          description: Results per page
+          examples:
+          - 50
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponsePolymarketPosition'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Polymarket Wallet Positions
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/polymarket/price-ohlcv/{condition_id}:
+    get:
+      description: 'OHLCV candlestick data for charting a Polymarket market — open, high, low, close, volume per candle.
+
+        Use this for rendering price charts with candlestick or bar visualizations.
+
+        For simple price time series (one price per interval), use `prices` instead.
+
+
+        Data refresh: ~30 minutes'
+      operationId: polymarket-price-ohlcv
+      parameters:
+      - description: Polymarket condition ID
+        in: path
+        name: condition_id
+        required: true
+        schema:
+          description: Polymarket condition ID
+          examples:
+          - '0x6fefc0438c7598b23531457c8c60541990d0786bd4bd9dfc3eabc8d95c291092'
+          type: string
+      - description: Start time (Unix seconds). 0 means no lower bound. Cache aligns to 5-minute buckets, so two requests within the same bucket return the same cached result.
+        explode: false
+        in: query
+        name: start_time
+        schema:
+          description: Start time (Unix seconds). 0 means no lower bound. Cache aligns to 5-minute buckets, so two requests within the same bucket return the same cached result.
+          format: int64
+          minimum: 0
+          type: integer
+      - description: End time (Unix seconds). 0 means current time. Cache aligns to 5-minute buckets, so two requests within the same bucket return the same cached result.
+        explode: false
+        in: query
+        name: end_time
+        schema:
+          description: End time (Unix seconds). 0 means current time. Cache aligns to 5-minute buckets, so two requests within the same bucket return the same cached result.
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Candle interval in minutes: 1=1min, 60=1hour, 1440=1day'
+        explode: false
+        in: query
+        name: interval
+        schema:
+          default: 60
+          description: 'Candle interval in minutes: 1=1min, 60=1hour, 1440=1day'
+          format: int64
+          maximum: 1440
+          minimum: 1
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V2CandlestickResponse'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Polymarket OHLCV Candlesticks
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/polymarket/prices:
+    get:
+      description: 'Simple price time series for a Polymarket market — one price point per interval.
+
+        Use this for tracking price trends over time.
+
+        For OHLCV candlestick data (open/high/low/close for charting libraries), use `price-ohlcv` instead.
+
+
+        **Data refresh:** ~30 minutes'
+      operationId: polymarket-prices
+      parameters:
+      - description: Market condition identifier
+        explode: false
+        in: query
+        name: condition_id
+        required: true
+        schema:
+          description: Market condition identifier
+          examples:
+          - '0x6fefc0438c7598b23531457c8c60541990d0786bd4bd9dfc3eabc8d95c291092'
+          type: string
+      - description: 'Window of history to return (how much data, from now backward): `7d`, `30d`, `90d`, `180d`, or `1y`. Ignored when `interval=latest`. Distinct from `interval` (which sets bucket size within this window).'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 30d
+          description: 'Window of history to return (how much data, from now backward): `7d`, `30d`, `90d`, `180d`, or `1y`. Ignored when `interval=latest`. Distinct from `interval` (which sets bucket size within this window).'
+          enum:
+          - 7d
+          - 30d
+          - 90d
+          - 180d
+          - 1y
+          examples:
+          - 30d
+          type: string
+      - description: 'Bucket size for each point in the returned series: `1h` (hourly), `1d` (daily), or `latest` (single most-recent snapshot). Distinct from `time_range` (which sets the window size).'
+        explode: false
+        in: query
+        name: interval
+        schema:
+          default: 1d
+          description: 'Bucket size for each point in the returned series: `1h` (hourly), `1d` (daily), or `latest` (single most-recent snapshot). Distinct from `time_range` (which sets the window size).'
+          enum:
+          - 1h
+          - 1d
+          - latest
+          examples:
+          - 1d
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponsePolymarketPricePoint'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Polymarket Price History
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/polymarket/smart-money:
+    get:
+      description: 'Smart wallet analytics for Polymarket markets.
+
+
+        view=positioning (default): Aggregate smart wallet direction per market — net bullish/bearish signal and conviction.
+
+        view=trades: Individual $10K+ trades with wallet address, amount, outcome, price, and wallet age.
+
+
+        **Data refresh:** ~5 minutes'
+      operationId: polymarket-smart-money
+      parameters:
+      - description: positioning = aggregate smart wallet direction per market; trades = individual $10K+ trades with wallet metadata
+        explode: false
+        in: query
+        name: view
+        schema:
+          default: positioning
+          description: positioning = aggregate smart wallet direction per market; trades = individual $10K+ trades with wallet metadata
+          enum:
+          - positioning
+          - trades
+          type: string
+      - description: Filter to a specific market (omit to browse all)
+        explode: false
+        in: query
+        name: condition_id
+        schema:
+          description: Filter to a specific market (omit to browse all)
+          type: string
+      - description: Filter by category
+        explode: false
+        in: query
+        name: category
+        schema:
+          description: Filter by category
+          enum:
+          - crypto
+          - culture
+          - economics
+          - financials
+          - politics
+          - stem
+          - sports
+          type: string
+      - description: Filter by net smart money direction (only for view=positioning)
+        explode: false
+        in: query
+        name: direction
+        schema:
+          description: Filter by net smart money direction (only for view=positioning)
+          enum:
+          - bullish
+          - bearish
+          - neutral
+          type: string
+      - description: Trade size tier filter (only for view=trades)
+        explode: false
+        in: query
+        name: whale_tier
+        schema:
+          description: Trade size tier filter (only for view=trades)
+          enum:
+          - whale
+          - large
+          - mega
+          type: string
+      - description: Start time as Unix seconds or date string (only for view=trades)
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start time as Unix seconds or date string (only for view=trades)
+          type: string
+      - description: End time as Unix seconds or date string (only for view=trades)
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End time as Unix seconds or date string (only for view=trades)
+          type: string
+      - description: Sort field
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: smart_wallets_involved
+          description: Sort field
+          enum:
+          - smart_wallets_involved
+          - smart_buy_volume_usd
+          - smart_sell_volume_usd
+          - amount_usd
+          - block_time
+          type: string
+      - description: Sort direction
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort direction
+          enum:
+          - asc
+          - desc
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseInterface {}'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Polymarket Smart Money
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/polymarket/trades:
+    get:
+      description: 'Trade and activity history for a Polymarket market or wallet.
+
+
+        Filter by market (condition_id), wallet (address), outcome (Yes/No), minimum trade size, and time range. Use type=redemption for splits/merges/redemptions, type=all for everything.
+
+
+        **Data refresh:** ~5 minutes'
+      operationId: polymarket-trades
+      parameters:
+      - description: Market condition identifier
+        explode: false
+        in: query
+        name: condition_id
+        schema:
+          description: Market condition identifier
+          examples:
+          - '0x6fefc0438c7598b23531457c8c60541990d0786bd4bd9dfc3eabc8d95c291092'
+          type: string
+      - description: Wallet address — returns trades where the address is maker or taker
+        explode: false
+        in: query
+        name: address
+        schema:
+          description: Wallet address — returns trades where the address is maker or taker
+          type: string
+      - description: 'Filter by activity type: `trade` (default, spot trades only), `redemption` (splits/merges/redemptions), or `all` (all activity). Use `redemption` or `all` to get non-trade wallet activity; `address` is required for these types.'
+        explode: false
+        in: query
+        name: type
+        schema:
+          default: trade
+          description: 'Filter by activity type: `trade` (default, spot trades only), `redemption` (splits/merges/redemptions), or `all` (all activity). Use `redemption` or `all` to get non-trade wallet activity; `address` is required for these types.'
+          enum:
+          - trade
+          - redemption
+          - all
+          type: string
+      - description: 'Filter by outcome label: `Yes` or `No`'
+        explode: false
+        in: query
+        name: outcome_label
+        schema:
+          description: 'Filter by outcome label: `Yes` or `No`'
+          enum:
+          - 'Yes'
+          - 'No'
+          type: string
+      - description: Minimum trade amount in USD
+        explode: false
+        in: query
+        name: min_amount
+        schema:
+          description: Minimum trade amount in USD
+          format: double
+          minimum: 0
+          type: number
+      - description: Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+          type: string
+      - description: End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)
+          type: string
+      - description: Field to sort results by
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: timestamp
+          description: Field to sort results by
+          enum:
+          - timestamp
+          - notional_volume_usd
+          examples:
+          - timestamp
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 50
+          description: Results per page
+          examples:
+          - 50
+          format: int64
+          maximum: 500
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseInterface {}'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Polymarket Trades
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/polymarket/volume-split/{condition_id}:
+    get:
+      description: 'Volume split by YES/NO outcome sides per interval (hour/day/week), plus total volume and trade count.
+
+        Use this to see directional volume bias.
+
+        For aggregate volume without YES/NO breakdown, use `volumes` instead.
+
+
+        Data refresh: ~30 minutes'
+      operationId: polymarket-volume-split
+      parameters:
+      - description: Polymarket condition ID
+        in: path
+        name: condition_id
+        required: true
+        schema:
+          description: Polymarket condition ID
+          examples:
+          - '0x6fefc0438c7598b23531457c8c60541990d0786bd4bd9dfc3eabc8d95c291092'
+          type: string
+      - description: Time granularity for volume aggregation
+        explode: false
+        in: query
+        name: granularity
+        schema:
+          default: hour
+          description: Time granularity for volume aggregation
+          enum:
+          - hour
+          - day
+          - week
+          type: string
+      - description: Start time (Unix seconds). 0 means no lower bound. Cache aligns to 5-minute buckets, so two requests within the same bucket return the same cached result.
+        explode: false
+        in: query
+        name: start_time
+        schema:
+          description: Start time (Unix seconds). 0 means no lower bound. Cache aligns to 5-minute buckets, so two requests within the same bucket return the same cached result.
+          format: int64
+          minimum: 0
+          type: integer
+      - description: End time (Unix seconds). 0 means current time. Cache aligns to 5-minute buckets, so two requests within the same bucket return the same cached result.
+        explode: false
+        in: query
+        name: end_time
+        schema:
+          description: End time (Unix seconds). 0 means current time. Cache aligns to 5-minute buckets, so two requests within the same bucket return the same cached result.
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V2VolumeChartResponse'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Polymarket Volume Split (YES/NO)
+      tags:
+      - Prediction Market
+  /gateway/v1/prediction-market/polymarket/volumes:
+    get:
+      description: 'Aggregate trading volume (USD) and trade count as a time series.
+
+        Use this for volume trend analysis.
+
+        For YES/NO volume breakdown by outcome side, use `volume-split` instead.
+
+
+        **Data refresh:** ~30 minutes'
+      operationId: polymarket-volumes
+      parameters:
+      - description: Market condition identifier (required if token_id not provided)
+        explode: false
+        in: query
+        name: condition_id
+        schema:
+          description: Market condition identifier (required if token_id not provided)
+          examples:
+          - '0x6fefc0438c7598b23531457c8c60541990d0786bd4bd9dfc3eabc8d95c291092'
+          type: string
+      - description: Token ID (alternative identifier, resolved to condition_id internally)
+        explode: false
+        in: query
+        name: token_id
+        schema:
+          description: Token ID (alternative identifier, resolved to condition_id internally)
+          type: string
+      - description: 'Window of history to return (how much data, from now backward): `7d`, `30d`, `90d`, `180d`, or `1y`. Distinct from `interval` (which sets bucket size within the window).'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 30d
+          description: 'Window of history to return (how much data, from now backward): `7d`, `30d`, `90d`, `180d`, or `1y`. Distinct from `interval` (which sets bucket size within the window).'
+          enum:
+          - 7d
+          - 30d
+          - 90d
+          - 180d
+          - 1y
+          examples:
+          - 30d
+          type: string
+      - description: 'Bucket size for each point in the returned series: `1h` (hourly) or `1d` (daily). Distinct from `time_range` (which sets the window size).'
+        explode: false
+        in: query
+        name: interval
+        schema:
+          default: 1d
+          description: 'Bucket size for each point in the returned series: `1h` (hourly) or `1d` (daily). Distinct from `time_range` (which sets the window size).'
+          enum:
+          - 1h
+          - 1d
+          examples:
+          - 1d
+          type: string
+      - description: Aggregation granularity (alternative to interval). When provided, queries daily table with buy/sell volume breakdown.
+        explode: false
+        in: query
+        name: granularity
+        schema:
+          description: Aggregation granularity (alternative to interval). When provided, queries daily table with buy/sell volume breakdown.
+          enum:
+          - day
+          - week
+          - month
+          - year
+          - all
+          type: string
+      - description: Start time as Unix seconds (alternative to time_range)
+        explode: false
+        in: query
+        name: start_time
+        schema:
+          description: Start time as Unix seconds (alternative to time_range)
+          format: int64
+          type: integer
+      - description: End time as Unix seconds (alternative to time_range)
+        explode: false
+        in: query
+        name: end_time
+        schema:
+          description: End time as Unix seconds (alternative to time_range)
+          format: int64
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponsePolymarketVolumePoint'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Polymarket Volume History
+      tags:
+      - Prediction Market
+components:
+  schemas:
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    DataResponsePolymarketVolumePoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponsePolymarketVolumePoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/PolymarketVolumePoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponsePolymarketPricePoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponsePolymarketPricePoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/PolymarketPricePoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseInterface {}:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseInterface {}.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items: {}
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    MatchedMarketPolymarket:
+      additionalProperties: false
+      properties:
+        condition_id:
+          description: Polymarket condition identifier
+          type: string
+        event_slug:
+          description: Event slug identifier
+          type: string
+        is_active:
+          description: Whether the market is currently active
+          type: boolean
+        outcome_label:
+          description: Polymarket matched outcome label
+          type: string
+        question:
+          description: Market question text
+          type: string
+        token_id:
+          description: Polymarket matched outcome token ID
+          type: string
+        volume_usd:
+          description: Total trading volume (USD)
+          format: double
+          type: number
+      required:
+      - condition_id
+      - question
+      - event_slug
+      - volume_usd
+      - is_active
+      type: object
+    V2OrderbookLevel:
+      additionalProperties: false
+      properties:
+        price:
+          description: Price level (0-1)
+          format: double
+          type: number
+        size:
+          description: Quantity at this price level
+          format: double
+          type: number
+      required:
+      - price
+      - size
+      type: object
+    PolymarketEvent:
+      additionalProperties: false
+      properties:
+        category:
+          description: Surf curated event category
+          type: string
+        description:
+          description: Event description
+          type: string
+        end_time:
+          description: Event end time (Unix seconds)
+          format: int64
+          type: integer
+        event_slug:
+          description: Event identifier slug
+          type: string
+        image:
+          description: Event image URL
+          type: string
+        market_count:
+          description: Number of markets in this event
+          format: int64
+          type: integer
+        markets:
+          description: Markets within this event
+          items:
+            $ref: '#/components/schemas/PolymarketMarketItem'
+          type:
+          - array
+          - 'null'
+        settlement_sources:
+          description: Resolution source URL
+          type: string
+        start_time:
+          description: Event start time (Unix seconds)
+          format: int64
+          type: integer
+        status:
+          description: 'Event status: `open` if any market is open, `closed` if all markets are closed'
+          type: string
+        subcategory:
+          description: Surf curated event subcategory
+          type: string
+        tags:
+          description: Event tags
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        title:
+          description: Event title
+          type: string
+        volume_total:
+          description: Total event volume across all markets (USD)
+          format: double
+          type: number
+      required:
+      - event_slug
+      - title
+      - status
+      - volume_total
+      - market_count
+      - markets
+      type: object
+    DataObjectResponseAnalyticsBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseAnalyticsBody.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/AnalyticsBody'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    KalshiEvent:
+      additionalProperties: false
+      properties:
+        event_subtitle:
+          description: Event subtitle
+          type: string
+        event_ticker:
+          description: Unique event ticker identifier
+          type: string
+        event_title:
+          description: Event title
+          type: string
+        market_count:
+          description: Number of markets in this event
+          format: int64
+          type: integer
+        markets:
+          description: Markets within this event
+          items:
+            $ref: '#/components/schemas/KalshiMarketItem'
+          type:
+          - array
+          - 'null'
+      required:
+      - event_ticker
+      - event_title
+      - market_count
+      - markets
+      type: object
+    DataResponseCorrelationItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseCorrelationItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/CorrelationItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    KalshiOIPoint:
+      additionalProperties: false
+      properties:
+        open_interest:
+          description: Open interest on this date (contracts)
+          format: double
+          type: number
+        timestamp:
+          description: Unix timestamp in seconds (midnight UTC for the trading day)
+          format: int64
+          type: integer
+      required:
+      - timestamp
+      - open_interest
+      type: object
+    DataResponseLeaderboardItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseLeaderboardItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/LeaderboardItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    V2CandlestickResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/V2CandlestickResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        candles:
+          items:
+            $ref: '#/components/schemas/V2CandlestickData'
+          type:
+          - array
+          - 'null'
+        condition_id:
+          type: string
+        interval:
+          format: int64
+          type: integer
+      required:
+      - condition_id
+      - interval
+      - candles
+      type: object
+    DataResponsePolymarketEvent:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponsePolymarketEvent.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/PolymarketEvent'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseKalshiPricePoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseKalshiPricePoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/KalshiPricePoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    KalshiTrade:
+      additionalProperties: false
+      properties:
+        market_ticker:
+          description: Unique market ticker identifier
+          type: string
+        no_price:
+          description: No outcome price as probability (0-1)
+          format: double
+          type: number
+        notional_volume_usd:
+          description: Notional volume in USD (each contract = $1)
+          format: int64
+          type: integer
+        taker_side:
+          description: 'Taker side: `yes` or `no`'
+          type: string
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type: integer
+        trade_id:
+          description: Unique trade identifier
+          type: string
+        yes_price:
+          description: Yes outcome price as probability (0-1)
+          format: double
+          type: number
+      required:
+      - timestamp
+      - trade_id
+      - market_ticker
+      - taker_side
+      - yes_price
+      - no_price
+      - notional_volume_usd
+      type: object
+    MatchedMarketPair:
+      additionalProperties: false
+      properties:
+        category:
+          description: Market category
+          type: string
+        confidence:
+          description: Match confidence score (75-100)
+          format: int64
+          type: integer
+        kalshi:
+          $ref: '#/components/schemas/MatchedMarketKalshi'
+          description: Kalshi market details
+        kalshi_price:
+          description: Kalshi YES-side probability (0-1). Omitted when no realtime price is available.
+          format: double
+          type: number
+        match_type:
+          description: 'Match type: exact or related'
+          type: string
+        polymarket:
+          $ref: '#/components/schemas/MatchedMarketPolymarket'
+          description: Polymarket market details
+        polymarket_price:
+          description: Polymarket matched outcome probability (0-1). Omitted when no realtime price is available.
+          format: double
+          type: number
+        spread_pct:
+          description: Absolute spread between Polymarket matched-outcome and Kalshi YES probabilities, expressed as a percentage. Only present when both prices are known.
+          format: double
+          type: number
+      required:
+      - confidence
+      - match_type
+      - category
+      - polymarket
+      - kalshi
+      type: object
+    DataResponseMatchedMarketDailyItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseMatchedMarketDailyItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MatchedMarketDailyItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    V2CursorPagination:
+      additionalProperties: false
+      properties:
+        count:
+          description: Items in current response
+          format: int64
+          type: integer
+        has_more:
+          description: Whether more data is available
+          type: boolean
+        limit:
+          description: Requested limit
+          format: int64
+          type: integer
+        pagination_key:
+          description: Base64 cursor for next page
+          type: string
+      required:
+      - limit
+      - count
+      - has_more
+      type: object
+    DataResponsePolymarketPosition:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponsePolymarketPosition.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/PolymarketPosition'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    PolymarketMarketSide:
+      additionalProperties: false
+      properties:
+        id:
+          description: Token identifier for this outcome
+          type: string
+        label:
+          description: Outcome label
+          type: string
+      required:
+      - id
+      - label
+      type: object
+    CategoryDailyPoint:
+      additionalProperties: false
+      properties:
+        market_count:
+          description: Number of active markets
+          format: int64
+          type: integer
+        open_interest_usd:
+          description: Cumulative open interest (USD)
+          format: double
+          type: number
+        source:
+          description: Polymarket or Kalshi
+          type: string
+        timestamp:
+          description: Day start Unix timestamp
+          format: int64
+          type: integer
+        volume_usd:
+          description: Daily notional volume (USD)
+          format: double
+          type: number
+      required:
+      - timestamp
+      - source
+      - volume_usd
+      - open_interest_usd
+      - market_count
+      type: object
+    LeaderboardItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address
+          type: string
+        pnl:
+          description: Realized PnL (USD)
+          format: double
+          type: number
+        positions:
+          description: Total positions
+          format: int64
+          type: integer
+        positions_lost:
+          description: Number of losing positions
+          format: int64
+          type: integer
+        positions_open:
+          description: Number of open positions
+          format: int64
+          type: integer
+        positions_won:
+          description: Number of winning positions
+          format: int64
+          type: integer
+        trade_count:
+          description: Total number of trades
+          format: int64
+          type: integer
+        volume:
+          description: Total trading volume (USD)
+          format: double
+          type: number
+      required:
+      - address
+      - pnl
+      - volume
+      - trade_count
+      - positions
+      - positions_won
+      - positions_lost
+      - positions_open
+      type: object
+    PolymarketPricePoint:
+      additionalProperties: false
+      properties:
+        side_a:
+          $ref: '#/components/schemas/PolymarketPriceSide'
+          description: First outcome price data
+        side_b:
+          $ref: '#/components/schemas/PolymarketPriceSide'
+          description: Second outcome price data
+        timestamp:
+          description: Interval start Unix timestamp in seconds
+          format: int64
+          type: integer
+      required:
+      - timestamp
+      type: object
+    MatchedMarketKalshi:
+      additionalProperties: false
+      properties:
+        event_ticker:
+          description: Kalshi event ticker
+          type: string
+        market_ticker:
+          description: Kalshi market ticker
+          type: string
+        open_interest:
+          description: Open interest in contracts
+          format: double
+          type: number
+        status:
+          description: Market status
+          type: string
+        title:
+          description: Market title
+          type: string
+        volume_contracts:
+          description: Total volume in contracts
+          format: double
+          type: number
+      required:
+      - market_ticker
+      - title
+      - event_ticker
+      - volume_contracts
+      - open_interest
+      - status
+      type: object
+    AnalyticsBody:
+      additionalProperties: false
+      properties:
+        category_trends:
+          description: Daily volume/OI time series by platform. When category is omitted, values are summed across all categories.
+          items:
+            $ref: '#/components/schemas/CategoryDailyPoint'
+          type:
+          - array
+          - 'null'
+        momentum_markets:
+          description: Per-market momentum signals sorted by sort_by
+          items:
+            $ref: '#/components/schemas/MomentumItem'
+          type:
+          - array
+          - 'null'
+        momentum_summary:
+          $ref: '#/components/schemas/MomentumSummary'
+          description: Distribution of momentum signals (within category, or globally when category is omitted)
+        top_markets:
+          description: Top markets by open interest (within category, or globally when category is omitted)
+          items:
+            $ref: '#/components/schemas/DiscoverMarketItem'
+          type:
+          - array
+          - 'null'
+      required:
+      - category_trends
+      - top_markets
+      - momentum_summary
+      - momentum_markets
+      type: object
+    PolymarketMarketItem:
+      additionalProperties: false
+      properties:
+        category:
+          description: Surf curated market category
+          type: string
+        close_time:
+          description: Market close time (Unix seconds)
+          format: int64
+          type: integer
+        completed_time:
+          description: Resolution time (Unix seconds)
+          format: int64
+          type: integer
+        condition_id:
+          description: Unique condition identifier
+          type: string
+        description:
+          description: Market description
+          type: string
+        end_time:
+          description: Market end time (Unix seconds)
+          format: int64
+          type: integer
+        event_slug:
+          description: Event identifier slug
+          type: string
+        game_start_time:
+          description: Game start time for sports markets (Unix seconds)
+          format: int64
+          type: integer
+        image:
+          description: Market image URL
+          type: string
+        market_slug:
+          description: Market identifier slug
+          type: string
+        negative_risk_id:
+          description: Negative risk market identifier
+          type: string
+        polymarket_link:
+          description: Link to Polymarket page
+          type: string
+        resolution_source:
+          description: URL to resolution data source
+          type: string
+        side_a:
+          $ref: '#/components/schemas/PolymarketMarketSide'
+          description: First outcome
+        side_b:
+          $ref: '#/components/schemas/PolymarketMarketSide'
+          description: Second outcome
+        start_time:
+          description: Market start time (Unix seconds)
+          format: int64
+          type: integer
+        status:
+          description: 'Market status: `open` or `closed`'
+          type: string
+        subcategory:
+          description: Surf curated market subcategory
+          type: string
+        tags:
+          description: Market tags
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        title:
+          description: Market title
+          type: string
+        volume_1_month:
+          description: Trading volume in the past month (USD)
+          format: double
+          type: number
+        volume_1_week:
+          description: Trading volume in the past week (USD)
+          format: double
+          type: number
+        volume_1_year:
+          description: Trading volume in the past year (USD)
+          format: double
+          type: number
+        volume_total:
+          description: Total trading volume (USD)
+          format: double
+          type: number
+        winning_side:
+          description: Winning outcome label, if resolved
+          type: string
+      required:
+      - market_slug
+      - condition_id
+      - title
+      - volume_1_week
+      - volume_1_month
+      - volume_1_year
+      - volume_total
+      - status
+      type: object
+    MomentumSummary:
+      additionalProperties: false
+      properties:
+        confirming_down:
+          description: Price down + volume up
+          format: int64
+          type: integer
+        confirming_up:
+          description: Price up + volume up
+          format: int64
+          type: integer
+        diverging_down:
+          description: Price down + volume down
+          format: int64
+          type: integer
+        diverging_up:
+          description: Price up + volume down
+          format: int64
+          type: integer
+        neutral:
+          description: No clear momentum
+          format: int64
+          type: integer
+        total_active:
+          description: Total active markets (in category, or globally when category is omitted)
+          format: int64
+          type: integer
+        volume_decreasing:
+          description: Markets with decreasing volume
+          format: int64
+          type: integer
+        volume_increasing:
+          description: Markets with increasing volume
+          format: int64
+          type: integer
+      required:
+      - total_active
+      - confirming_up
+      - confirming_down
+      - diverging_up
+      - diverging_down
+      - neutral
+      - volume_increasing
+      - volume_decreasing
+      type: object
+    DiscoverMarketItem:
+      additionalProperties: false
+      properties:
+        category:
+          description: Surf-curated category
+          type: string
+        condition_id:
+          description: Polymarket condition ID
+          type: string
+        days_to_resolution:
+          description: Days until market end date
+          format: int64
+          type: integer
+        event_group_slug:
+          description: Canonical Polymarket event group slug for sibling event pages
+          type: string
+        event_slug:
+          description: Polymarket event slug
+          type: string
+        event_ticker:
+          description: Kalshi event ticker
+          type: string
+        event_title:
+          description: Event title
+          type: string
+        latest_price:
+          description: Probability (0-1) for token_id/outcome_label from realtime price store. Omitted when no selected outcome token is available.
+          format: double
+          type: number
+        market_link:
+          description: Direct link to market
+          type: string
+        market_slug:
+          description: Polymarket market slug
+          type: string
+        market_ticker:
+          description: Kalshi market ticker
+          type: string
+        matched_counterpart:
+          description: Matching market ID on the other platform
+          type: string
+        open_interest_usd:
+          description: Current open interest (USD)
+          format: double
+          type: number
+        outcome_label:
+          description: Polymarket selected outcome label
+          type: string
+        platform:
+          description: polymarket or kalshi
+          type: string
+        question:
+          description: Market question text
+          type: string
+        smart_money_direction:
+          description: BULLISH, BEARISH, or NEUTRAL (Polymarket only)
+          type: string
+        status:
+          description: Market status
+          type: string
+        subcategory:
+          description: Surf-curated subcategory
+          type: string
+        token_id:
+          description: Polymarket selected outcome token ID
+          type: string
+        trade_count_7d:
+          description: Number of trades last 7 days
+          format: int64
+          type: integer
+        volume_1d:
+          description: Notional volume last 24h (USD)
+          format: double
+          type: number
+        volume_30d:
+          description: Notional volume last 30 days (USD)
+          format: double
+          type: number
+        volume_7d:
+          description: Notional volume last 7 days (USD)
+          format: double
+          type: number
+      required:
+      - platform
+      - question
+      - category
+      - status
+      - volume_1d
+      - volume_7d
+      - volume_30d
+      - trade_count_7d
+      - open_interest_usd
+      type: object
+    V2VolumeChartPoint:
+      additionalProperties: false
+      properties:
+        no_volume:
+          description: No-side volume in USD
+          format: double
+          type: number
+        timestamp:
+          description: Unix timestamp (seconds)
+          format: int64
+          type: integer
+        total_volume:
+          description: Total volume in USD
+          format: double
+          type: number
+        trades_count:
+          description: Number of trades
+          format: int64
+          type: integer
+        yes_volume:
+          description: Yes-side volume in USD
+          format: double
+          type: number
+      required:
+      - timestamp
+      - total_volume
+      - yes_volume
+      - no_volume
+      - trades_count
+      type: object
+    DataResponsePolymarketMarketItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponsePolymarketMarketItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/PolymarketMarketItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    V2KalshiOrderbooksResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/V2KalshiOrderbooksResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        pagination:
+          $ref: '#/components/schemas/V2CursorPagination'
+        snapshots:
+          items:
+            $ref: '#/components/schemas/V2KalshiOrderbookSnapshot'
+          type:
+          - array
+          - 'null'
+      required:
+      - snapshots
+      - pagination
+      type: object
+    V2CandlestickData:
+      additionalProperties: false
+      properties:
+        close:
+          description: Closing price
+          format: double
+          type: number
+        end_period_ts:
+          description: Period end Unix timestamp (seconds)
+          format: int64
+          type: integer
+        high:
+          description: Highest price in period
+          format: double
+          type: number
+        low:
+          description: Lowest price in period
+          format: double
+          type: number
+        open:
+          description: Opening price
+          format: double
+          type: number
+        timestamp:
+          description: Period start Unix timestamp (seconds)
+          format: int64
+          type: integer
+        trades_count:
+          description: Number of trades
+          format: int64
+          type: integer
+        volume:
+          description: Total shares traded
+          format: double
+          type: number
+      required:
+      - timestamp
+      - end_period_ts
+      - open
+      - high
+      - low
+      - close
+      - volume
+      - trades_count
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    DataResponseKalshiVolumePoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseKalshiVolumePoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/KalshiVolumePoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    CorrelationItem:
+      additionalProperties: false
+      properties:
+        category:
+          description: Shared category
+          type: string
+        correlation:
+          description: 30-day Pearson correlation coefficient
+          format: double
+          type: number
+        market_a_condition_id:
+          description: First market condition ID
+          type: string
+        market_a_question:
+          description: First market question
+          type: string
+        market_b_condition_id:
+          description: Second market condition ID
+          type: string
+        market_b_question:
+          description: Second market question
+          type: string
+        overlapping_days:
+          description: Number of trading days with data for both markets
+          format: int64
+          type: integer
+      required:
+      - market_a_condition_id
+      - market_b_condition_id
+      - category
+      - correlation
+      - overlapping_days
+      type: object
+    DataResponseKalshiMarketItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseKalshiMarketItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/KalshiMarketItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    V2VolumeChartResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/V2VolumeChartResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        condition_id:
+          type: string
+        data_points:
+          items:
+            $ref: '#/components/schemas/V2VolumeChartPoint'
+          type:
+          - array
+          - 'null'
+        end_time:
+          format: int64
+          type: integer
+        granularity:
+          type: string
+        start_time:
+          format: int64
+          type: integer
+      required:
+      - condition_id
+      - granularity
+      - start_time
+      - end_time
+      - data_points
+      type: object
+    PolymarketOIPoint:
+      additionalProperties: false
+      properties:
+        daily_net_change_usd:
+          description: Daily net change in USD
+          format: double
+          type: number
+        open_interest_usd:
+          description: Open interest in USD
+          format: double
+          type: number
+        timestamp:
+          description: Unix timestamp in seconds (midnight UTC)
+          format: int64
+          type: integer
+      required:
+      - timestamp
+      - open_interest_usd
+      - daily_net_change_usd
+      type: object
+    DataResponseMatchedMarketPair:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseMatchedMarketPair.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MatchedMarketPair'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseKalshiEvent:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseKalshiEvent.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/KalshiEvent'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    KalshiPriceSide:
+      additionalProperties: false
+      properties:
+        label:
+          description: 'Outcome label: `Yes` or `No`'
+          type: string
+        price:
+          description: Price as probability (0-1)
+          format: double
+          type: number
+      required:
+      - label
+      - price
+      type: object
+    PolymarketPriceSide:
+      additionalProperties: false
+      properties:
+        label:
+          description: Outcome label such as `Yes` or `No`
+          type: string
+        price:
+          description: Average price over the interval (0-1)
+          format: double
+          type: number
+        token_id:
+          description: Outcome token identifier
+          type: string
+      required:
+      - token_id
+      - label
+      - price
+      type: object
+    DataResponsePolymarketOIPoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponsePolymarketOIPoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/PolymarketOIPoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    KalshiVolumePoint:
+      additionalProperties: false
+      properties:
+        notional_volume_usd:
+          description: Notional volume in USD (each contract counted as $1)
+          format: double
+          type: number
+        timestamp:
+          description: Unix timestamp in seconds (midnight UTC for the trading day)
+          format: int64
+          type: integer
+      required:
+      - timestamp
+      - notional_volume_usd
+      type: object
+    KalshiPricePoint:
+      additionalProperties: false
+      properties:
+        high:
+          description: Highest price as probability (0-1)
+          format: double
+          type: number
+        low:
+          description: Lowest price as probability (0-1)
+          format: double
+          type: number
+        open:
+          description: Opening price as probability (0-1). Present for daily interval only.
+          format: double
+          type: number
+        side_a:
+          $ref: '#/components/schemas/KalshiPriceSide'
+          description: Yes outcome price data (close price for daily/hourly)
+        side_b:
+          $ref: '#/components/schemas/KalshiPriceSide'
+          description: No outcome price data (close price for daily/hourly)
+        timestamp:
+          description: Unix timestamp in seconds (midnight UTC for daily, hour start for hourly, trade time for latest)
+          format: int64
+          type: integer
+      required:
+      - timestamp
+      - side_a
+      - side_b
+      - high
+      - low
+      type: object
+    PolymarketPosition:
+      additionalProperties: false
+      properties:
+        avg_price:
+          description: Average entry price (0-1)
+          format: double
+          type: number
+        cash_pnl:
+          description: Unrealized profit and loss in USD
+          format: double
+          type: number
+        condition_id:
+          description: Market condition identifier
+          type: string
+        cur_price:
+          description: Current market price (0-1)
+          format: double
+          type: number
+        current_value:
+          description: Current position value in USD
+          format: double
+          type: number
+        outcome_label:
+          description: Outcome label
+          type: string
+        question:
+          description: Market question
+          type: string
+        realized_pnl:
+          description: Realized profit and loss in USD
+          format: double
+          type: number
+        redeemable:
+          description: Whether the position is redeemable
+          type: boolean
+        size:
+          description: Position size in shares
+          format: double
+          type: number
+      required:
+      - condition_id
+      - question
+      - outcome_label
+      - size
+      - avg_price
+      - cur_price
+      - current_value
+      - cash_pnl
+      - realized_pnl
+      - redeemable
+      type: object
+    V2KalshiOrderbookSnapshot:
+      additionalProperties: false
+      properties:
+        ask_depth:
+          description: Total ask depth (contracts)
+          format: int64
+          type: integer
+        best_ask:
+          description: Best ask price (cents)
+          format: int64
+          type: integer
+        best_bid:
+          description: Best bid price (cents)
+          format: int64
+          type: integer
+        bid_depth:
+          description: Total bid depth (contracts)
+          format: int64
+          type: integer
+        sequence:
+          description: Sequence number
+          format: int64
+          type: integer
+        ticker:
+          description: Market ticker
+          type: string
+        timestamp:
+          description: Snapshot time in milliseconds
+          format: int64
+          type: integer
+        yes_asks:
+          description: Yes sell orders, price ascending
+          items:
+            $ref: '#/components/schemas/V2KalshiOrderbookLevel'
+          type:
+          - array
+          - 'null'
+        yes_bids:
+          description: Yes buy orders, price descending
+          items:
+            $ref: '#/components/schemas/V2KalshiOrderbookLevel'
+          type:
+          - array
+          - 'null'
+      required:
+      - ticker
+      - timestamp
+      - yes_bids
+      - yes_asks
+      - best_bid
+      - best_ask
+      - bid_depth
+      - ask_depth
+      - sequence
+      type: object
+    DataResponseKalshiOIPoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseKalshiOIPoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/KalshiOIPoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    KalshiMarketItem:
+      additionalProperties: false
+      properties:
+        category:
+          description: Surf curated market category
+          type: string
+        close_time:
+          description: Market close time (Unix seconds)
+          format: int64
+          type: integer
+        end_time:
+          description: Market end time (Unix seconds)
+          format: int64
+          type: integer
+        event_ticker:
+          description: Parent event ticker
+          type: string
+        event_title:
+          description: Event title
+          type: string
+        last_day_open_interest:
+          description: Previous day open interest from daily report
+          format: double
+          type: number
+        market_ticker:
+          description: Unique market ticker identifier
+          type: string
+        notional_volume_usd:
+          description: Last day notional trading volume in USD (each contract = $1)
+          format: double
+          type: number
+        open_interest:
+          description: Open interest (contracts)
+          format: double
+          type: number
+        payout_type:
+          description: Payout type
+          type: string
+        result:
+          description: Market result if resolved
+          type: string
+        start_time:
+          description: Market start time (Unix seconds)
+          format: int64
+          type: integer
+        status:
+          description: Market status
+          type: string
+        subcategory:
+          description: Surf curated market subcategory
+          type: string
+        title:
+          description: Market title
+          type: string
+        total_volume:
+          description: Total trading volume (contracts)
+          format: int64
+          type: integer
+      required:
+      - market_ticker
+      - event_ticker
+      - title
+      - status
+      - payout_type
+      - total_volume
+      - notional_volume_usd
+      - open_interest
+      - last_day_open_interest
+      type: object
+    V2KalshiOrderbookLevel:
+      additionalProperties: false
+      properties:
+        price:
+          description: Price in cents (1-99)
+          format: int64
+          type: integer
+        size:
+          description: Number of contracts at this price level
+          format: int64
+          type: integer
+      required:
+      - price
+      - size
+      type: object
+    MomentumItem:
+      additionalProperties: false
+      properties:
+        category:
+          description: Surf-curated category
+          type: string
+        condition_id:
+          description: Polymarket condition ID
+          type: string
+        latest_price:
+          description: Latest YES price (0-1)
+          format: double
+          type: number
+        oi_change_7d:
+          description: 7-day open interest change (USD)
+          format: double
+          type: number
+        price_change_7d:
+          description: 7-day price change
+          format: double
+          type: number
+        price_momentum:
+          description: CONFIRMING_UP, CONFIRMING_DOWN, DIVERGING_UP, DIVERGING_DOWN, or NEUTRAL
+          type: string
+        question:
+          description: Market question text
+          type: string
+        smart_money_direction:
+          description: BULLISH, BEARISH, or NEUTRAL
+          type: string
+        smart_wallets_involved:
+          description: Number of smart wallets with positions
+          format: int64
+          type: integer
+        subcategory:
+          description: Surf-curated subcategory
+          type: string
+        volume_7d:
+          description: 7-day volume (USD)
+          format: double
+          type: number
+        volume_direction:
+          description: INCREASING, STABLE, or DECREASING
+          type: string
+        whale_flow_net_1d:
+          description: Net whale flow (USD) last 24h
+          format: double
+          type: number
+        whale_flow_net_7d:
+          description: Net whale flow (USD) last 7 days
+          format: double
+          type: number
+      required:
+      - condition_id
+      - question
+      - category
+      - latest_price
+      - price_change_7d
+      - volume_7d
+      - volume_direction
+      - price_momentum
+      - smart_money_direction
+      - smart_wallets_involved
+      - whale_flow_net_1d
+      - whale_flow_net_7d
+      - oi_change_7d
+      type: object
+    V2OrderbooksResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/V2OrderbooksResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        pagination:
+          $ref: '#/components/schemas/V2CursorPagination'
+        snapshots:
+          items:
+            $ref: '#/components/schemas/V2OrderbookSnapshot'
+          type:
+          - array
+          - 'null'
+      required:
+      - snapshots
+      - pagination
+      type: object
+    MatchedMarketDailyItem:
+      additionalProperties: false
+      properties:
+        kalshi_oi_contracts:
+          description: Kalshi open interest (contracts)
+          format: double
+          type: number
+        kalshi_volume_contracts:
+          description: Kalshi daily volume (contracts)
+          format: double
+          type: number
+        polymarket_oi_usd:
+          description: Polymarket open interest (USD)
+          format: double
+          type: number
+        polymarket_volume_usd:
+          description: Polymarket daily volume (USD)
+          format: double
+          type: number
+        timestamp:
+          description: Unix timestamp (midnight UTC)
+          format: int64
+          type: integer
+      required:
+      - timestamp
+      - polymarket_volume_usd
+      - polymarket_oi_usd
+      - kalshi_volume_contracts
+      - kalshi_oi_contracts
+      type: object
+    PolymarketVolumePoint:
+      additionalProperties: false
+      properties:
+        buy_volume:
+          description: Buy-side volume (USD), available when using granularity param
+          format: double
+          type: number
+        notional_volume_usd:
+          description: Notional trading volume in USD
+          format: double
+          type: number
+        sell_volume:
+          description: Sell-side volume (USD), available when using granularity param
+          format: double
+          type: number
+        timestamp:
+          description: Interval start Unix timestamp in seconds
+          format: int64
+          type: integer
+        trade_count:
+          description: Number of trades
+          format: int64
+          type: integer
+      required:
+      - timestamp
+      - notional_volume_usd
+      - trade_count
+      type: object
+    DataResponseKalshiTrade:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseKalshiTrade.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/KalshiTrade'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    V2OrderbookSnapshot:
+      additionalProperties: false
+      properties:
+        asks:
+          description: Sell orders, price-ordered
+          items:
+            $ref: '#/components/schemas/V2OrderbookLevel'
+          type:
+          - array
+          - 'null'
+        assetId:
+          description: Token identifier
+          type: string
+        bids:
+          description: Buy orders, price-ordered
+          items:
+            $ref: '#/components/schemas/V2OrderbookLevel'
+          type:
+          - array
+          - 'null'
+        hash:
+          description: Orderbook state identifier
+          type: string
+        indexedAt:
+          description: Indexing time in milliseconds
+          format: int64
+          type: integer
+        market:
+          description: Market condition ID
+          type: string
+        tickSize:
+          description: Minimum price increment
+          type: string
+        timestamp:
+          description: Snapshot time in milliseconds
+          format: int64
+          type: integer
+      required:
+      - asks
+      - bids
+      - hash
+      - assetId
+      - timestamp
+      - tickSize
+      - indexedAt
+      - market
+      type: object
+  securitySchemes:
+    AccessToken:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    AdminToken:
+      in: header
+      name: X-Admin-Token
+      type: apiKey
+    InternalKey:
+      in: header
+      name: X-Internal-Key
+      type: apiKey

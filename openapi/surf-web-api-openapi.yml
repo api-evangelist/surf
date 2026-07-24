@@ -1,0 +1,189 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: backend@cybertinolab.com
+    name: Cyber team
+  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
+  title: Hermod DEX Web API
+  version: sha-80d3407
+servers:
+- url: /
+tags:
+- description: Fetch and search web content. Retrieve any URL and convert it to clean, LLM-friendly markdown, or search the internet for crypto-related articles, reports, and resources.
+  name: Web
+paths:
+  /gateway/v1/web/fetch:
+    get:
+      description: 'Fetches a web page and converts it to clean, LLM-friendly markdown.
+
+
+        **Options:**
+
+        - `target_selector` — extract specific page sections
+
+        - `remove_selector` — strip unwanted elements
+
+
+        Returns 400 if the URL is invalid or unreachable.'
+      operationId: web-fetch
+      parameters:
+      - description: URL to fetch and parse
+        explode: false
+        in: query
+        name: url
+        required: true
+        schema:
+          description: URL to fetch and parse
+          examples:
+          - https://ethereum.org
+          type: string
+      - description: CSS selector to extract specific content
+        explode: false
+        in: query
+        name: target_selector
+        schema:
+          description: CSS selector to extract specific content
+          examples:
+          - article.main-content
+          type: string
+      - description: CSS selector to remove unwanted elements
+        explode: false
+        in: query
+        name: remove_selector
+        schema:
+          description: CSS selector to remove unwanted elements
+          examples:
+          - nav,footer,.ads
+          type: string
+      - description: CSS selector to wait for before extracting
+        explode: false
+        in: query
+        name: wait_for_selector
+        schema:
+          description: CSS selector to wait for before extracting
+          examples:
+          - .content-loaded
+          type: string
+      - description: Request timeout in milliseconds
+        explode: false
+        in: query
+        name: timeout
+        schema:
+          default: 30000
+          description: Request timeout in milliseconds
+          examples:
+          - 5000
+          format: int64
+          maximum: 60000
+          minimum: 1000
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectResponseWebFetchResultItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Web Page Fetch
+      tags:
+      - Web
+components:
+  schemas:
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    DataObjectResponseWebFetchResultItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseWebFetchResultItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/WebFetchResultItem'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    WebFetchResultItem:
+      additionalProperties: false
+      properties:
+        content:
+          description: Full page content converted to clean markdown text
+          type: string
+        title:
+          description: Page title extracted from the HTML
+          type: string
+        url:
+          description: The URL that was fetched
+          type: string
+      required:
+      - url
+      - content
+      type: object
+  securitySchemes:
+    AccessToken:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    AdminToken:
+      in: header
+      name: X-Admin-Token
+      type: apiKey
+    InternalKey:
+      in: header
+      name: X-Internal-Key
+      type: apiKey

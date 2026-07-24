@@ -1,0 +1,248 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: backend@cybertinolab.com
+    name: Cyber team
+  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
+  title: Hermod DEX API
+  version: sha-80d3407
+servers:
+- url: /
+tags:
+- name: DEX
+paths:
+  /gateway/v1/dex/token/price:
+    get:
+      description: 'Returns DEX-pool-weighted OHLCV bars (timestamp, open, high, low, close, volume_usd) for a single token identified by `chain` + `address`. USD only. Bars are sorted ascending by `timestamp`.
+
+
+        **Use for** meme coins, newly-launched tokens, and any DEX-native asset where `/v1/market/price` returns nothing. Prefer the standard `/v1/market/price` for major listed tokens (BTC, ETH, etc.).
+
+
+        **Time window:** `time_range` (default `24h`) sets the window; `from`+`to` (Unix seconds or `YYYY-MM-DD`) override it. Bars use closed-interval semantics, so `24h × 1h` returns 25 bars. Maximum 1500 bars per call — combinations exceeding the cap (e.g. `30d × 5m`) return 422. `time_range=max` returns the largest allowed 1500-bar window for the selected interval.
+
+
+        **Identity:** `chain` (enum) + `address` (EVM hex or Solana base58). No symbol input.'
+      operationId: dex-token-price
+      parameters:
+      - description: Chain the token lives on. Can be `ethereum`, `base`, `bsc`, `arbitrum`, `optimism`, `polygon`, `avalanche`, or `solana`.
+        explode: false
+        in: query
+        name: chain
+        required: true
+        schema:
+          description: Chain the token lives on. Can be `ethereum`, `base`, `bsc`, `arbitrum`, `optimism`, `polygon`, `avalanche`, or `solana`.
+          enum:
+          - ethereum
+          - base
+          - bsc
+          - arbitrum
+          - optimism
+          - polygon
+          - avalanche
+          - solana
+          examples:
+          - ethereum
+          type: string
+      - description: Token contract address — 0x-prefixed hex (42 chars) for EVM chains, base58 for Solana. NOT a ticker symbol.
+        explode: false
+        in: query
+        name: address
+        required: true
+        schema:
+          description: Token contract address — 0x-prefixed hex (42 chars) for EVM chains, base58 for Solana. NOT a ticker symbol.
+          examples:
+          - '0x6982508145454ce325ddbe47a25d4ec3d2311933'
+          type: string
+      - description: Candle bucket size. Sub-day intervals (`1m`-`4h`) are the typical choice for active DEX analysis.
+        explode: false
+        in: query
+        name: interval
+        schema:
+          default: 1h
+          description: Candle bucket size. Sub-day intervals (`1m`-`4h`) are the typical choice for active DEX analysis.
+          enum:
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 4h
+          - 12h
+          - 1d
+          - 7d
+          examples:
+          - 1h
+          type: string
+      - description: Window of historical data to return. `max` returns the largest allowed 1500-bar window for the selected interval. Ignored when both `from` and `to` are set.
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 24h
+          description: Window of historical data to return. `max` returns the largest allowed 1500-bar window for the selected interval. Ignored when both `from` and `to` are set.
+          enum:
+          - 1h
+          - 6h
+          - 12h
+          - 24h
+          - 7d
+          - 30d
+          - 90d
+          - 180d
+          - 365d
+          - max
+          examples:
+          - 24h
+          type: string
+      - description: Start of custom date range (Unix seconds or YYYY-MM-DD). Must be set together with `to`. Overrides `time_range` when set.
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start of custom date range (Unix seconds or YYYY-MM-DD). Must be set together with `to`. Overrides `time_range` when set.
+          examples:
+          - '2026-01-01'
+          type: string
+      - description: End of custom date range (Unix seconds or YYYY-MM-DD). Must be set together with `from`. Overrides `time_range` when set.
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End of custom date range (Unix seconds or YYYY-MM-DD). Must be set together with `from`. Overrides `time_range` when set.
+          examples:
+          - '2026-01-02'
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleListResponseDexTokenPriceBar'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: DEX Token OHLCV Price
+      tags:
+      - DEX
+components:
+  schemas:
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    DexTokenPriceBar:
+      additionalProperties: false
+      properties:
+        close:
+          description: Closing price in USD
+          format: double
+          type: number
+        high:
+          description: Highest price during the bar in USD
+          format: double
+          type: number
+        low:
+          description: Lowest price during the bar in USD
+          format: double
+          type: number
+        open:
+          description: Opening price in USD
+          format: double
+          type: number
+        timestamp:
+          description: Unix timestamp in seconds at the bar's open
+          format: int64
+          type: integer
+        volume_usd:
+          description: USD volume traded during the bar
+          format: double
+          type: number
+      required:
+      - timestamp
+      - open
+      - high
+      - low
+      - close
+      - volume_usd
+      type: object
+    SimpleListResponseDexTokenPriceBar:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseDexTokenPriceBar.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/DexTokenPriceBar'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+  securitySchemes:
+    AccessToken:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    AdminToken:
+      in: header
+      name: X-Admin-Token
+      type: apiKey
+    InternalKey:
+      in: header
+      name: X-Internal-Key
+      type: apiKey

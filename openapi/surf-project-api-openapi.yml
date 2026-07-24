@@ -1,0 +1,1170 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: backend@cybertinolab.com
+    name: Cyber team
+  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
+  title: Hermod DEX Project API
+  version: sha-80d3407
+servers:
+- url: /
+tags:
+- description: Research crypto projects in depth. Retrieve aggregated project profiles covering overview, team, funding rounds, tokenomics, social links, and TGE status. Track DeFi protocol metrics like TVL, fees, revenue, trading volume, and active users over time.
+  name: Project
+paths:
+  /gateway/v1/project/ai-news:
+    get:
+      description: 'AI-generated news and signal analysis for a project. Each item includes title, summary, TL;DR, signal type, source URLs, and source tweet if applicable.
+
+
+        **Signal types:** `price_analysis`, `mindshare`, `funding`, `twitter`, `ai_twitter`.
+
+
+        **Lookup:** by UUID (`id`) or name (`q`). Filter by `lang` (en/zh/ja/kr). Returns 404 if not found.'
+      operationId: project-ai-news
+      parameters:
+      - description: Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q.
+        explode: false
+        in: query
+        name: id
+        schema:
+          description: Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q.
+          examples:
+          - 25c6612a-395c-4974-94eb-3b5f9f4b2ed7
+          type: string
+      - description: Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+          examples:
+          - ethereum
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 50
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Language for AI-generated content
+        explode: false
+        in: query
+        name: lang
+        schema:
+          default: en
+          description: Language for AI-generated content
+          enum:
+          - en
+          - zh
+          - ja
+          - kr
+          examples:
+          - en
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseProjectPulseItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Project AI News
+      tags:
+      - Project
+  /gateway/v1/project/defi/metrics:
+    get:
+      description: 'Returns historical time-series for a single DeFi protocol metric (e.g. daily TVL). Each data point has a Unix timestamp and value.
+
+
+        **Available metrics:** `volume`, `fee`, `fees`, `revenue`, `tvl`, `users`.
+
+
+        **Lookup:** by UUID (`id`) or name (`q`). Filter by `chain` and date range (`from`/`to`). Returns 404 if the project is not found.
+
+
+        **Pagination:** check `meta.has_more`; when true, increase `offset` or `limit` to fetch the remaining points.
+
+
+        **Note:** this endpoint only returns data for DeFi protocol projects (e.g. `aave`, `uniswap`, `lido`, `makerdao`). Use `q` with a DeFi protocol name.'
+      operationId: project-defi-metrics
+      parameters:
+      - description: Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q.
+        explode: false
+        in: query
+        name: id
+        schema:
+          description: Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q.
+          examples:
+          - 25c6612a-395c-4974-94eb-3b5f9f4b2ed7
+          type: string
+      - description: Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+          examples:
+          - uniswap
+          type: string
+      - description: Metric to query. Can be `volume`, `fees` (or `fee` alias), `revenue`, `tvl`, or `users`. Defaults to tvl.
+        explode: false
+        in: query
+        name: metric
+        schema:
+          default: tvl
+          description: Metric to query. Can be `volume`, `fees` (or `fee` alias), `revenue`, `tvl`, or `users`. Defaults to tvl.
+          enum:
+          - volume
+          - fee
+          - fees
+          - revenue
+          - tvl
+          - users
+          examples:
+          - tvl
+          type: string
+      - description: Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+          examples:
+          - '2024-01-01'
+          type: string
+      - description: End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)
+          examples:
+          - '2024-02-01'
+          type: string
+      - description: Filter by chain. Can be `ethereum`, `polygon`, `bsc`, `arbitrum`, `optimism`, `base`, `avalanche`, `fantom`, or `solana`.
+        explode: false
+        in: query
+        name: chain
+        schema:
+          description: Filter by chain. Can be `ethereum`, `polygon`, `bsc`, `arbitrum`, `optimism`, `base`, `avalanche`, `fantom`, or `solana`.
+          enum:
+          - ethereum
+          - polygon
+          - bsc
+          - arbitrum
+          - optimism
+          - base
+          - avalanche
+          - fantom
+          - solana
+          examples:
+          - ethereum
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseProjectMetricPoint'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Project DeFi Metrics
+      tags:
+      - Project
+  /gateway/v1/project/defi/ranking:
+    get:
+      description: 'Returns a DeFi protocol leaderboard (e.g. Aave, Uniswap, Lido) ranked by TVL, fees, revenue, or users. For individual pool/vault yields, use `onchain-yield-ranking` instead.
+
+
+        **Available metrics:** `tvl`, `revenue`, `fees`, `volume`, `users`.'
+      operationId: project-defi-ranking
+      parameters:
+      - description: Ranking metric. Can be `tvl`, `revenue`, `fees`, `volume`, or `users`.
+        explode: false
+        in: query
+        name: metric
+        required: true
+        schema:
+          description: Ranking metric. Can be `tvl`, `revenue`, `fees`, `volume`, or `users`.
+          enum:
+          - tvl
+          - revenue
+          - fees
+          - volume
+          - users
+          examples:
+          - tvl
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseProjectTopRankItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: DeFi Protocol Ranking
+      tags:
+      - Project
+  /gateway/v1/project/detail:
+    get:
+      description: 'Returns a crypto project''s profile with selectable sub-resources: overview (description, chains, exchanges), token_info (price, market cap, supply, all-time high/low dates), tokenomics, funding, team, contracts, social, tge_status.
+
+
+        **Available fields** (via `fields`): `overview`, `token_info`, `tokenomics`, `funding`, `team`, `contracts`, `social`, `tge_status`.
+
+
+        **Important:** `tokenomics` is a legacy supply/valuation group (`total_supply`, `circulating_supply`, `market_cap_usd`, `fdv`). It does not include token unlock schedule, allocation, or unlock percentage data. For unlock schedule and unlocked-supply percentage, use `/token/tokenomics`.
+
+
+        **Lookup:** accepts project names directly via `q` (e.g. `?q=aave`) — no need to call `/search/project` first. Also accepts UUID via `id`. Returns 404 if not found.
+
+
+        For DeFi metrics (TVL, fees, revenue, volume, users) and per-chain breakdown, use `/project/defi/metrics`.'
+      operationId: project-detail
+      parameters:
+      - description: Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q.
+        explode: false
+        in: query
+        name: id
+        schema:
+          description: Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q.
+          examples:
+          - 25c6612a-395c-4974-94eb-3b5f9f4b2ed7
+          type: string
+      - description: Numeric X (Twitter) account ID. Resolves to the associated project.
+        explode: false
+        in: query
+        name: x_id
+        schema:
+          description: Numeric X (Twitter) account ID. Resolves to the associated project.
+          examples:
+          - '984188226826010624'
+          type: string
+      - description: X (Twitter) handle without @. Resolves to the associated project via twitter account lookup.
+        explode: false
+        in: query
+        name: handle
+        schema:
+          description: X (Twitter) handle without @. Resolves to the associated project via twitter account lookup.
+          examples:
+          - uniswap
+          type: string
+      - description: Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+          examples:
+          - ethereum
+          type: string
+      - description: Comma-separated sub-resources to include. Can be `overview`, `token_info`, `tokenomics`, `funding`, `team`, `contracts`, `social`, or `tge_status`.
+        explode: false
+        in: query
+        name: fields
+        schema:
+          default: overview,token_info,tokenomics,funding,team,contracts,social,tge_status
+          description: Comma-separated sub-resources to include. Can be `overview`, `token_info`, `tokenomics`, `funding`, `team`, `contracts`, `social`, or `tge_status`.
+          examples:
+          - overview,token_info,funding
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectResponseHumaProjectDetailBody'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Aggregated Project Detail
+      tags:
+      - Project
+      x-agent-views:
+        contracts:
+          command_example: surf project-detail --q "aave" --fields contracts --agent-view contracts
+          description: Flattened contract rows for agents; normalizes nested contract shapes into chain, address, symbol, name, and optional decimals.
+          output:
+            items:
+              fields:
+                address: string|null
+                chain: string|null
+                decimals: number|string|null
+                name: string|null
+                symbol: string|null
+              type: object
+            type: array
+  /gateway/v1/project/pulse:
+    get:
+      deprecated: true
+      description: '**[DEPRECATED]** Use `GET /v1/project/ai-news` instead. This endpoint will continue to work but will not receive new features.
+
+
+        ---
+
+
+        AI-generated news and signal analysis for a project. Each item includes title, summary, TL;DR, signal type, source URLs, and source tweet if applicable.
+
+
+        **Signal types:** `price_analysis`, `mindshare`, `funding`, `twitter`, `ai_twitter`.
+
+
+        **Lookup:** by UUID (`id`) or name (`q`). Filter by `lang` (en/zh/ja/kr). Returns 404 if not found.'
+      operationId: project-pulse
+      parameters:
+      - description: Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q.
+        explode: false
+        in: query
+        name: id
+        schema:
+          description: Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q.
+          examples:
+          - 25c6612a-395c-4974-94eb-3b5f9f4b2ed7
+          type: string
+      - description: Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+          examples:
+          - ethereum
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 50
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Language for AI-generated content
+        explode: false
+        in: query
+        name: lang
+        schema:
+          default: en
+          description: Language for AI-generated content
+          enum:
+          - en
+          - zh
+          - ja
+          - kr
+          examples:
+          - en
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseProjectPulseItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Project Pulse [Deprecated]
+      tags:
+      - Project
+components:
+  schemas:
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    ProjectPulseItem:
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        signal_type:
+          type: string
+        slug:
+          type: string
+        source_tweet:
+          $ref: '#/components/schemas/PulseSourceTweet'
+        sources:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        subtitle:
+          type: string
+        timestamp:
+          format: int64
+          type: integer
+        title:
+          type: string
+        tldr:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        twitter_author:
+          $ref: '#/components/schemas/PulseTweetAuthor'
+      required:
+      - id
+      - title
+      - signal_type
+      - timestamp
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    ProjectTopRankItem:
+      additionalProperties: false
+      properties:
+        fees:
+          format: double
+          type: number
+        id:
+          description: Surf project UUID. Empty when no matching Surf project metadata is available.
+          type: string
+        logo_url:
+          description: Project logo image URL
+          type: string
+        name:
+          type: string
+        revenue:
+          format: double
+          type: number
+        slug:
+          description: Surf project slug. Empty under the same conditions as id.
+          type: string
+        symbol:
+          type: string
+        tvl:
+          format: double
+          type: number
+        users:
+          format: int64
+          type: integer
+        volume:
+          format: double
+          type: number
+      required:
+      - name
+      type: object
+    ProjectFundingItem:
+      additionalProperties: false
+      properties:
+        rounds:
+          description: List of individual funding rounds
+          items:
+            $ref: '#/components/schemas/ProjectFundingRound'
+          type:
+          - array
+          - 'null'
+        total_raise:
+          description: Total capital raised across all rounds in USD
+          format: double
+          type: number
+      type: object
+    ProjectSocialAccount:
+      additionalProperties: false
+      properties:
+        followers_count:
+          description: Number of followers on this platform
+          format: int64
+          type: integer
+        handle:
+          description: Username or handle on the social platform
+          type: string
+        url:
+          description: Profile URL on the social platform
+          type: string
+      type: object
+    ProjectContractAddress:
+      additionalProperties: false
+      properties:
+        address:
+          description: Contract address on the specified chain
+          type: string
+        chain:
+          description: Chain name like `ethereum`, `bsc`, or `solana`
+          type: string
+        label:
+          description: Human-readable label for this contract like `Token` or `Staking`
+          type: string
+      required:
+      - chain
+      - address
+      type: object
+    ProjectMetricPoint:
+      additionalProperties: false
+      properties:
+        timestamp:
+          description: Unix timestamp in seconds for this data point
+          format: int64
+          type: integer
+        value:
+          description: Metric value at this timestamp
+          format: double
+          type: number
+      required:
+      - timestamp
+      - value
+      type: object
+    DataObjectResponseHumaProjectDetailBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseHumaProjectDetailBody.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/HumaProjectDetailBody'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    ProjectTokenInfoItem:
+      additionalProperties: false
+      properties:
+        all_time_high:
+          description: All-time high price in USD
+          format: double
+          type: number
+        all_time_high_date:
+          description: Unix timestamp in seconds when the all-time high price was reached
+          format: int64
+          type: integer
+        all_time_low:
+          description: All-time low price in USD
+          format: double
+          type: number
+        all_time_low_date:
+          description: Unix timestamp in seconds when the all-time low price was reached
+          format: int64
+          type: integer
+        circulating_supply:
+          description: Circulating token supply
+          format: double
+          type: number
+        fdv:
+          description: Fully diluted valuation in USD
+          format: double
+          type: number
+        high_24h:
+          description: 24-hour high price in USD
+          format: double
+          type: number
+        image:
+          description: Token logo image URL
+          type: string
+        low_24h:
+          description: 24-hour low price in USD
+          format: double
+          type: number
+        market_cap_usd:
+          description: Market capitalization in USD
+          format: double
+          type: number
+        name:
+          description: Full token name
+          type: string
+        price_change_24h:
+          description: 24-hour price change percentage
+          format: double
+          type: number
+        price_change_30d:
+          description: 30-day price change percentage
+          format: double
+          type: number
+        price_change_7d:
+          description: 7-day price change percentage
+          format: double
+          type: number
+        price_usd:
+          description: Current price in USD
+          format: double
+          type: number
+        symbol:
+          description: Token ticker symbol
+          type: string
+        total_supply:
+          description: Total token supply
+          format: double
+          type: number
+        volume_24h:
+          description: 24-hour trading volume in USD
+          format: double
+          type: number
+      required:
+      - symbol
+      - name
+      type: object
+    ProjectContractsItem:
+      additionalProperties: false
+      properties:
+        contracts:
+          description: List of deployed smart contract addresses across chains
+          items:
+            $ref: '#/components/schemas/ProjectContractAddress'
+          type:
+          - array
+          - 'null'
+      type: object
+    DataResponseProjectTopRankItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseProjectTopRankItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ProjectTopRankItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    ProjectTgeStatusItem:
+      additionalProperties: false
+      properties:
+        current_status:
+          description: 'TGE status: `pre`, `upcoming`, or `post`. Omitted when unknown.'
+          type: string
+        exchanges:
+          description: Exchange names where the token is listed
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        last_event_time:
+          description: Unix timestamp of the last TGE event
+          format: int64
+          type: integer
+      type: object
+    HumaProjectDetailBody:
+      additionalProperties: false
+      properties:
+        contracts:
+          $ref: '#/components/schemas/ProjectContractsItem'
+          description: Deployed smart contract addresses across chains
+        funding:
+          $ref: '#/components/schemas/ProjectFundingItem'
+          description: Fundraising history (rounds, amounts, investors)
+        overview:
+          $ref: '#/components/schemas/ProjectOverviewItem'
+          description: Comprehensive project overview (name, description, website, tags, chains, token symbol, social handles)
+        social:
+          $ref: '#/components/schemas/ProjectSocialItem'
+          description: Social media links and follower counts
+        team:
+          $ref: '#/components/schemas/ProjectTeamItem'
+          description: Team members with roles and social links
+        tge_status:
+          $ref: '#/components/schemas/ProjectTgeStatusItem'
+          description: TGE status and exchange listings (pre/upcoming/post)
+        token_info:
+          $ref: '#/components/schemas/ProjectTokenInfoItem'
+          description: Native token market data (price, supply, market cap, price changes)
+        tokenomics:
+          $ref: '#/components/schemas/ProjectTokenomicsItem'
+          description: Legacy token supply and valuation metrics. Does not include unlock schedule, allocation, or unlock percentage data.
+      type: object
+    ProjectTokenomicsItem:
+      additionalProperties: false
+      properties:
+        circulating_supply:
+          description: Number of tokens currently in public circulation
+          format: double
+          type: number
+        fdv:
+          description: Fully diluted valuation in USD
+          format: double
+          type: number
+        market_cap_usd:
+          description: Total market capitalization in USD
+          format: double
+          type: number
+        total_supply:
+          description: Total token supply
+          format: double
+          type: number
+      type: object
+    ProjectFundingInvestor:
+      additionalProperties: false
+      properties:
+        id:
+          description: Surf UUID for the investor (Fund UUID when Type=FUND, Person UUID when Type=PERSON)
+          type: string
+        is_lead:
+          description: Whether this investor led the round
+          type: boolean
+        logo:
+          description: Investor logo URL
+          type: string
+        name:
+          description: Investor name
+          type: string
+        type:
+          description: Investor type (FUND or PERSON)
+          type: string
+      required:
+      - name
+      - is_lead
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    PulseSourceTweet:
+      additionalProperties: false
+      properties:
+        comment:
+          format: int64
+          type: integer
+        likes:
+          format: int64
+          type: integer
+        post_at:
+          format: int64
+          type: integer
+        repost:
+          format: int64
+          type: integer
+        text:
+          type: string
+        tweet_id:
+          type: string
+        views:
+          format: int64
+          type: integer
+      required:
+      - tweet_id
+      - text
+      - post_at
+      - views
+      - likes
+      - repost
+      - comment
+      type: object
+    ProjectOverviewItem:
+      additionalProperties: false
+      properties:
+        chains:
+          description: Chains the project is deployed on
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        description:
+          description: Short description of the project
+          type: string
+        exchanges:
+          description: Exchange names where the token is listed
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        id:
+          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup. Prefer over 'q' (fuzzy name search).
+          type: string
+        logo_url:
+          description: Project logo image URL
+          type: string
+        name:
+          description: Project name
+          type: string
+        slug:
+          description: URL-friendly project slug
+          type: string
+        tags:
+          description: Project category tags like `DeFi`, `NFT`, or `Layer2`
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        tge_status:
+          description: 'TGE status: pre, upcoming, or post'
+          type: string
+        token_symbol:
+          description: Primary token ticker symbol
+          type: string
+        website:
+          description: Project official website URL
+          type: string
+        x_followers:
+          description: Number of X (Twitter) followers
+          format: int64
+          type: integer
+        x_handle:
+          description: X (Twitter) handle without the @ prefix
+          type: string
+        x_id:
+          description: Numeric X (Twitter) account ID for the primary X account
+          type: string
+      required:
+      - id
+      - name
+      - x_followers
+      type: object
+    ProjectTeamMember:
+      additionalProperties: false
+      properties:
+        id:
+          description: Surf Person UUID. Omitted when no linked Person record is available.
+          type: string
+        image:
+          description: Team member profile image URL
+          type: string
+        name:
+          description: Team member's full name
+          type: string
+        role:
+          description: Team member's role or title
+          type: string
+        social_links:
+          additionalProperties:
+            type: string
+          description: Social profile links keyed by platform name like `twitter` or `linkedin`
+          type: object
+      required:
+      - name
+      type: object
+    ProjectFundingRound:
+      additionalProperties: false
+      properties:
+        amount:
+          description: Amount raised in USD
+          format: double
+          type: number
+        date:
+          description: Date when the round closed in ISO 8601 format
+          type: string
+        investors:
+          description: Investors participating in this round
+          items:
+            $ref: '#/components/schemas/ProjectFundingInvestor'
+          type:
+          - array
+          - 'null'
+        round_name:
+          description: Funding round name like `Seed`, `Series A`, or `Private`
+          type: string
+        valuation:
+          description: Project valuation at round close in USD
+          format: double
+          type: number
+      required:
+      - round_name
+      type: object
+    DataResponseProjectMetricPoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseProjectMetricPoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ProjectMetricPoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    ProjectSocialItem:
+      additionalProperties: false
+      properties:
+        discord:
+          $ref: '#/components/schemas/ProjectSocialAccount'
+          description: Discord community server
+        github:
+          $ref: '#/components/schemas/ProjectSocialAccount'
+          description: GitHub organization or repository account
+        telegram:
+          $ref: '#/components/schemas/ProjectSocialAccount'
+          description: Telegram group or channel
+        twitter:
+          $ref: '#/components/schemas/ProjectSocialAccount'
+          description: X (Twitter) account for the project
+      type: object
+    DataResponseProjectPulseItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseProjectPulseItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ProjectPulseItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    PulseTweetAuthor:
+      additionalProperties: false
+      properties:
+        avatar_url:
+          type: string
+        display_name:
+          type: string
+        follower_count:
+          format: int64
+          type: integer
+        handle:
+          type: string
+        smart_follower_count:
+          format: int64
+          type: integer
+        twitter_id:
+          type: string
+      required:
+      - twitter_id
+      - handle
+      - follower_count
+      - smart_follower_count
+      type: object
+    ProjectTeamItem:
+      additionalProperties: false
+      properties:
+        members:
+          description: List of team members with their roles and social links
+          items:
+            $ref: '#/components/schemas/ProjectTeamMember'
+          type:
+          - array
+          - 'null'
+      type: object
+  securitySchemes:
+    AccessToken:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    AdminToken:
+      in: header
+      name: X-Admin-Token
+      type: apiKey
+    InternalKey:
+      in: header
+      name: X-Internal-Key
+      type: apiKey

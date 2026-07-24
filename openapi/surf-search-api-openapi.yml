@@ -1,0 +1,2893 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: backend@cybertinolab.com
+    name: Cyber team
+  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
+  title: Hermod DEX Search API
+  version: sha-80d3407
+servers:
+- url: /
+tags:
+- description: Find anything across Surf's data universe. Search for crypto projects, X (Twitter) accounts and posts, news articles, wallet addresses, web pages, investment funds, airdrop opportunities, and prediction market events — all from a single unified search interface.
+  name: Search
+paths:
+  /gateway/v1/search/airdrop:
+    get:
+      description: 'Searches and filters airdrop opportunities.
+
+
+        **Filters:** keyword, status, reward type, task type.
+
+
+        Returns paginated results with optional task details.'
+      operationId: search-airdrop
+      parameters:
+      - description: Search keyword for coin name
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Search keyword for coin name
+          examples:
+          - airdrop
+          maxLength: 100
+          type: string
+      - description: Comma-separated lifecycle phases. `active` = tasks open, can participate (POTENTIAL + CONFIRMED). `claimable` = eligible, can claim (SNAPSHOT + VERIFICATION + REWARD_AVAILABLE). `completed` = done (DISTRIBUTED). Defaults to `active,claimable` to show actionable airdrops.
+        explode: false
+        in: query
+        name: phase
+        schema:
+          default: active,claimable
+          description: Comma-separated lifecycle phases. `active` = tasks open, can participate (POTENTIAL + CONFIRMED). `claimable` = eligible, can claim (SNAPSHOT + VERIFICATION + REWARD_AVAILABLE). `completed` = done (DISTRIBUTED). Defaults to `active,claimable` to show actionable airdrops.
+          examples:
+          - active
+          type: string
+      - description: Filter by reward type
+        explode: false
+        in: query
+        name: reward_type
+        schema:
+          description: Filter by reward type
+          enum:
+          - airdrop
+          - points
+          - whitelist
+          - nft
+          - role
+          - ambassador
+          examples:
+          - airdrop
+          type: string
+      - description: Filter activities containing tasks of this type
+        explode: false
+        in: query
+        name: task_type
+        schema:
+          description: Filter activities containing tasks of this type
+          enum:
+          - social
+          - bounty-platforms
+          - testnet
+          - mainnet
+          - role
+          - form
+          - liquidity
+          - mint-nft
+          - game
+          - trading
+          - staking
+          - depin
+          - node
+          - ambassador
+          - hold
+          - check-wallet
+          - mint-domain
+          - predictions
+          - deploy
+          examples:
+          - social
+          type: string
+      - description: Only return activities with currently OPEN tasks
+        explode: false
+        in: query
+        name: has_open
+        schema:
+          default: false
+          description: Only return activities with currently OPEN tasks
+          examples:
+          - true
+          type: boolean
+      - description: Field to sort results by
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: last_status_update
+          description: Field to sort results by
+          enum:
+          - total_raise
+          - xscore
+          - last_status_update
+          examples:
+          - last_status_update
+          type: string
+      - description: Sort order
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort order
+          enum:
+          - asc
+          - desc
+          examples:
+          - desc
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Include full task list per activity
+        explode: false
+        in: query
+        name: include_tasks
+        schema:
+          default: false
+          description: Include full task list per activity
+          examples:
+          - true
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseAirdropSearchItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Airdrop Search
+      tags:
+      - Search
+  /gateway/v1/search/airdrop/activities:
+    get:
+      description: 'Lists airdrop activities with pagination.
+
+
+        Returns activity metadata including reward type, status, and social metrics.'
+      operationId: search-airdrop-activities
+      parameters:
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseAirdropActivityItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Airdrop Activities
+      tags:
+      - Search
+  /gateway/v1/search/events:
+    get:
+      description: 'Searches project events by keyword, optionally filtered by `type`.
+
+
+        **Valid types:** `launch`, `upgrade`, `partnership`, `news`, `airdrop`, `listing`, `twitter`.
+
+
+        **Lookup:** by UUID (`id`) or name (`q`). Returns 404 if the project is not found.'
+      operationId: search-events
+      parameters:
+      - description: Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q.
+        explode: false
+        in: query
+        name: id
+        schema:
+          description: Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q.
+          examples:
+          - 25c6612a-395c-4974-94eb-3b5f9f4b2ed7
+          type: string
+      - description: Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.
+          examples:
+          - ethereum
+          type: string
+      - description: Filter by event type. Can be `launch`, `upgrade`, `partnership`, `news`, `airdrop`, `listing`, or `twitter`.
+        explode: false
+        in: query
+        name: type
+        schema:
+          description: Filter by event type. Can be `launch`, `upgrade`, `partnership`, `news`, `airdrop`, `listing`, or `twitter`.
+          enum:
+          - launch
+          - upgrade
+          - partnership
+          - news
+          - airdrop
+          - listing
+          - twitter
+          examples:
+          - launch
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseProjectEventItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Project Event Search
+      tags:
+      - Search
+  /gateway/v1/search/fund:
+    get:
+      description: 'Searches funds by keyword.
+
+
+        **Included fields:** name, tier, type, logo, top invested projects.'
+      operationId: search-fund
+      parameters:
+      - description: Search keyword — fund name like `a16z`, `paradigm`, or `coinbase ventures`
+        explode: false
+        in: query
+        name: q
+        required: true
+        schema:
+          description: Search keyword — fund name like `a16z`, `paradigm`, or `coinbase ventures`
+          examples:
+          - a16z
+          maxLength: 100
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseFundSearchItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Fund Search
+      tags:
+      - Search
+  /gateway/v1/search/fundraising:
+    get:
+      description: 'Searches source-backed fundraising and token-sale events, or returns the latest fundraising timeline when `q` is omitted.
+
+
+        Supports inclusive UTC time bounds, source and importance filters, localization, deterministic sorting, and offset pagination. Results intentionally omit project or fundraiser identity because source context is not guaranteed to identify the organization raising funds.'
+      operationId: search-fundraising
+      parameters:
+      - description: Optional project name, alias, symbol, title, or summary search query. When provided, the trimmed query must contain 2-100 Unicode characters.
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Optional project name, alias, symbol, title, or summary search query. When provided, the trimmed query must contain 2-100 Unicode characters.
+          examples:
+          - elliptic
+          maxLength: 100
+          minLength: 2
+          type: string
+      - description: Inclusive event-time lower bound. Accepts Unix seconds, YYYY-MM-DD, or RFC3339; date-only values start at 00:00:00 UTC.
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Inclusive event-time lower bound. Accepts Unix seconds, YYYY-MM-DD, or RFC3339; date-only values start at 00:00:00 UTC.
+          examples:
+          - '2026-07-01'
+          type: string
+      - description: Inclusive event-time upper bound. Accepts Unix seconds, YYYY-MM-DD, or RFC3339; date-only values end at 23:59:59 UTC. Defaults to the current time.
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: Inclusive event-time upper bound. Accepts Unix seconds, YYYY-MM-DD, or RFC3339; date-only values end at 23:59:59 UTC. Defaults to the current time.
+          examples:
+          - '2026-07-10'
+          type: string
+      - description: 'Filter by public source type: social or news.'
+        explode: false
+        in: query
+        name: source
+        schema:
+          description: 'Filter by public source type: social or news.'
+          enum:
+          - social
+          - news
+          examples:
+          - social
+          type: string
+      - description: Display and search language. Missing translated fields fall back to English.
+        explode: false
+        in: query
+        name: lang
+        schema:
+          default: en
+          description: Display and search language. Missing translated fields fall back to English.
+          enum:
+          - en
+          - zh
+          - ja
+          - kr
+          examples:
+          - en
+          type: string
+      - description: Minimum importance score from 1 to 5. Omit to include unscored events.
+        explode: false
+        in: query
+        name: min_importance
+        schema:
+          description: Minimum importance score from 1 to 5. Omit to include unscored events.
+          examples:
+          - 3
+          format: int64
+          maximum: 5
+          minimum: 1
+          type: integer
+      - description: Sort by recency, query relevance, or importance. Relevance requires q.
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: recency
+          description: Sort by recency, query relevance, or importance. Relevance requires q.
+          enum:
+          - recency
+          - relevance
+          - importance
+          examples:
+          - recency
+          type: string
+      - description: Sort order. Relevance only supports desc.
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort order. Relevance only supports desc.
+          enum:
+          - asc
+          - desc
+          examples:
+          - desc
+          type: string
+      - description: Results per page.
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page.
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset. The offset plus limit cannot exceed 10000.
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset. The offset plus limit cannot exceed 10000.
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseFundraisingSearchItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Fundraising Event Search
+      tags:
+      - Search
+  /gateway/v1/search/kalshi:
+    get:
+      deprecated: true
+      description: '**[DEPRECATED]** Use `GET /v1/search/prediction-market?platform=kalshi` instead. This endpoint will continue to work but will not receive new features.
+
+
+        ---
+
+
+        Searches Kalshi events by keyword and/or category.
+
+
+        **Filters:**
+
+        - Keyword matching event title, subtitle, or market title
+
+        - Category
+
+
+        At least one of `q` or `category` is required. Returns events with nested markets.
+
+
+        **Data refresh:** ~30 minutes'
+      operationId: search-kalshi
+      parameters:
+      - description: Search keyword matching event title, subtitle, or market title
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Search keyword matching event title, subtitle, or market title
+          examples:
+          - bitcoin
+          maxLength: 200
+          type: string
+      - description: Filter by category
+        explode: false
+        in: query
+        name: category
+        schema:
+          description: Filter by category
+          enum:
+          - crypto
+          - culture
+          - economics
+          - financials
+          - politics
+          - stem
+          - sports
+          - unknown
+          examples:
+          - crypto
+          type: string
+      - description: 'Market status filter: `active`, `closed`, `determined`, `disputed`, `finalized`, `inactive`, or `initialized`'
+        explode: false
+        in: query
+        name: status
+        schema:
+          description: 'Market status filter: `active`, `closed`, `determined`, `disputed`, `finalized`, `inactive`, or `initialized`'
+          enum:
+          - active
+          - closed
+          - determined
+          - disputed
+          - finalized
+          - inactive
+          - initialized
+          examples:
+          - active
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseKalshiEvent'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Kalshi Event Search [Deprecated]
+      tags:
+      - Search
+  /gateway/v1/search/news:
+    get:
+      description: 'Searches crypto news articles by keyword.
+
+
+        Returns results ranked by relevance with highlighted matching fragments. Supports pagination via limit and offset.'
+      operationId: search-news
+      parameters:
+      - description: Search keyword or phrase
+        explode: false
+        in: query
+        name: q
+        required: true
+        schema:
+          description: Search keyword or phrase
+          examples:
+          - bitcoin ETF
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 10
+          description: Results per page
+          examples:
+          - 10
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseNewsArticleItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: News Article Search
+      tags:
+      - Search
+  /gateway/v1/search/polymarket:
+    get:
+      deprecated: true
+      description: '**[DEPRECATED]** Use `GET /v1/search/prediction-market?platform=polymarket` instead. This endpoint will continue to work but will not receive new features.
+
+
+        ---
+
+
+        Searches Polymarket events by keyword, tags, and/or category.
+
+
+        **Filters:**
+
+        - Keyword matching market question, event title, or description
+
+        - Comma-separated tag labels
+
+        - Surf-curated category
+
+
+        At least one of `q`, `tags`, or `category` is required. Returns events with nested markets ranked by volume.
+
+
+        **Data refresh:** ~30 minutes'
+      operationId: search-polymarket
+      parameters:
+      - description: Search keyword matching market question, event title, or description
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Search keyword matching market question, event title, or description
+          examples:
+          - bitcoin
+          maxLength: 200
+          type: string
+      - description: 'Comma-separated tag labels to filter by (matches any). Commonly used tags: `Crypto`, `Politics`, `Sports`, `Science`, `Pop Culture`'
+        explode: false
+        in: query
+        name: tags
+        schema:
+          description: 'Comma-separated tag labels to filter by (matches any). Commonly used tags: `Crypto`, `Politics`, `Sports`, `Science`, `Pop Culture`'
+          examples:
+          - politics
+          maxLength: 500
+          type: string
+      - description: Filter by Surf-curated category
+        explode: false
+        in: query
+        name: category
+        schema:
+          description: Filter by Surf-curated category
+          enum:
+          - crypto
+          - culture
+          - early_polymarket_trades
+          - economics
+          - financials
+          - politics
+          - stem
+          - sports
+          - unknown
+          examples:
+          - politics
+          type: string
+      - description: 'Market status filter: `active`, `finalized`, `ended`, `initialized`, or `closed`'
+        explode: false
+        in: query
+        name: status
+        schema:
+          default: active
+          description: 'Market status filter: `active`, `finalized`, `ended`, `initialized`, or `closed`'
+          enum:
+          - active
+          - finalized
+          - ended
+          - initialized
+          - closed
+          examples:
+          - active
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponsePolymarketEvent'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Polymarket Event Search [Deprecated]
+      tags:
+      - Search
+  /gateway/v1/search/prediction-market:
+    get:
+      description: 'Browse and search prediction markets across all supported platforms.
+
+
+        Filter by platform, category, status, keyword search, and smart money direction. Each result includes volume, open interest, trade counts, and smart money signals.
+
+
+        Supports single-market lookup via `condition_id` or `market_ticker`.
+
+
+        **Data refresh:** ~5 minutes.'
+      operationId: search-prediction-market
+      parameters:
+      - description: Polymarket condition ID for single-market lookup
+        explode: false
+        in: query
+        name: condition_id
+        schema:
+          description: Polymarket condition ID for single-market lookup
+          type: string
+      - description: Kalshi market ticker for single-market lookup
+        explode: false
+        in: query
+        name: market_ticker
+        schema:
+          description: Kalshi market ticker for single-market lookup
+          type: string
+      - description: Filter by platform (omit for both)
+        explode: false
+        in: query
+        name: platform
+        schema:
+          description: Filter by platform (omit for both)
+          enum:
+          - polymarket
+          - kalshi
+          type: string
+      - description: Filter by Surf-curated category
+        explode: false
+        in: query
+        name: category
+        schema:
+          description: Filter by Surf-curated category
+          enum:
+          - crypto
+          - culture
+          - economics
+          - financials
+          - politics
+          - stem
+          - sports
+          type: string
+      - description: Market status filter
+        explode: false
+        in: query
+        name: status
+        schema:
+          default: active
+          description: Market status filter
+          enum:
+          - active
+          - closed
+          - finalized
+          type: string
+      - description: Sort field
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: volume_7d
+          description: Sort field
+          enum:
+          - volume_1d
+          - volume_7d
+          - volume_30d
+          - open_interest
+          - trade_count_7d
+          - days_to_resolution
+          type: string
+      - description: Sort direction
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort direction
+          enum:
+          - asc
+          - desc
+          type: string
+      - description: Filter by smart money direction (Polymarket only)
+        explode: false
+        in: query
+        name: smart_money
+        schema:
+          description: Filter by smart money direction (Polymarket only)
+          enum:
+          - bullish
+          - bearish
+          type: string
+      - description: Search markets by keyword in question text or ticker. Results include slug and event fields when available, but machine slugs are not searched.
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Search markets by keyword in question text or ticker. Results include slug and event fields when available, but machine slugs are not searched.
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseDiscoverMarketItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Search Prediction Markets
+      tags:
+      - Search
+  /gateway/v1/search/project:
+    get:
+      description: 'Searches crypto projects by keyword.
+
+
+        **Included fields:** name, description, chains, logo.'
+      operationId: search-project
+      parameters:
+      - description: Search keyword — project name or ticker like `uniswap`, `bitcoin`, or `ETH`
+        explode: false
+        in: query
+        name: q
+        required: true
+        schema:
+          description: Search keyword — project name or ticker like `uniswap`, `bitcoin`, or `ETH`
+          examples:
+          - bitcoin
+          maxLength: 100
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseProjectSearchItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Project Search
+      tags:
+      - Search
+  /gateway/v1/search/social/people:
+    get:
+      description: 'Searches X (Twitter) users by keyword.
+
+
+        **Included fields:** handle, display name, bio, follower count, avatar.'
+      operationId: search-social-people
+      parameters:
+      - description: Search keyword or `@handle` for exact handle lookup. Use a keyword like `vitalik` for fuzzy matching across names and bios, or `@VitalikButerin` to find a specific account by handle
+        explode: false
+        in: query
+        name: q
+        required: true
+        schema:
+          description: Search keyword or `@handle` for exact handle lookup. Use a keyword like `vitalik` for fuzzy matching across names and bios, or `@VitalikButerin` to find a specific account by handle
+          examples:
+          - vitalik
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+        explode: false
+        in: query
+        name: cursor
+        schema:
+          description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CursorDataResponseXUser'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Social User Search
+      tags:
+      - Search
+  /gateway/v1/search/social/posts:
+    get:
+      description: 'Searches X (Twitter) posts by keyword or `from:handle` syntax.
+
+
+        **Included fields:** author, content, engagement metrics, timestamp.
+
+
+        **Pagination:** check `meta.has_more`; if true, pass `meta.next_cursor` as the `cursor` query parameter in the next request.'
+      operationId: search-social-posts
+      parameters:
+      - description: 'Search keyword(s), or X (Twitter) advanced-search operators. Supported operators: `from:handle` (by author), `to:handle` (replies to a user), `@handle` (mentions), `#hashtag`, `-word` (exclude a term), `min_faves:N` (min likes), `min_retweets:N`, `min_replies:N`, `since:YYYY-MM-DD`, `until:YYYY-MM-DD`, plus double-quoted exact phrases. Operators combine, e.g. `ethereum min_faves:1000 since:2024-01-01`. Plain keywords return newest-first. Note: there is no `min_views:` operator — filter or rank by views is not supported.'
+        explode: false
+        in: query
+        name: q
+        required: true
+        schema:
+          description: 'Search keyword(s), or X (Twitter) advanced-search operators. Supported operators: `from:handle` (by author), `to:handle` (replies to a user), `@handle` (mentions), `#hashtag`, `-word` (exclude a term), `min_faves:N` (min likes), `min_retweets:N`, `min_replies:N`, `since:YYYY-MM-DD`, `until:YYYY-MM-DD`, plus double-quoted exact phrases. Operators combine, e.g. `ethereum min_faves:1000 since:2024-01-01`. Plain keywords return newest-first. Note: there is no `min_views:` operator — filter or rank by views is not supported.'
+          examples:
+          - ethereum
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+        explode: false
+        in: query
+        name: cursor
+        schema:
+          description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CursorDataResponseXTweet'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Social Post Search
+      tags:
+      - Search
+  /gateway/v1/search/token:
+    get:
+      description: 'Resolves an exact token ticker symbol to likely contract address candidates on supported chains.
+
+
+        Use this before calling token endpoints that require a contract address. Pass a returned `chain` + `address` only to endpoints that support that chain.
+
+
+        Results are ranked by Surf registry, listing, and market signals. `volume_usd` is kept for response compatibility, always returns `0`, and must not be used as a candidate ordering signal.
+
+
+        **Included fields:** symbol, chain, address, decimals, volume_usd.
+
+
+        **Chains:** Ethereum, Base, BSC, Arbitrum, Solana, Polygon, Optimism, Avalanche, Fantom, Tron, Linea, Mantle, Blast, Gnosis, zkSync, Scroll.'
+      operationId: search-token
+      parameters:
+      - description: Exact token ticker symbol to resolve (case-insensitive), like `USDC` or `PEPE`. NOT a contract address, trading pair, or fuzzy token name.
+        explode: false
+        in: query
+        name: q
+        required: true
+        schema:
+          description: Exact token ticker symbol to resolve (case-insensitive), like `USDC` or `PEPE`. NOT a contract address, trading pair, or fuzzy token name.
+          examples:
+          - USDC
+          maxLength: 50
+          type: string
+      - description: Restrict resolution to one supported chain. Omit to search all supported chains.
+        explode: false
+        in: query
+        name: chain
+        schema:
+          description: Restrict resolution to one supported chain. Omit to search all supported chains.
+          enum:
+          - ethereum
+          - base
+          - bsc
+          - arbitrum
+          - solana
+          - polygon
+          - optimism
+          - avalanche
+          - fantom
+          - tron
+          - linea
+          - mantle
+          - blast
+          - gnosis
+          - zksync
+          - scroll
+          examples:
+          - solana
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseSearchTokenItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Token Symbol Resolution
+      tags:
+      - Search
+  /gateway/v1/search/wallet:
+    get:
+      description: 'Searches wallets by ENS name, address label, or address prefix.
+
+
+        Returns matching wallet addresses with entity labels.'
+      operationId: search-wallet
+      parameters:
+      - description: Search keyword like `binance`, `vitalik.eth`, or `0xd8dA...`
+        explode: false
+        in: query
+        name: q
+        required: true
+        schema:
+          description: Search keyword like `binance`, `vitalik.eth`, or `0xd8dA...`
+          examples:
+          - vitalik.eth
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseWalletSearchItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Wallet Search
+      tags:
+      - Search
+  /gateway/v1/search/web:
+    get:
+      description: 'Searches web pages, articles, and content by keyword.
+
+
+        **Filters:** domain via `site` (e.g. `coindesk.com`).
+
+
+        **Included fields:** titles, URLs, content snippets.'
+      operationId: search-web
+      parameters:
+      - description: Search query like `bitcoin price prediction 2026`
+        explode: false
+        in: query
+        name: q
+        required: true
+        schema:
+          description: Search query like `bitcoin price prediction 2026`
+          examples:
+          - bitcoin price prediction 2026
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Comma-separated domain filter like `coindesk.com` or `cointelegraph.com`
+        explode: false
+        in: query
+        name: site
+        schema:
+          description: Comma-separated domain filter like `coindesk.com` or `cointelegraph.com`
+          examples:
+          - coindesk.com,cointelegraph.com
+          type: string
+      - description: When false (default), search returns title/url/description only — fast (~2-3s) URL discovery. Set true to also include full markdown content for each result (~5-30KB per result, ~10-15s for limit=5). Use true only when the caller needs page content inline and won't follow up with `/web/fetch`.
+        explode: false
+        in: query
+        name: include_content
+        schema:
+          default: false
+          description: When false (default), search returns title/url/description only — fast (~2-3s) URL discovery. Set true to also include full markdown content for each result (~5-30KB per result, ~10-15s for limit=5). Use true only when the caller needs page content inline and won't follow up with `/web/fetch`.
+          examples:
+          - false
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseWebSearchResultItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Web Search
+      tags:
+      - Search
+      x-agent-views:
+        results:
+          command_example: surf search-web --q "bitcoin price prediction 2026" --agent-view results
+          description: Compact search results for agents; strips raw page content and returns title, description, and URL.
+          output:
+            items:
+              fields:
+                description: string|null
+                title: string|null
+                url: string|null
+              type: object
+            type: array
+components:
+  schemas:
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    DataResponseNewsArticleItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseNewsArticleItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/NewsArticleItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseDiscoverMarketItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseDiscoverMarketItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/DiscoverMarketItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseWalletSearchItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseWalletSearchItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/WalletSearchItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    DataResponseAirdropActivityItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseAirdropActivityItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/AirdropActivityItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    WebSearchResultItem:
+      additionalProperties: false
+      properties:
+        content:
+          description: Relevant content snippet from the page
+          type: string
+        description:
+          description: Short description or meta description of the page
+          type: string
+        title:
+          description: Page title from the search result
+          type: string
+        url:
+          description: Full URL of the search result page
+          type: string
+      required:
+      - title
+      - url
+      - description
+      - content
+      type: object
+    PolymarketEvent:
+      additionalProperties: false
+      properties:
+        category:
+          description: Surf curated event category
+          type: string
+        description:
+          description: Event description
+          type: string
+        end_time:
+          description: Event end time (Unix seconds)
+          format: int64
+          type: integer
+        event_slug:
+          description: Event identifier slug
+          type: string
+        image:
+          description: Event image URL
+          type: string
+        market_count:
+          description: Number of markets in this event
+          format: int64
+          type: integer
+        markets:
+          description: Markets within this event
+          items:
+            $ref: '#/components/schemas/PolymarketMarketItem'
+          type:
+          - array
+          - 'null'
+        settlement_sources:
+          description: Resolution source URL
+          type: string
+        start_time:
+          description: Event start time (Unix seconds)
+          format: int64
+          type: integer
+        status:
+          description: 'Event status: `open` if any market is open, `closed` if all markets are closed'
+          type: string
+        subcategory:
+          description: Surf curated event subcategory
+          type: string
+        tags:
+          description: Event tags
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        title:
+          description: Event title
+          type: string
+        volume_total:
+          description: Total event volume across all markets (USD)
+          format: double
+          type: number
+      required:
+      - event_slug
+      - title
+      - status
+      - volume_total
+      - market_count
+      - markets
+      type: object
+    DataResponseProjectSearchItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseProjectSearchItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ProjectSearchItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    XAuthor:
+      additionalProperties: false
+      properties:
+        avatar:
+          description: Profile picture URL
+          type: string
+        handle:
+          description: X/Twitter handle without the @ prefix (e.g. 'cz_binance')
+          type: string
+        name:
+          description: Display name on X/Twitter
+          type: string
+        user_id:
+          description: Numeric X/Twitter user ID as a string
+          type: string
+      required:
+      - user_id
+      - handle
+      - name
+      type: object
+    KalshiEvent:
+      additionalProperties: false
+      properties:
+        event_subtitle:
+          description: Event subtitle
+          type: string
+        event_ticker:
+          description: Unique event ticker identifier
+          type: string
+        event_title:
+          description: Event title
+          type: string
+        market_count:
+          description: Number of markets in this event
+          format: int64
+          type: integer
+        markets:
+          description: Markets within this event
+          items:
+            $ref: '#/components/schemas/KalshiMarketItem'
+          type:
+          - array
+          - 'null'
+      required:
+      - event_ticker
+      - event_title
+      - market_count
+      - markets
+      type: object
+    FundPortfolioItem:
+      additionalProperties: false
+      properties:
+        invested_at:
+          description: Investment date (Unix seconds)
+          format: int64
+          type: integer
+        is_lead:
+          description: Whether this fund was the lead investor
+          type: boolean
+        project_id:
+          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup. Prefer over 'q' (fuzzy name search).
+          type: string
+        project_logo:
+          description: Project logo URL
+          type: string
+        project_name:
+          description: Project name
+          type: string
+        project_slug:
+          description: Project slug
+          type: string
+        recent_raise:
+          description: Most recent funding round amount in USD
+          format: double
+          type: number
+        total_raise:
+          description: Total amount raised by the project in USD
+          format: double
+          type: number
+      required:
+      - project_id
+      - project_name
+      - is_lead
+      type: object
+    DataResponseFundraisingSearchItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseFundraisingSearchItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/FundraisingSearchItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    XUser:
+      additionalProperties: false
+      properties:
+        avatar:
+          description: Profile picture URL
+          type: string
+        bio:
+          description: Profile biography text
+          type: string
+        followers_count:
+          description: Number of followers
+          format: int64
+          type: integer
+        following_count:
+          description: Number of accounts this user follows
+          format: int64
+          type: integer
+        handle:
+          description: X/Twitter handle without the @ prefix
+          type: string
+        name:
+          description: Display name on X/Twitter
+          type: string
+        user_id:
+          description: Numeric X/Twitter user ID as a string
+          type: string
+      required:
+      - user_id
+      - handle
+      - name
+      - followers_count
+      - following_count
+      type: object
+    DataResponsePolymarketEvent:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponsePolymarketEvent.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/PolymarketEvent'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    TokenSearchItem:
+      additionalProperties: false
+      properties:
+        id:
+          description: Token identifier
+          type: string
+        image:
+          description: Token logo image URL
+          type: string
+        name:
+          description: Token name
+          type: string
+        symbol:
+          description: Token symbol
+          type: string
+      required:
+      - id
+      - name
+      - symbol
+      type: object
+    CursorDataResponseXTweet:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/CursorDataResponseXTweet.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/XTweet'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/CursorMeta'
+      required:
+      - data
+      - meta
+      type: object
+    AirdropTaskItem:
+      additionalProperties: false
+      properties:
+        blockchains:
+          description: Supported blockchain names
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        close_date:
+          description: Task close date as Unix seconds (0 if unknown)
+          format: int64
+          type: integer
+        cost:
+          description: Participation cost in USD (0 = free)
+          format: int32
+          type: integer
+        external_link:
+          description: Public participation URL
+          type: string
+        is_exclusive:
+          description: Whether task is exclusive
+          type: boolean
+        open_date:
+          description: Task open date as Unix seconds (0 if unknown)
+          format: int64
+          type: integer
+        status:
+          description: 'Task status: OPEN, CLOSED, UPCOMING'
+          type: string
+        time_minutes:
+          description: Estimated time in minutes
+          format: int32
+          type: integer
+        title:
+          description: Task title
+          type: string
+        type:
+          description: 'Task type: social, testnet, mainnet, staking, trading, etc.'
+          type: string
+      required:
+      - title
+      - type
+      - status
+      - is_exclusive
+      - cost
+      - time_minutes
+      - open_date
+      - close_date
+      type: object
+    ProjectSearchItem:
+      additionalProperties: false
+      properties:
+        chains:
+          description: Chains the project operates on
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        description:
+          description: Short description of the project
+          type: string
+        id:
+          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup. Prefer over 'q' (fuzzy name search).
+          type: string
+        logo_url:
+          description: Project logo image URL
+          type: string
+        name:
+          description: Project name
+          type: string
+        slug:
+          description: Project slug for URL construction
+          type: string
+        symbol:
+          description: Primary token symbol like `BTC` or `ETH`
+          type: string
+        tags:
+          description: Project category tags
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        tokens:
+          description: Associated tokens
+          items:
+            $ref: '#/components/schemas/TokenSearchItem'
+          type:
+          - array
+          - 'null'
+      required:
+      - id
+      - name
+      type: object
+    AirdropTaskSummary:
+      additionalProperties: false
+      properties:
+        open:
+          description: Number of currently open tasks
+          format: int32
+          type: integer
+        total:
+          description: Total number of tasks
+          format: int32
+          type: integer
+        types:
+          description: Distinct task types
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      required:
+      - total
+      - open
+      - types
+      type: object
+    PolymarketMarketSide:
+      additionalProperties: false
+      properties:
+        id:
+          description: Token identifier for this outcome
+          type: string
+        label:
+          description: Outcome label
+          type: string
+      required:
+      - id
+      - label
+      type: object
+    FundraisingSearchSource:
+      additionalProperties: false
+      properties:
+        name:
+          description: Source account or publication name
+          type: string
+        type:
+          description: 'Public source type: social or news'
+          enum:
+          - social
+          - news
+          type: string
+        url:
+          description: Primary source URL
+          type: string
+      required:
+      - type
+      type: object
+    WalletSearchItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Primary wallet address for this entity
+          type: string
+        addresses:
+          description: Known wallet addresses for this entity (max 10, use num_addresses for the total count)
+          items:
+            $ref: '#/components/schemas/WalletSearchAddress'
+          type:
+          - array
+          - 'null'
+        chain:
+          description: Chain of the primary address
+          type: string
+        entity_name:
+          description: Name of the associated entity like `Binance` or `Aave`
+          type: string
+        entity_type:
+          description: Type of entity like `exchange`, `fund`, or `whale`
+          type: string
+        label:
+          description: Human-readable label for the wallet entity
+          type: string
+        num_addresses:
+          description: Total number of wallet addresses associated with this entity
+          format: int64
+          type: integer
+        twitter:
+          description: Associated X (Twitter) handle
+          type: string
+      type: object
+    XStats:
+      additionalProperties: false
+      properties:
+        likes:
+          description: Number of likes (hearts)
+          format: int64
+          type: integer
+        replies:
+          description: Number of replies
+          format: int64
+          type: integer
+        reposts:
+          description: Number of retweets/reposts
+          format: int64
+          type: integer
+        views:
+          description: Total view count
+          format: int64
+          type: integer
+      required:
+      - views
+      - likes
+      - reposts
+      - replies
+      type: object
+    PolymarketMarketItem:
+      additionalProperties: false
+      properties:
+        category:
+          description: Surf curated market category
+          type: string
+        close_time:
+          description: Market close time (Unix seconds)
+          format: int64
+          type: integer
+        completed_time:
+          description: Resolution time (Unix seconds)
+          format: int64
+          type: integer
+        condition_id:
+          description: Unique condition identifier
+          type: string
+        description:
+          description: Market description
+          type: string
+        end_time:
+          description: Market end time (Unix seconds)
+          format: int64
+          type: integer
+        event_slug:
+          description: Event identifier slug
+          type: string
+        game_start_time:
+          description: Game start time for sports markets (Unix seconds)
+          format: int64
+          type: integer
+        image:
+          description: Market image URL
+          type: string
+        market_slug:
+          description: Market identifier slug
+          type: string
+        negative_risk_id:
+          description: Negative risk market identifier
+          type: string
+        polymarket_link:
+          description: Link to Polymarket page
+          type: string
+        resolution_source:
+          description: URL to resolution data source
+          type: string
+        side_a:
+          $ref: '#/components/schemas/PolymarketMarketSide'
+          description: First outcome
+        side_b:
+          $ref: '#/components/schemas/PolymarketMarketSide'
+          description: Second outcome
+        start_time:
+          description: Market start time (Unix seconds)
+          format: int64
+          type: integer
+        status:
+          description: 'Market status: `open` or `closed`'
+          type: string
+        subcategory:
+          description: Surf curated market subcategory
+          type: string
+        tags:
+          description: Market tags
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        title:
+          description: Market title
+          type: string
+        volume_1_month:
+          description: Trading volume in the past month (USD)
+          format: double
+          type: number
+        volume_1_week:
+          description: Trading volume in the past week (USD)
+          format: double
+          type: number
+        volume_1_year:
+          description: Trading volume in the past year (USD)
+          format: double
+          type: number
+        volume_total:
+          description: Total trading volume (USD)
+          format: double
+          type: number
+        winning_side:
+          description: Winning outcome label, if resolved
+          type: string
+      required:
+      - market_slug
+      - condition_id
+      - title
+      - volume_1_week
+      - volume_1_month
+      - volume_1_year
+      - volume_total
+      - status
+      type: object
+    AirdropSearchItem:
+      additionalProperties: false
+      properties:
+        coin_symbol:
+          description: Token ticker symbol
+          type: string
+        followers_count:
+          description: X/Twitter follower count (0 if unknown)
+          format: int64
+          type: integer
+        last_status_update:
+          description: Last status change as Unix seconds
+          format: int64
+          type: integer
+        logo_url:
+          description: Project logo image URL
+          type: string
+        project_id:
+          description: Surf project UUID if linked
+          type: string
+        project_name:
+          description: Project/coin name
+          type: string
+        reward_date:
+          description: Expected reward date as Unix seconds (0 if unknown)
+          format: int64
+          type: integer
+        reward_type:
+          description: 'Reward type: airdrop, points, whitelist, nft, role, ambassador'
+          type: string
+        status:
+          description: 'Airdrop lifecycle stage: `POTENTIAL` (speculated, tasks open), `CONFIRMED` (announced, tasks open), `SNAPSHOT` (eligibility snapshot taken), `VERIFICATION` (claim window open), `REWARD_AVAILABLE` (ready to claim), `DISTRIBUTED` (sent, historical)'
+          type: string
+        task_summary:
+          $ref: '#/components/schemas/AirdropTaskSummary'
+          description: Aggregated task statistics
+        tasks:
+          description: Full task list (only with include_tasks=true)
+          items:
+            $ref: '#/components/schemas/AirdropTaskItem'
+          type:
+          - array
+          - 'null'
+        total_raise:
+          description: Total project fundraise in USD (0 if unknown)
+          format: int64
+          type: integer
+        xscore:
+          description: CryptoRank social score (0 if unknown)
+          format: int64
+          type: integer
+      required:
+      - project_name
+      - status
+      - total_raise
+      - xscore
+      - followers_count
+      - reward_date
+      - last_status_update
+      type: object
+    DiscoverMarketItem:
+      additionalProperties: false
+      properties:
+        category:
+          description: Surf-curated category
+          type: string
+        condition_id:
+          description: Polymarket condition ID
+          type: string
+        days_to_resolution:
+          description: Days until market end date
+          format: int64
+          type: integer
+        event_group_slug:
+          description: Canonical Polymarket event group slug for sibling event pages
+          type: string
+        event_slug:
+          description: Polymarket event slug
+          type: string
+        event_ticker:
+          description: Kalshi event ticker
+          type: string
+        event_title:
+          description: Event title
+          type: string
+        latest_price:
+          description: Probability (0-1) for token_id/outcome_label from realtime price store. Omitted when no selected outcome token is available.
+          format: double
+          type: number
+        market_link:
+          description: Direct link to market
+          type: string
+        market_slug:
+          description: Polymarket market slug
+          type: string
+        market_ticker:
+          description: Kalshi market ticker
+          type: string
+        matched_counterpart:
+          description: Matching market ID on the other platform
+          type: string
+        open_interest_usd:
+          description: Current open interest (USD)
+          format: double
+          type: number
+        outcome_label:
+          description: Polymarket selected outcome label
+          type: string
+        platform:
+          description: polymarket or kalshi
+          type: string
+        question:
+          description: Market question text
+          type: string
+        smart_money_direction:
+          description: BULLISH, BEARISH, or NEUTRAL (Polymarket only)
+          type: string
+        status:
+          description: Market status
+          type: string
+        subcategory:
+          description: Surf-curated subcategory
+          type: string
+        token_id:
+          description: Polymarket selected outcome token ID
+          type: string
+        trade_count_7d:
+          description: Number of trades last 7 days
+          format: int64
+          type: integer
+        volume_1d:
+          description: Notional volume last 24h (USD)
+          format: double
+          type: number
+        volume_30d:
+          description: Notional volume last 30 days (USD)
+          format: double
+          type: number
+        volume_7d:
+          description: Notional volume last 7 days (USD)
+          format: double
+          type: number
+      required:
+      - platform
+      - question
+      - category
+      - status
+      - volume_1d
+      - volume_7d
+      - volume_30d
+      - trade_count_7d
+      - open_interest_usd
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    DataResponseWebSearchResultItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseWebSearchResultItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/WebSearchResultItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    FundraisingSearchItem:
+      additionalProperties: false
+      properties:
+        event_at:
+          description: Effective event time as Unix seconds
+          format: int64
+          type: integer
+        id:
+          description: Fundraising event UUID
+          type: string
+        importance:
+          description: Importance score from 1 to 5; omitted when unscored
+          format: int64
+          maximum: 5
+          minimum: 1
+          type: integer
+        published_at:
+          description: Source publication time as Unix seconds
+          format: int64
+          type: integer
+        source:
+          $ref: '#/components/schemas/FundraisingSearchSource'
+          description: Primary source information
+        source_count:
+          description: Number of sources consolidated into this event
+          format: int64
+          type: integer
+        summary:
+          description: Localized event summary with field-level English fallback
+          type: string
+        title:
+          description: Localized event title with field-level English fallback
+          type: string
+      required:
+      - id
+      - title
+      - summary
+      - source
+      - event_at
+      - published_at
+      - source_count
+      type: object
+    FundSearchItem:
+      additionalProperties: false
+      properties:
+        id:
+          description: Surf fund UUID — pass as 'id' parameter to /fund/detail or /fund/portfolio for exact lookup
+          type: string
+        image:
+          description: Fund logo URL
+          type: string
+        invested_projects_count:
+          description: Total number of unique invested projects (a project with multiple funding rounds counts once)
+          format: int64
+          type: integer
+        name:
+          description: Fund name
+          type: string
+        tier:
+          description: Fund tier ranking (lower is better)
+          format: int64
+          type: integer
+        top_projects:
+          description: Top invested projects (up to 5)
+          items:
+            $ref: '#/components/schemas/FundPortfolioItem'
+          type:
+          - array
+          - 'null'
+        type:
+          description: Fund type
+          type: string
+      required:
+      - id
+      - name
+      - tier
+      - invested_projects_count
+      - top_projects
+      type: object
+    AirdropActivityItem:
+      additionalProperties: false
+      properties:
+        coin_name:
+          description: Project/coin name
+          type: string
+        coin_symbol:
+          description: Token symbol
+          type: string
+        created_at:
+          description: Activity creation time (Unix seconds)
+          format: int64
+          type: integer
+        followers_count:
+          description: Twitter followers count
+          type: string
+        id:
+          description: Activity identifier
+          type: string
+        reward:
+          description: Reward description
+          type: string
+        reward_date:
+          description: Expected reward date
+          type: string
+        reward_type:
+          description: Reward type (TOKEN, NFT, etc.)
+          type: string
+        status:
+          description: Activity status (ACTIVE, ENDED, etc.)
+          type: string
+        total_raise:
+          description: Total funds raised in USD
+          format: int64
+          type: integer
+        updated_at:
+          description: Last update time (Unix seconds)
+          format: int64
+          type: integer
+        xscore:
+          description: Social score
+          type: string
+      required:
+      - id
+      - coin_name
+      - status
+      - reward
+      - reward_type
+      - created_at
+      - updated_at
+      type: object
+    DataResponseKalshiEvent:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseKalshiEvent.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/KalshiEvent'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    CursorDataResponseXUser:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/CursorDataResponseXUser.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/XUser'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/CursorMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseSearchTokenItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseSearchTokenItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/SearchTokenItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    WalletSearchAddress:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address
+          type: string
+        chain:
+          description: Chain name like ethereum, arbitrum_one
+          type: string
+      required:
+      - address
+      - chain
+      type: object
+    NewsArticleItem:
+      additionalProperties: false
+      properties:
+        highlights:
+          additionalProperties:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          description: Search highlight fragments with <em> tags around matching terms. Only present in search results.
+          type: object
+        id:
+          description: Article ID. Use with the detail endpoint to fetch full content.
+          type: string
+        project_id:
+          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup
+          type: string
+        project_name:
+          description: Primary crypto project referenced in the article
+          type: string
+        published_at:
+          description: Unix timestamp in seconds when the article was published
+          format: int64
+          type: integer
+        source:
+          description: Publisher name (e.g. COINDESK, COINTELEGRAPH)
+          type: string
+        summary:
+          description: Short summary of the article
+          type: string
+        title:
+          description: Article headline
+          type: string
+        url:
+          description: Direct URL to the original article
+          type: string
+      required:
+      - id
+      - title
+      - published_at
+      type: object
+    XTweet:
+      additionalProperties: false
+      properties:
+        author:
+          $ref: '#/components/schemas/XAuthor'
+          description: Author of the tweet
+        cover_image_url:
+          description: Article cover image URL; present only when type is 'article'
+          type: string
+        created_at:
+          description: Unix timestamp (seconds) when the tweet was posted
+          format: int64
+          type: integer
+        lang:
+          description: Tweet language code when available
+          type: string
+        media:
+          description: Attached media items (photos, videos, GIFs)
+          items:
+            $ref: '#/components/schemas/XMedia'
+          type:
+          - array
+          - 'null'
+        stats:
+          $ref: '#/components/schemas/XStats'
+          description: Engagement statistics (likes, reposts, replies, views)
+        text:
+          description: Full text content of the tweet
+          type: string
+        title:
+          description: Article title; present only when type is 'article'
+          type: string
+        tweet_id:
+          description: Numeric tweet ID as a string (e.g. '1234567890123456789')
+          type: string
+        type:
+          description: Tweet type when available (e.g. 'article' for long-form posts)
+          type: string
+        url:
+          description: Permanent link to the tweet on X/Twitter
+          type: string
+      required:
+      - tweet_id
+      - text
+      - url
+      - created_at
+      - author
+      - stats
+      type: object
+    DataResponseProjectEventItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseProjectEventItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ProjectEventItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    KalshiMarketItem:
+      additionalProperties: false
+      properties:
+        category:
+          description: Surf curated market category
+          type: string
+        close_time:
+          description: Market close time (Unix seconds)
+          format: int64
+          type: integer
+        end_time:
+          description: Market end time (Unix seconds)
+          format: int64
+          type: integer
+        event_ticker:
+          description: Parent event ticker
+          type: string
+        event_title:
+          description: Event title
+          type: string
+        last_day_open_interest:
+          description: Previous day open interest from daily report
+          format: double
+          type: number
+        market_ticker:
+          description: Unique market ticker identifier
+          type: string
+        notional_volume_usd:
+          description: Last day notional trading volume in USD (each contract = $1)
+          format: double
+          type: number
+        open_interest:
+          description: Open interest (contracts)
+          format: double
+          type: number
+        payout_type:
+          description: Payout type
+          type: string
+        result:
+          description: Market result if resolved
+          type: string
+        start_time:
+          description: Market start time (Unix seconds)
+          format: int64
+          type: integer
+        status:
+          description: Market status
+          type: string
+        subcategory:
+          description: Surf curated market subcategory
+          type: string
+        title:
+          description: Market title
+          type: string
+        total_volume:
+          description: Total trading volume (contracts)
+          format: int64
+          type: integer
+      required:
+      - market_ticker
+      - event_ticker
+      - title
+      - status
+      - payout_type
+      - total_volume
+      - notional_volume_usd
+      - open_interest
+      - last_day_open_interest
+      type: object
+    SearchTokenItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Token contract address. Use together with `chain` only on token endpoints that support the returned chain.
+          type: string
+        chain:
+          description: Chain the contract is deployed on
+          type: string
+        decimals:
+          description: Token decimal places
+          format: int64
+          type: integer
+        symbol:
+          description: Token ticker symbol (canonical uppercase)
+          type: string
+        volume_usd:
+          description: Reserved compatibility field. Always returns 0; do not use this field for candidate ordering.
+          format: double
+          type: number
+      required:
+      - symbol
+      - chain
+      - address
+      - decimals
+      - volume_usd
+      type: object
+    DataResponseAirdropSearchItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseAirdropSearchItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/AirdropSearchItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    CursorMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items exist beyond the current page.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        next_cursor:
+          description: Opaque cursor token for fetching the next page. Empty when no more pages exist.
+          type: string
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - has_more
+      - limit
+      - credits_used
+      - cached
+      type: object
+    ProjectEventItem:
+      additionalProperties: false
+      properties:
+        date:
+          description: Event date in ISO 8601 format
+          type: string
+        description:
+          description: Detailed event description
+          type: string
+        logo_url:
+          description: Project logo image URL
+          type: string
+        title:
+          description: Short event title
+          type: string
+        type:
+          description: 'Event type — one of: launch, upgrade, partnership, news, airdrop, listing, twitter'
+          type: string
+      required:
+      - type
+      - title
+      type: object
+    DataResponseFundSearchItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseFundSearchItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/FundSearchItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    XMedia:
+      additionalProperties: false
+      properties:
+        type:
+          description: 'Media type: photo, video, or animated_gif'
+          type: string
+        url:
+          description: Direct URL to the media asset
+          type: string
+      required:
+      - type
+      - url
+      type: object
+  securitySchemes:
+    AccessToken:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    AdminToken:
+      in: header
+      name: X-Admin-Token
+      type: apiKey
+    InternalKey:
+      in: header
+      name: X-Internal-Key
+      type: apiKey

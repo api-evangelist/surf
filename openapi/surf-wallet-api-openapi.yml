@@ -1,0 +1,1199 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: backend@cybertinolab.com
+    name: Cyber team
+  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
+  title: Hermod DEX Wallet API
+  version: sha-80d3407
+servers:
+- url: /
+tags:
+- description: Inspect any wallet on Ethereum, Base, Solana, and other chains. View token balances, NFT holdings, entity labels, transfer history, full transaction logs, DeFi protocol positions (lending, staking, LP), and net worth trends over time.
+  name: Wallet
+paths:
+  /gateway/v1/wallet/detail:
+    get:
+      description: 'Returns a wallet''s cross-chain portfolio with selectable sub-resources (balance, tokens, labels, NFTs). Always includes per-chain USD breakdown across 15+ EVM chains.
+
+
+        **Available fields** (via `fields`): `balance`, `tokens`, `labels`, `nft`.
+
+
+        **Lookup:** by `address`. Partial failures return available fields with per-field error info. Returns 422 if `fields` is invalid.'
+      operationId: wallet-detail
+      parameters:
+      - description: Wallet address (0x hex for EVM, base58 for Solana)
+        explode: false
+        in: query
+        name: address
+        required: true
+        schema:
+          description: Wallet address (0x hex for EVM, base58 for Solana)
+          examples:
+          - '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
+          type: string
+      - description: 'Chain filter for `tokens`, `nft`, and `approvals`. When omitted, inferred from address format: 0x addresses query all EVM chains, base58 addresses query Solana.'
+        explode: false
+        in: query
+        name: chain
+        schema:
+          description: 'Chain filter for `tokens`, `nft`, and `approvals`. When omitted, inferred from address format: 0x addresses query all EVM chains, base58 addresses query Solana.'
+          enum:
+          - ethereum
+          - polygon
+          - bsc
+          - avalanche
+          - arbitrum
+          - optimism
+          - fantom
+          - base
+          - solana
+          examples:
+          - ethereum
+          type: string
+      - description: 'Comma-separated sub-resources to include. Valid: `balance`, `tokens`, `labels`, `nft`, `approvals`. The `active_chains` field is always returned. `approvals` is opt-in (not in default) as it triggers additional upstream calls.'
+        explode: false
+        in: query
+        name: fields
+        schema:
+          default: balance,tokens,labels,nft
+          description: 'Comma-separated sub-resources to include. Valid: `balance`, `tokens`, `labels`, `nft`, `approvals`. The `active_chains` field is always returned. `approvals` is opt-in (not in default) as it triggers additional upstream calls.'
+          examples:
+          - balance,labels,approvals
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectResponseWalletDetailBody'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Aggregated Wallet Detail
+      tags:
+      - Wallet
+  /gateway/v1/wallet/history:
+    get:
+      description: 'Returns all on-chain transactions for a wallet, classified by type (send, receive, swap, approve) with native token value. For ERC-20 token transfers with token identity and USD value, use `wallet-transfers` instead.
+
+
+        **Lookup:** by `address`. Filter by `chain` — supports `ethereum`, `polygon`, `bsc`, `arbitrum`, `optimism`, `avalanche`, `fantom`, `base`.'
+      operationId: wallet-history
+      parameters:
+      - description: Wallet address — must be a raw 0x-prefixed hex address, not an ENS name
+        explode: false
+        in: query
+        name: address
+        required: true
+        schema:
+          description: Wallet address — must be a raw 0x-prefixed hex address, not an ENS name
+          examples:
+          - '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
+          type: string
+      - description: Chain filter. Can be `ethereum`, `polygon`, `bsc`, `avalanche`, `arbitrum`, `optimism`, `fantom`, or `base`.
+        explode: false
+        in: query
+        name: chain
+        schema:
+          default: ethereum
+          description: Chain filter. Can be `ethereum`, `polygon`, `bsc`, `avalanche`, `arbitrum`, `optimism`, `fantom`, or `base`.
+          enum:
+          - ethereum
+          - polygon
+          - bsc
+          - avalanche
+          - arbitrum
+          - optimism
+          - fantom
+          - base
+          examples:
+          - ethereum
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset. This feed is cursor-paginated upstream and only the most recent ~1000 transactions are reachable; a larger offset returns an empty page with meta.empty_reason rather than an error. For deep history prefer the `before` cursor — its upstream cost is bounded by `limit` and independent of depth, whereas a large offset is emulated by walking the whole feed.
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset. This feed is cursor-paginated upstream and only the most recent ~1000 transactions are reachable; a larger offset returns an empty page with meta.empty_reason rather than an error. For deep history prefer the `before` cursor — its upstream cost is bounded by `limit` and independent of depth, whereas a large offset is emulated by walking the whole feed.
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Cursor for efficient deep pagination: return transactions strictly older than this Unix-seconds timestamp (exclusive). Pass the `timestamp` of the last item from the previous page; if items may share a second, pass that timestamp + 1 and de-duplicate on `tx_hash`. Unlike `offset` (which walks the feed), the number of upstream fetches is bounded by `limit` (DeBank returns up to 20 per page) and independent of how far back you page. Mutually exclusive with `offset`.'
+        explode: false
+        in: query
+        name: before
+        schema:
+          description: 'Cursor for efficient deep pagination: return transactions strictly older than this Unix-seconds timestamp (exclusive). Pass the `timestamp` of the last item from the previous page; if items may share a second, pass that timestamp + 1 and de-duplicate on `tx_hash`. Unlike `offset` (which walks the feed), the number of upstream fetches is bounded by `limit` (DeBank returns up to 20 per page) and independent of how far back you page. Mutually exclusive with `offset`.'
+          examples:
+          - 1704067200
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Field to sort results by. The cursor-paginated upstream feed only supports `timestamp` correctly; unsupported values are rejected by the handler for correctness.
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: timestamp
+          description: Field to sort results by. The cursor-paginated upstream feed only supports `timestamp` correctly; unsupported values are rejected by the handler for correctness.
+          enum:
+          - timestamp
+          - value
+          examples:
+          - timestamp
+          type: string
+      - description: Sort order. The cursor-paginated upstream feed only supports `desc` correctly; unsupported values are rejected by the handler for correctness.
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort order. The cursor-paginated upstream feed only supports `desc` correctly; unsupported values are rejected by the handler for correctness.
+          enum:
+          - asc
+          - desc
+          examples:
+          - desc
+          type: string
+      - description: 'Comma-separated enrichments to attach to each item. Currently valid: `labels` — adds `from_label` and `to_label` fields with entity information for each counterparty address.'
+        explode: false
+        in: query
+        name: include
+        schema:
+          description: 'Comma-separated enrichments to attach to each item. Currently valid: `labels` — adds `from_label` and `to_label` fields with entity information for each counterparty address.'
+          examples:
+          - labels
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseWalletHistoryItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Wallet Transaction History
+      tags:
+      - Wallet
+  /gateway/v1/wallet/labels/batch:
+    get:
+      description: 'Returns entity labels for multiple wallet addresses.
+
+
+        Pass up to 100 comma-separated addresses via the `addresses` query parameter.
+
+
+        **Included fields:** entity name, type, and labels per address.'
+      operationId: wallet-labels-batch
+      parameters:
+      - description: Comma-separated wallet addresses to look up, max 100
+        explode: false
+        in: query
+        name: addresses
+        required: true
+        schema:
+          description: Comma-separated wallet addresses to look up, max 100
+          examples:
+          - 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045,0xdead
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseWalletLabelItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Wallet Labels (Batch)
+      tags:
+      - Wallet
+  /gateway/v1/wallet/net-worth:
+    get:
+      description: 'Returns a time-series of the wallet''s total net worth in USD.
+
+
+        Returns ~288 data points at 5-minute intervals covering the last 24 hours. Fixed window — no custom time range supported.
+
+
+        **Lookup:** by `address` (EVM only — 0x-prefixed hex). Solana addresses are not supported.'
+      operationId: wallet-net-worth
+      parameters:
+      - description: Wallet address — must be a raw 0x-prefixed hex address (EVM only). Solana and ENS names are not supported.
+        explode: false
+        in: query
+        name: address
+        required: true
+        schema:
+          description: Wallet address — must be a raw 0x-prefixed hex address (EVM only). Solana and ENS names are not supported.
+          examples:
+          - '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseWalletNetWorthPoint'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Wallet Net Worth History
+      tags:
+      - Wallet
+  /gateway/v1/wallet/protocols:
+    get:
+      description: 'Returns all DeFi protocol positions for a wallet — lending, staking, LP, and farming with token breakdowns and USD values.
+
+
+        **Lookup:** by `address` (EVM only — 0x-prefixed hex). Solana addresses are not supported.'
+      operationId: wallet-protocols
+      parameters:
+      - description: Wallet address — must be a raw 0x-prefixed hex address, not an ENS name
+        explode: false
+        in: query
+        name: address
+        required: true
+        schema:
+          description: Wallet address — must be a raw 0x-prefixed hex address, not an ENS name
+          examples:
+          - '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseWalletProtocolItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Wallet DeFi Protocol Positions
+      tags:
+      - Wallet
+  /gateway/v1/wallet/transfers:
+    get:
+      description: 'Returns ERC-20/SPL token transfers with token identity, USD value, and flow direction (in/out). Unlike `wallet-history` which shows all tx types in native value, this focuses on token-level transfer activity.
+
+
+        Pass the **wallet address** in `address` — returns all ERC-20/SPL token transfers where this wallet is the sender or receiver.
+
+
+        **Included fields:** token contract, token symbol, amount USD, counterparty, flow direction.
+
+
+        Filter by specific token or flow direction (in/out).
+
+
+        **Lookup:** `address` (wallet, raw 0x hex or base58 — ENS not supported). Filter by `chain` — supports `ethereum`, `base`, `bsc`, `arbitrum`, `tron`, `solana`.
+
+
+        **Data refresh:** ~24 hours · **Chains:** Ethereum, Base, BSC, Arbitrum, Tron (Solana uses a different source with no delay)'
+      operationId: wallet-transfers
+      parameters:
+      - description: Wallet address — must be a raw address (0x-prefixed hex for EVM, base58 for Solana). ENS names like `vitalik.eth` are not supported; resolve to a 0x address first.
+        explode: false
+        in: query
+        name: address
+        required: true
+        schema:
+          description: Wallet address — must be a raw address (0x-prefixed hex for EVM, base58 for Solana). ENS names like `vitalik.eth` are not supported; resolve to a 0x address first.
+          examples:
+          - '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
+          type: string
+      - description: Chain. Can be `ethereum`, `base`, `solana`, `tron`, `bsc`, or `arbitrum`.
+        explode: false
+        in: query
+        name: chain
+        schema:
+          default: ethereum
+          description: Chain. Can be `ethereum`, `base`, `solana`, `tron`, `bsc`, or `arbitrum`.
+          enum:
+          - ethereum
+          - base
+          - solana
+          - tron
+          - bsc
+          - arbitrum
+          examples:
+          - ethereum
+          type: string
+      - description: Filter by transfer direction relative to the queried wallet. `in` for incoming, `out` for outgoing. Omit for both directions.
+        explode: false
+        in: query
+        name: flow
+        schema:
+          description: Filter by transfer direction relative to the queried wallet. `in` for incoming, `out` for outgoing. Omit for both directions.
+          enum:
+          - in
+          - out
+          examples:
+          - in
+          type: string
+      - description: Filter by token contract address. Use `0x0000000000000000000000000000000000000000` for native token transfers. Omit for all tokens.
+        explode: false
+        in: query
+        name: token
+        schema:
+          description: Filter by token contract address. Use `0x0000000000000000000000000000000000000000` for native token transfers. Omit for all tokens.
+          examples:
+          - '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+          type: string
+      - description: 'Results per page. Default 20, max 100. NOTE: Solana (`chain=solana`) is hard-capped at 40 per call by the upstream Solscan API — values above 40 return at most 40 items. Check `meta.has_more` and paginate with `offset` to fetch beyond the first page.'
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: 'Results per page. Default 20, max 100. NOTE: Solana (`chain=solana`) is hard-capped at 40 per call by the upstream Solscan API — values above 40 return at most 40 items. Check `meta.has_more` and paginate with `offset` to fetch beyond the first page.'
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset. For Solana, this maps to Solscan's 1-indexed `page` parameter (page = offset/page_size + 1).
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset. For Solana, this maps to Solscan's 1-indexed `page` parameter (page = offset/page_size + 1).
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Comma-separated enrichments to attach to each transfer. Currently valid: `labels` — adds `from_label` and `to_label` fields with entity information for each counterparty address.'
+        explode: false
+        in: query
+        name: include
+        schema:
+          description: 'Comma-separated enrichments to attach to each transfer. Currently valid: `labels` — adds `from_label` and `to_label` fields with entity information for each counterparty address.'
+          examples:
+          - labels
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseWalletTransferItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Wallet Transfer History
+      tags:
+      - Wallet
+components:
+  schemas:
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    EvmTokenItem:
+      additionalProperties: false
+      properties:
+        balance:
+          description: Decimal-adjusted token balance as a string
+          type: string
+        chain:
+          description: Chain name like ethereum, polygon (EVM only)
+          type: string
+        is_verified:
+          description: Whether the token is verified (EVM only)
+          type: boolean
+        logo_url:
+          description: Token logo image URL
+          type: string
+        name:
+          description: Full token name
+          type: string
+        price:
+          description: Current USD price per token (EVM only)
+          format: double
+          type: number
+        symbol:
+          description: Token ticker symbol
+          type: string
+        token_address:
+          description: Token contract address (EVM only)
+          type: string
+        usd_value:
+          description: Total USD value (balance * price) (EVM only)
+          format: double
+          type: number
+      required:
+      - token_address
+      - symbol
+      - balance
+      - price
+      - usd_value
+      - is_verified
+      type: object
+    DataResponseWalletLabelItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseWalletLabelItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/WalletLabelItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    WalletProtocolPosition:
+      additionalProperties: false
+      properties:
+        balance_usd:
+          description: Total USD value of this position
+          format: double
+          type: number
+        borrow_tokens:
+          description: Tokens borrowed in this position
+          items:
+            $ref: '#/components/schemas/WalletProtocolToken'
+          type:
+          - array
+          - 'null'
+        lp_tokens:
+          description: LP tokens in this position
+          items:
+            $ref: '#/components/schemas/WalletProtocolToken'
+          type:
+          - array
+          - 'null'
+        name:
+          description: Position name or type like `Lending` or `Staking`
+          type: string
+        reward_tokens:
+          description: Unclaimed reward tokens in this position
+          items:
+            $ref: '#/components/schemas/WalletProtocolToken'
+          type:
+          - array
+          - 'null'
+        supply_tokens:
+          description: Tokens supplied/deposited in this position
+          items:
+            $ref: '#/components/schemas/WalletProtocolToken'
+          type:
+          - array
+          - 'null'
+      required:
+      - name
+      - balance_usd
+      type: object
+    DataResponseWalletHistoryItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseWalletHistoryItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/WalletHistoryItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    WalletDetailBody:
+      additionalProperties: false
+      properties:
+        active_chains:
+          description: Chains the wallet has non-zero balances on. Always present (not controlled by fields param). For Solana addresses, returns a single entry.
+          items:
+            $ref: '#/components/schemas/WalletChainItem'
+          type:
+          - array
+          - 'null'
+        approvals:
+          description: Token approvals (EVM-only, up to 50). Only present when `approvals` is included in the `fields` param.
+          items:
+            $ref: '#/components/schemas/WalletApprovalItem'
+          type:
+          - array
+          - 'null'
+        errors:
+          description: Per-field errors for any fields that failed to load
+          items:
+            $ref: '#/components/schemas/WalletDetailError'
+          type:
+          - array
+          - 'null'
+        evm_balance:
+          $ref: '#/components/schemas/EvmBalanceItem'
+          description: EVM wallet balance. Populated for EVM chains only.
+        evm_tokens:
+          description: EVM token holdings (up to 50). Populated for EVM chains only.
+          items:
+            $ref: '#/components/schemas/EvmTokenItem'
+          type:
+          - array
+          - 'null'
+        labels:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Address labels and entity attribution
+        nft:
+          description: NFT holdings (EVM-only, top 200 by value)
+          items:
+            $ref: '#/components/schemas/WalletNFTItem'
+          type:
+          - array
+          - 'null'
+        sol_balance:
+          $ref: '#/components/schemas/SolBalanceItem'
+          description: Solana wallet balance from Solscan. Populated for Solana chain only.
+        sol_tokens:
+          description: Solana SPL token holdings from Solscan (up to 50). Populated for Solana chain only.
+          items:
+            $ref: '#/components/schemas/SolTokenItem'
+          type:
+          - array
+          - 'null'
+      type: object
+    WalletNetWorthPoint:
+      additionalProperties: false
+      properties:
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type: integer
+        usd_value:
+          description: Total portfolio value in USD at this point in time
+          format: double
+          type: number
+      required:
+      - timestamp
+      - usd_value
+      type: object
+    WalletHistoryItem:
+      additionalProperties: false
+      properties:
+        from_address:
+          description: Sender wallet address
+          type: string
+        from_label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity labels for from_address. Only present when the request sets `include=labels`.
+        timestamp:
+          description: Unix timestamp in seconds when the transaction was confirmed
+          format: int64
+          type: integer
+        to_address:
+          description: Recipient wallet address
+          type: string
+        to_label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity labels for to_address. Only present when the request sets `include=labels`.
+        tx_hash:
+          description: Transaction hash
+          type: string
+        tx_type:
+          description: 'Transaction type: `send`, `receive`, `swap`, `approve`, etc.'
+          type: string
+        value:
+          description: Decimal-adjusted transaction value in native token as a string
+          type: string
+      required:
+      - tx_hash
+      - from_address
+      - to_address
+      - value
+      - timestamp
+      type: object
+    DataResponseWalletNetWorthPoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseWalletNetWorthPoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/WalletNetWorthPoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    WalletLabelItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address
+          type: string
+        entity_name:
+          description: Name of the associated entity like `Binance` or `Aave`
+          type: string
+        entity_type:
+          description: Type of entity like `exchange`, `fund`, or `whale`
+          type: string
+        labels:
+          description: List of labels assigned to this address
+          items:
+            $ref: '#/components/schemas/WalletLabelInfo'
+          type:
+          - array
+          - 'null'
+      required:
+      - address
+      - labels
+      type: object
+    DataObjectResponseWalletDetailBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseWalletDetailBody.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/WalletDetailBody'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    WalletTransferItem:
+      additionalProperties: false
+      properties:
+        activity_type:
+          description: Transfer activity type (Solana only, e.g. ACTIVITY_SPL_TRANSFER)
+          type: string
+        amount:
+          description: Decimal-adjusted transfer amount as a string
+          type: string
+        amount_usd:
+          description: Transfer value in USD at the time of the transaction
+          format: double
+          type: number
+        flow:
+          description: 'Transfer direction relative to the queried wallet: `in` or `out`'
+          type: string
+        from_address:
+          description: Sender wallet address
+          type: string
+        from_label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity labels for from_address. Only present when the request sets `include=labels`.
+        timestamp:
+          description: Unix timestamp in seconds when the transfer occurred
+          format: int64
+          type: integer
+        to_address:
+          description: Recipient wallet address
+          type: string
+        to_label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity labels for to_address. Only present when the request sets `include=labels`.
+        token_address:
+          description: Token contract address (EVM) or SPL mint address (Solana)
+          type: string
+        token_symbol:
+          description: Token ticker symbol (available for EVM chains from on-chain data)
+          type: string
+        tx_hash:
+          description: Transaction hash (EVM) or transaction signature (Solana)
+          type: string
+      required:
+      - tx_hash
+      - from_address
+      - to_address
+      - amount
+      - timestamp
+      type: object
+    WalletChainItem:
+      additionalProperties: false
+      properties:
+        chain:
+          description: Canonical chain name like `ethereum` or `polygon`
+          type: string
+        chain_id:
+          description: EVM chain ID like `1` for Ethereum or `137` for Polygon
+          format: int64
+          type: integer
+        usd_value:
+          description: Total USD value of assets on this chain
+          format: double
+          type: number
+      required:
+      - chain
+      - usd_value
+      type: object
+    WalletLabelInfo:
+      additionalProperties: false
+      properties:
+        confidence:
+          description: Confidence score 0.0-1.0
+          format: double
+          type: number
+        label:
+          description: Human-readable label for this address like `Binance Hot Wallet`
+          type: string
+      required:
+      - label
+      type: object
+    WalletProtocolItem:
+      additionalProperties: false
+      properties:
+        chain:
+          description: Canonical chain name where the protocol operates
+          type: string
+        logo_url:
+          description: Protocol logo image URL
+          type: string
+        positions:
+          description: Individual positions held in this protocol
+          items:
+            $ref: '#/components/schemas/WalletProtocolPosition'
+          type:
+          - array
+          - 'null'
+        protocol_name:
+          description: Human-readable protocol name
+          type: string
+        site_url:
+          description: Protocol website URL
+          type: string
+        total_usd:
+          description: Total USD value across all positions in this protocol
+          format: double
+          type: number
+      required:
+      - protocol_name
+      - chain
+      - total_usd
+      - positions
+      type: object
+    WalletDetailError:
+      additionalProperties: false
+      properties:
+        field:
+          description: Field name that failed to load like `evm_balance`, `sol_balance`, `evm_tokens`, `sol_tokens`, `labels`, `nft`, `active_chains`, or `approvals`
+          type: string
+        message:
+          description: Error message describing why the field could not be loaded
+          type: string
+      required:
+      - field
+      - message
+      type: object
+    DataResponseWalletTransferItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseWalletTransferItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/WalletTransferItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    SolTokenItem:
+      additionalProperties: false
+      properties:
+        balance:
+          description: Decimal-adjusted token balance as a string
+          type: string
+        decimals:
+          description: Token decimal places (Solana only)
+          format: int64
+          type: integer
+        is_verified:
+          description: Whether the token contract is verified
+          type: boolean
+        logo_url:
+          description: Token logo image URL
+          type: string
+        name:
+          description: Full token name
+          type: string
+        symbol:
+          description: Token ticker symbol
+          type: string
+        token_address:
+          description: SPL token mint address (Solana only)
+          type: string
+      required:
+      - token_address
+      - symbol
+      - balance
+      - decimals
+      - is_verified
+      type: object
+    DataResponseWalletProtocolItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseWalletProtocolItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/WalletProtocolItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    WalletNFTItem:
+      additionalProperties: false
+      properties:
+        chain:
+          description: Canonical chain name like `ethereum` or `polygon`
+          type: string
+        collection_name:
+          description: NFT collection name
+          type: string
+        contract_address:
+          description: NFT contract address
+          type: string
+        image_url:
+          description: NFT image or thumbnail URL
+          type: string
+        name:
+          description: NFT item name or title
+          type: string
+        token_id:
+          description: NFT token ID within the collection
+          type: string
+        usd_price:
+          description: Latest trading price in USD
+          format: double
+          type: number
+      required:
+      - contract_address
+      - token_id
+      type: object
+    SolBalanceItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address
+          type: string
+        sol_balance:
+          description: Decimal-adjusted native SOL balance as a string (Solana only)
+          type: string
+      required:
+      - address
+      - sol_balance
+      type: object
+    WalletApprovalSpender:
+      additionalProperties: false
+      properties:
+        allowance:
+          description: Approved token amount (use -1 for unlimited)
+          format: double
+          type: number
+        spender_address:
+          description: Address of the approved spender contract
+          type: string
+        spender_name:
+          description: Human-readable name of the spender, absent for unrecognized contracts
+          type: string
+      required:
+      - spender_address
+      - allowance
+      type: object
+    WalletProtocolToken:
+      additionalProperties: false
+      properties:
+        amount:
+          description: Token amount held in this position
+          format: double
+          type: number
+        chain:
+          description: Canonical chain name like `ethereum` or `polygon`
+          type: string
+        name:
+          description: Full token name
+          type: string
+        price:
+          description: Current token price in USD
+          format: double
+          type: number
+        symbol:
+          description: Token ticker symbol
+          type: string
+        token_address:
+          description: Token contract address
+          type: string
+      required:
+      - symbol
+      - amount
+      - price
+      - chain
+      type: object
+    WalletApprovalItem:
+      additionalProperties: false
+      properties:
+        balance:
+          description: Current token balance
+          format: double
+          type: number
+        chain:
+          description: Canonical chain name
+          type: string
+        name:
+          description: Full token name
+          type: string
+        spenders:
+          description: List of approved spender contracts
+          items:
+            $ref: '#/components/schemas/WalletApprovalSpender'
+          type:
+          - array
+          - 'null'
+        symbol:
+          description: Token ticker symbol
+          type: string
+        token_address:
+          description: Token contract address
+          type: string
+      required:
+      - token_address
+      - symbol
+      - chain
+      - balance
+      - spenders
+      type: object
+    EvmBalanceItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address
+          type: string
+        chain_balances:
+          description: Per-chain balance breakdown, sorted by value descending (EVM only)
+          items:
+            $ref: '#/components/schemas/WalletChainItem'
+          type:
+          - array
+          - 'null'
+        total_usd:
+          description: Total portfolio value in USD (EVM only)
+          format: double
+          type: number
+      required:
+      - address
+      - total_usd
+      type: object
+  securitySchemes:
+    AccessToken:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    AdminToken:
+      in: header
+      name: X-Admin-Token
+      type: apiKey
+    InternalKey:
+      in: header
+      name: X-Internal-Key
+      type: apiKey

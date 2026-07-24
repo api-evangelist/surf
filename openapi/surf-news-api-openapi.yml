@@ -1,0 +1,386 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: backend@cybertinolab.com
+    name: Cyber team
+  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
+  title: Hermod DEX News API
+  version: sha-80d3407
+servers:
+- url: /
+tags:
+- description: Stay up to date with crypto news. Browse the latest articles from major crypto media outlets, read full article content, and search across all sources by keyword.
+  name: News
+paths:
+  /gateway/v1/news/detail:
+    get:
+      description: Returns the full content of a single news article by its ID (returned as `id` in feed and search results).
+      operationId: news-detail
+      parameters:
+      - description: Article ID (returned as id in feed/search results)
+        explode: false
+        in: query
+        name: id
+        required: true
+        schema:
+          description: Article ID (returned as id in feed/search results)
+          examples:
+          - e54e0ac4-1ef8-44d2-928e-52df465e2c81
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectResponseNewsArticleDetailItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: News Article Detail
+      tags:
+      - News
+  /gateway/v1/news/feed:
+    get:
+      description: 'Returns crypto news from major sources.
+
+
+        **Filters:** `source` (enum), `project`, and time range (`from`/`to`).
+
+
+        **Sort:** `recency` (default) or `trending`.
+
+
+        Use the detail endpoint with article `id` for full content.'
+      operationId: news-feed
+      parameters:
+      - description: Filter by news source
+        explode: false
+        in: query
+        name: source
+        schema:
+          description: Filter by news source
+          enum:
+          - coindesk
+          - cointelegraph
+          - theblock
+          - decrypt
+          - dlnews
+          - blockbeats
+          - bitcoincom
+          - coinpedia
+          - ambcrypto
+          - cryptodaily
+          - cryptopotato
+          - phemex
+          - panews
+          - odaily
+          - tradingview
+          - chaincatcher
+          - techflow
+          examples:
+          - coindesk
+          type: string
+      - description: Comma-separated project names to filter by
+        explode: false
+        in: query
+        name: project
+        schema:
+          description: Comma-separated project names to filter by
+          examples:
+          - bitcoin,ethereum
+          type: string
+      - description: Filter articles published on or after this time. Accepts Unix seconds or date string (2024-01-01)
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Filter articles published on or after this time. Accepts Unix seconds or date string (2024-01-01)
+          examples:
+          - '2024-01-01'
+          type: string
+      - description: Filter articles published on or before this time. Accepts Unix seconds or date string (2024-02-01)
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: Filter articles published on or before this time. Accepts Unix seconds or date string (2024-02-01)
+          examples:
+          - '2024-02-01'
+          type: string
+      - description: 'Sort order: recency (newest first) or trending (deterministic newest-first alias until engagement ranking is available)'
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: recency
+          description: 'Sort order: recency (newest first) or trending (deterministic newest-first alias until engagement ranking is available)'
+          enum:
+          - recency
+          - trending
+          examples:
+          - recency
+          type: string
+      - description: Results per page (max 50)
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page (max 50)
+          examples:
+          - 20
+          format: int64
+          maximum: 50
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseNewsArticleItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Crypto News Feed
+      tags:
+      - News
+components:
+  schemas:
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    DataResponseNewsArticleItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseNewsArticleItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/NewsArticleItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    NewsArticleItem:
+      additionalProperties: false
+      properties:
+        highlights:
+          additionalProperties:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          description: Search highlight fragments with <em> tags around matching terms. Only present in search results.
+          type: object
+        id:
+          description: Article ID. Use with the detail endpoint to fetch full content.
+          type: string
+        project_id:
+          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup
+          type: string
+        project_name:
+          description: Primary crypto project referenced in the article
+          type: string
+        published_at:
+          description: Unix timestamp in seconds when the article was published
+          format: int64
+          type: integer
+        source:
+          description: Publisher name (e.g. COINDESK, COINTELEGRAPH)
+          type: string
+        summary:
+          description: Short summary of the article
+          type: string
+        title:
+          description: Article headline
+          type: string
+        url:
+          description: Direct URL to the original article
+          type: string
+      required:
+      - id
+      - title
+      - published_at
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    NewsArticleDetailItem:
+      additionalProperties: false
+      properties:
+        content:
+          description: Full article body text
+          type: string
+        id:
+          description: Article ID
+          type: string
+        project_id:
+          description: Surf project UUID
+          type: string
+        project_name:
+          description: Primary crypto project referenced in the article
+          type: string
+        published_at:
+          description: Unix timestamp in seconds when the article was published
+          format: int64
+          type: integer
+        source:
+          description: Publisher name
+          type: string
+        summary:
+          description: Short summary of the article
+          type: string
+        title:
+          description: Article headline
+          type: string
+        url:
+          description: Direct URL to the original article
+          type: string
+      required:
+      - id
+      - title
+      - content
+      - published_at
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    DataObjectResponseNewsArticleDetailItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseNewsArticleDetailItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/NewsArticleDetailItem'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+  securitySchemes:
+    AccessToken:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    AdminToken:
+      in: header
+      name: X-Admin-Token
+      type: apiKey
+    InternalKey:
+      in: header
+      name: X-Internal-Key
+      type: apiKey

@@ -1,0 +1,2502 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: backend@cybertinolab.com
+    name: Cyber team
+  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
+  title: Hermod DEX Market API
+  version: sha-80d3407
+servers:
+- url: /
+tags:
+- description: Get a high-level view of the crypto market. Browse token rankings by market cap or volume, track derivatives across all exchanges, monitor spot ETF fund flows, view liquidation events, compute technical indicators (RSI, MACD, Bollinger Bands, and more), explore on-chain valuation metrics (NUPL, MVRV, SOPR), and check the Fear & Greed Index.
+  name: Market
+paths:
+  /gateway/v1/market/etf:
+    get:
+      description: 'Returns daily spot ETF flow history.
+
+
+        **Included fields:** net flow (USD), token price, per-ticker breakdown.
+
+
+        Sorted by date descending. `symbol`: `BTC`, `ETH`, `XRP`, `SOL`, or `HYPE`.'
+      operationId: market-etf
+      parameters:
+      - description: Token symbol. Can be `BTC`, `ETH`, `XRP`, `SOL`, or `HYPE`.
+        explode: false
+        in: query
+        name: symbol
+        required: true
+        schema:
+          description: Token symbol. Can be `BTC`, `ETH`, `XRP`, `SOL`, or `HYPE`.
+          enum:
+          - BTC
+          - ETH
+          - XRP
+          - SOL
+          - HYPE
+          examples:
+          - BTC
+          type: string
+      - description: Field to sort results by
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: timestamp
+          description: Field to sort results by
+          enum:
+          - flow_usd
+          - timestamp
+          examples:
+          - timestamp
+          type: string
+      - description: Sort order
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort order
+          enum:
+          - asc
+          - desc
+          examples:
+          - desc
+          type: string
+      - description: Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD)
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD)
+          examples:
+          - '2026-01-01'
+          type: string
+      - description: End of time range. Accepts Unix seconds or date string (YYYY-MM-DD)
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End of time range. Accepts Unix seconds or date string (YYYY-MM-DD)
+          examples:
+          - '2026-03-01'
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleListResponseMarketETFFlowItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: ETF Flow History
+      tags:
+      - Market
+  /gateway/v1/market/exchange-flow/exchanges:
+    get:
+      description: 'Returns Hermod''s curated exchange filters for exchange-flow metrics: upstream aggregate filters plus 20 high-coverage individual exchanges.
+
+
+        Use the returned `symbol` values as the `exchange` query parameter on `/v1/market/onchain-indicator` when `metric` is one of `exchange-flows/inflow`, `exchange-flows/outflow`, `exchange-flows/netflow`, or `exchange-flows/reserve`.
+
+
+        The curated list intentionally excludes long-tail upstream exchange entities that return empty data or bad-request errors for flow metrics.'
+      operationId: market-exchange-flow-exchanges
+      parameters:
+      - description: Token ticker symbol. Can be `BTC` or `ETH`.
+        explode: false
+        in: query
+        name: symbol
+        required: true
+        schema:
+          description: Token ticker symbol. Can be `BTC` or `ETH`.
+          enum:
+          - BTC
+          - ETH
+          examples:
+          - BTC
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 100
+          description: Results per page
+          examples:
+          - 100
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseMarketExchangeFlowExchangeItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Exchange Flow Exchanges
+      tags:
+      - Market
+  /gateway/v1/market/fear-greed:
+    get:
+      description: 'Returns Bitcoin Fear & Greed Index history.
+
+
+        **Included fields:** index value (0-100), classification label, BTC price at each data point.
+
+
+        Sorted newest-first. Use `from`/`to` to filter by date range.'
+      operationId: market-fear-greed
+      parameters:
+      - description: Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD)
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD)
+          examples:
+          - '2026-01-01'
+          type: string
+      - description: End of time range. Accepts Unix seconds or date string (YYYY-MM-DD)
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End of time range. Accepts Unix seconds or date string (YYYY-MM-DD)
+          examples:
+          - '2026-03-01'
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleListResponseMarketFearGreedHistoryItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Fear & Greed Index History
+      tags:
+      - Market
+  /gateway/v1/market/futures:
+    get:
+      description: 'Returns futures market data across all tracked tokens in a single ranked snapshot.
+
+
+        **Included fields:** open interest, funding rate, long/short ratio, 24h volume.
+
+
+        Sorted by `volume_24h` by default — use `sort_by` to change.
+
+
+        **No pagination** — this endpoint returns the full list in one response. Does NOT accept `limit`, `offset`, or `symbol`; to filter to one token, look it up in the response locally.'
+      operationId: market-futures
+      parameters:
+      - description: Field to sort results by
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: volume_24h
+          description: Field to sort results by
+          enum:
+          - open_interest
+          - funding_rate
+          - volume_24h
+          - long_short_ratio
+          examples:
+          - volume_24h
+          type: string
+      - description: Sort order
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort order
+          enum:
+          - asc
+          - desc
+          examples:
+          - desc
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleListResponseMarketFuturesItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Futures Market Overview
+      tags:
+      - Market
+  /gateway/v1/market/liquidation/chart:
+    get:
+      description: 'Returns OHLC-style aggregated liquidation data for a token on a specific exchange.
+
+
+        **Filters:** `symbol`, `exchange`, `interval`.
+
+
+        Useful for charting liquidation volume over time.'
+      operationId: market-liquidation-chart
+      parameters:
+      - description: Token ticker symbol like `BTC` or `ETH`
+        explode: false
+        in: query
+        name: symbol
+        required: true
+        schema:
+          description: Token ticker symbol like `BTC` or `ETH`
+          examples:
+          - BTC
+          type: string
+      - description: 'Candlestick interval — bucket size for each point in the liquidation chart series: `1m`, `3m`, `5m`, `15m`, `30m`, `1h`, `4h`, `6h`, `8h`, `12h`, `1d`, or `1w`. This endpoint uses `interval` only; it does NOT accept `time_range`. Use `from`/`to` to bound the series.'
+        explode: false
+        in: query
+        name: interval
+        schema:
+          default: 1h
+          description: 'Candlestick interval — bucket size for each point in the liquidation chart series: `1m`, `3m`, `5m`, `15m`, `30m`, `1h`, `4h`, `6h`, `8h`, `12h`, `1d`, or `1w`. This endpoint uses `interval` only; it does NOT accept `time_range`. Use `from`/`to` to bound the series.'
+          enum:
+          - 1m
+          - 3m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 4h
+          - 6h
+          - 8h
+          - 12h
+          - 1d
+          - 1w
+          examples:
+          - 1h
+          type: string
+      - description: Exchange name. Can be `Binance`, `OKX`, `Bybit`, `Bitget`, `Hyperliquid`, `Gate`, `HTX`, `Bitmex`, `Bitfinex`, `CoinEx`, `Aster`, or `Lighter`.
+        explode: false
+        in: query
+        name: exchange
+        schema:
+          default: Binance
+          description: Exchange name. Can be `Binance`, `OKX`, `Bybit`, `Bitget`, `Hyperliquid`, `Gate`, `HTX`, `Bitmex`, `Bitfinex`, `CoinEx`, `Aster`, or `Lighter`.
+          enum:
+          - Binance
+          - OKX
+          - Bybit
+          - Bitget
+          - Hyperliquid
+          - Gate
+          - HTX
+          - Bitmex
+          - Bitfinex
+          - CoinEx
+          - Aster
+          - Lighter
+          examples:
+          - Binance
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 500
+          description: Results per page
+          examples:
+          - 500
+          format: int64
+          maximum: 4500
+          minimum: 1
+          type: integer
+      - description: Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+          examples:
+          - '2024-01-01'
+          type: string
+      - description: End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)
+          examples:
+          - '2024-02-01'
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleListResponseLiquidationChartItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Liquidation Chart
+      tags:
+      - Market
+  /gateway/v1/market/liquidation/exchange-list:
+    get:
+      description: 'Returns liquidation breakdown by exchange in a single ranked snapshot.
+
+
+        **Included fields:** total, long, and short volumes in USD.
+
+
+        **Filters:** `symbol` and `time_range` (`1h`, `4h`, `12h`, `24h`).
+
+
+        **No pagination and no `interval`** — this endpoint does NOT accept `limit`, `offset`, or `interval`. Returns the full exchange list in one response.'
+      operationId: market-liquidation-exchange-list
+      parameters:
+      - description: Token ticker symbol like `BTC` or `ETH`
+        explode: false
+        in: query
+        name: symbol
+        schema:
+          default: BTC
+          description: Token ticker symbol like `BTC` or `ETH`
+          examples:
+          - BTC
+          type: string
+      - description: 'Window to aggregate over for the snapshot: `1h`, `4h`, `12h`, or `24h`. Returns a single snapshot (not a time-series). This endpoint uses `time_range` only — it does NOT accept `interval`.'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 24h
+          description: 'Window to aggregate over for the snapshot: `1h`, `4h`, `12h`, or `24h`. Returns a single snapshot (not a time-series). This endpoint uses `time_range` only — it does NOT accept `interval`.'
+          enum:
+          - 1h
+          - 4h
+          - 12h
+          - 24h
+          examples:
+          - 24h
+          type: string
+      - description: Field to sort results by
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: liquidation_usd
+          description: Field to sort results by
+          enum:
+          - liquidation_usd
+          - long_liquidation_usd
+          - short_liquidation_usd
+          examples:
+          - liquidation_usd
+          type: string
+      - description: Sort order
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort order
+          enum:
+          - asc
+          - desc
+          examples:
+          - desc
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleListResponseLiquidationExchangeItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Liquidation by Exchange
+      tags:
+      - Market
+  /gateway/v1/market/liquidation/order:
+    get:
+      description: 'Returns individual large liquidation orders above a USD threshold (`min_amount`, default 10000).
+
+
+        **Filters:** `exchange` and `symbol`.
+
+
+        **Pagination:** `limit`/`offset` page within a bounded, most-recent window. To page beyond that window, shift the time range: set `to` to `oldest_returned_timestamp + 1` (Unix seconds) and repeat, de-duplicating on `order_id`. `to` is **exclusive** (returns rows strictly older than `to`), so the `+1` re-includes the boundary second; using the oldest timestamp itself would skip any rows sharing that second. When `offset` exceeds the window the response returns an empty array with `meta.empty_reason` rather than falsely claiming exhaustion.
+
+
+        For aggregate totals and long/short breakdown by exchange, use `/market/liquidation/exchange-list`. For historical liquidation charts, use `/market/liquidation/chart`.'
+      operationId: market-liquidation-order
+      parameters:
+      - description: Exchange name. Can be `Binance`, `OKX`, `Bybit`, `Bitget`, `Hyperliquid`, `Gate`, `HTX`, `Bitmex`, `Bitfinex`, `CoinEx`, `Aster`, or `Lighter`.
+        explode: false
+        in: query
+        name: exchange
+        schema:
+          default: Binance
+          description: Exchange name. Can be `Binance`, `OKX`, `Bybit`, `Bitget`, `Hyperliquid`, `Gate`, `HTX`, `Bitmex`, `Bitfinex`, `CoinEx`, `Aster`, or `Lighter`.
+          enum:
+          - Binance
+          - OKX
+          - Bybit
+          - Bitget
+          - Hyperliquid
+          - Gate
+          - HTX
+          - Bitmex
+          - Bitfinex
+          - CoinEx
+          - Aster
+          - Lighter
+          examples:
+          - Binance
+          type: string
+      - description: Token ticker symbol like `BTC` or `ETH`
+        explode: false
+        in: query
+        name: symbol
+        schema:
+          default: BTC
+          description: Token ticker symbol like `BTC` or `ETH`
+          examples:
+          - BTC
+          type: string
+      - description: Minimum liquidation amount in USD
+        explode: false
+        in: query
+        name: min_amount
+        schema:
+          default: '10000'
+          description: Minimum liquidation amount in USD
+          examples:
+          - '10000'
+          type: string
+      - description: Filter by liquidation side. Omit to return both.
+        explode: false
+        in: query
+        name: side
+        schema:
+          description: Filter by liquidation side. Omit to return both.
+          enum:
+          - long
+          - short
+          examples:
+          - long
+          type: string
+      - description: Field to sort results by
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: timestamp
+          description: Field to sort results by
+          enum:
+          - usd_value
+          - timestamp
+          - price
+          type: string
+      - description: Sort order
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort order
+          enum:
+          - asc
+          - desc
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Start of time range (inclusive). Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start of time range (inclusive). Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+          examples:
+          - '2024-01-01'
+          type: string
+      - description: End of time range, exclusive (returns rows strictly older than `to`). Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`). To page backward, set this to the oldest returned `timestamp` + 1 and de-duplicate on `order_id`.
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End of time range, exclusive (returns rows strictly older than `to`). Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`). To page backward, set this to the oldest returned `timestamp` + 1 and de-duplicate on `order_id`.
+          examples:
+          - '2024-02-01'
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseLiquidationOrderItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Large Liquidation Orders
+      tags:
+      - Market
+  /gateway/v1/market/listing:
+    get:
+      description: 'Returns historical exchange listing and delisting events.
+
+
+        **Filters:** date range, exchange, token symbol, product type, event type.'
+      operationId: listing
+      parameters:
+      - description: Start date (YYYY-MM-DD or ISO 8601)
+        explode: false
+        in: query
+        name: from
+        required: true
+        schema:
+          description: Start date (YYYY-MM-DD or ISO 8601)
+          examples:
+          - '2024-01-01'
+          type: string
+      - description: End date (defaults to now)
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End date (defaults to now)
+          examples:
+          - '2024-03-01'
+          type: string
+      - description: Filter by token symbol
+        explode: false
+        in: query
+        name: symbol
+        schema:
+          description: Filter by token symbol
+          examples:
+          - BTC
+          type: string
+      - description: Filter by exchange name
+        explode: false
+        in: query
+        name: exchange
+        schema:
+          description: Filter by exchange name
+          examples:
+          - binance
+          type: string
+      - description: Filter by product type
+        explode: false
+        in: query
+        name: product
+        schema:
+          default: all
+          description: Filter by product type
+          enum:
+          - spot
+          - margin
+          - perp
+          - pre_market_perp
+          - all
+          type: string
+      - description: Event type filter
+        explode: false
+        in: query
+        name: type
+        schema:
+          default: listing
+          description: Event type filter
+          enum:
+          - listing
+          - delisting
+          - cancelled
+          - advanced
+          - postponed
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseListingEventItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Exchange Listing Events
+      tags:
+      - Market
+  /gateway/v1/market/onchain-indicator:
+    get:
+      description: 'Returns on-chain indicator time-series for BTC or ETH.
+
+
+        **Available metrics:** `nupl`, `sopr`, `mvrv`, `puell-multiple`, `nvm`, `nvt`, `nvt-golden-cross`, `exchange-flows` (inflow/outflow/netflow/reserve).
+
+
+        **Long ranges:** each response is capped at about 100 data points. When `meta.has_more=true`, split `from`/`to` into smaller windows (about 90 days for daily data) and merge by timestamp client-side. For exchange-flow metrics, `all_exchange`, `spot_exchange`, and `derivative_exchange` are aggregate filters, not sums over the curated individual exchange list.'
+      operationId: market-onchain-indicator
+      parameters:
+      - description: Token ticker symbol. Can be `BTC` or `ETH`.
+        explode: false
+        in: query
+        name: symbol
+        required: true
+        schema:
+          description: Token ticker symbol. Can be `BTC` or `ETH`.
+          enum:
+          - BTC
+          - ETH
+          examples:
+          - BTC
+          type: string
+      - description: On-chain metric name. Can be `nupl`, `sopr`, `mvrv`, `puell-multiple`, `nvm`, `nvt`, `nvt-golden-cross`, or `exchange-flows/{inflow,outflow,netflow,reserve}`.
+        explode: false
+        in: query
+        name: metric
+        required: true
+        schema:
+          description: On-chain metric name. Can be `nupl`, `sopr`, `mvrv`, `puell-multiple`, `nvm`, `nvt`, `nvt-golden-cross`, or `exchange-flows/{inflow,outflow,netflow,reserve}`.
+          enum:
+          - nupl
+          - sopr
+          - mvrv
+          - puell-multiple
+          - nvm
+          - nvt
+          - nvt-golden-cross
+          - exchange-flows/inflow
+          - exchange-flows/outflow
+          - exchange-flows/netflow
+          - exchange-flows/reserve
+          examples:
+          - nupl
+          type: string
+      - description: Aggregation granularity.
+        explode: false
+        in: query
+        name: granularity
+        schema:
+          default: day
+          description: Aggregation granularity.
+          enum:
+          - day
+          examples:
+          - day
+          type: string
+      - description: Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD). Defaults to 90 days ago when omitted. Maximum range is 365 days. Responses are capped at about 100 data points; when meta.has_more is true, split from/to into smaller windows (about 90 days for daily data).
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD). Defaults to 90 days ago when omitted. Maximum range is 365 days. Responses are capped at about 100 data points; when meta.has_more is true, split from/to into smaller windows (about 90 days for daily data).
+          examples:
+          - '2026-01-01'
+          type: string
+      - description: End of time range. Accepts Unix seconds or date string (YYYY-MM-DD). Defaults to today when omitted. Maximum range is 365 days. Responses are capped at about 100 data points; when meta.has_more is true, split from/to into smaller windows (about 90 days for daily data).
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End of time range. Accepts Unix seconds or date string (YYYY-MM-DD). Defaults to today when omitted. Maximum range is 365 days. Responses are capped at about 100 data points; when meta.has_more is true, split from/to into smaller windows (about 90 days for daily data).
+          examples:
+          - '2026-03-01'
+          type: string
+      - description: Curated exchange filter for exchange-flow metrics. Use /v1/market/exchange-flow/exchanges to list labels.
+        explode: false
+        in: query
+        name: exchange
+        schema:
+          default: all_exchange
+          description: Curated exchange filter for exchange-flow metrics. Use /v1/market/exchange-flow/exchanges to list labels.
+          enum:
+          - all_exchange
+          - spot_exchange
+          - derivative_exchange
+          - coinbase_prime
+          - binance
+          - coinbase_advanced
+          - okx
+          - kraken
+          - bybit
+          - bitstamp
+          - gemini
+          - bitget
+          - kucoin
+          - bitfinex
+          - gate_io
+          - deribit
+          - mexc
+          - htx_global
+          - bitflyer
+          - coinone
+          - bithumb
+          - upbit
+          - hashkey_exchange
+          examples:
+          - all_exchange
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseMarketMetricPoint'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: On-Chain Indicator
+      tags:
+      - Market
+  /gateway/v1/market/options:
+    get:
+      description: 'Returns options market data for a `symbol`.
+
+
+        **Included fields:** open interest, volume, put/call ratio, max pain price.'
+      operationId: market-options
+      parameters:
+      - description: Token symbol. Can be `BTC`, `ETH`, `SOL`, `XRP`, `BNB`, `DOGE`, `ADA`, or `AVAX`.
+        explode: false
+        in: query
+        name: symbol
+        required: true
+        schema:
+          description: Token symbol. Can be `BTC`, `ETH`, `SOL`, `XRP`, `BNB`, `DOGE`, `ADA`, or `AVAX`.
+          enum:
+          - BTC
+          - ETH
+          - SOL
+          - XRP
+          - BNB
+          - DOGE
+          - ADA
+          - AVAX
+          examples:
+          - BTC
+          type: string
+      - description: Field to sort results by
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: volume_24h
+          description: Field to sort results by
+          enum:
+          - open_interest
+          - volume_24h
+          examples:
+          - volume_24h
+          type: string
+      - description: Sort order
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: Sort order
+          enum:
+          - asc
+          - desc
+          examples:
+          - desc
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleListResponseMarketOptionsItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Options Market Data
+      tags:
+      - Market
+  /gateway/v1/market/price:
+    get:
+      description: 'Returns historical price data points for a token over a specified time range.
+
+
+        **Time range options:**
+
+        - Predefined: `1d`, `7d`, `14d`, `30d`, `90d`, `180d`, `365d`, `max`
+
+        - Custom: use `from` / `to` (Unix seconds or `YYYY-MM-DD`)
+
+
+        **Granularity** is automatic based on range:
+
+        - `1d` → 5-minute intervals
+
+        - `7d`–`90d` → hourly
+
+        - `180d`+ → daily'
+      operationId: market-price
+      parameters:
+      - description: Single token ticker symbol like `BTC`, `ETH`, or `SOL` (multi-symbol not supported)
+        explode: false
+        in: query
+        name: symbol
+        required: true
+        schema:
+          description: Single token ticker symbol like `BTC`, `ETH`, or `SOL` (multi-symbol not supported)
+          examples:
+          - BTC
+          type: string
+      - description: 'Window of historical data to return: `1d`, `7d`, `14d`, `30d`, `90d`, `180d`, `365d`, or `max`. Ignored when `from`/`to` are set. This endpoint uses `time_range` only — it does NOT accept `interval`; bucket granularity is chosen server-side based on the window size.'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 30d
+          description: 'Window of historical data to return: `1d`, `7d`, `14d`, `30d`, `90d`, `180d`, `365d`, or `max`. Ignored when `from`/`to` are set. This endpoint uses `time_range` only — it does NOT accept `interval`; bucket granularity is chosen server-side based on the window size.'
+          enum:
+          - 1d
+          - 7d
+          - 14d
+          - 30d
+          - 90d
+          - 180d
+          - 365d
+          - max
+          examples:
+          - 30d
+          type: string
+      - description: Start of custom date range (Unix timestamp or YYYY-MM-DD). Must be used together with `to`. Overrides `time_range` when set.
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start of custom date range (Unix timestamp or YYYY-MM-DD). Must be used together with `to`. Overrides `time_range` when set.
+          examples:
+          - '2025-01-01'
+          type: string
+      - description: End of custom date range (Unix timestamp or YYYY-MM-DD). Must be used together with `from`. Overrides `time_range` when set.
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End of custom date range (Unix timestamp or YYYY-MM-DD). Must be used together with `from`. Overrides `time_range` when set.
+          examples:
+          - '2025-03-01'
+          type: string
+      - description: Quote currency like `usd`, `eur`, or `btc`
+        explode: false
+        in: query
+        name: currency
+        schema:
+          default: usd
+          description: Quote currency like `usd`, `eur`, or `btc`
+          examples:
+          - usd
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketPriceResponse'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Token Price History
+      tags:
+      - Market
+  /gateway/v1/market/price-indicator:
+    get:
+      description: 'Returns a technical indicator for a trading pair on a given exchange and interval.
+
+
+        **Modes:**
+
+        - Set `from`/`to` for time-series
+
+        - Omit for latest value only
+
+
+        **Indicator-specific tuning** via `options` (e.g. `period:7`, `fast_period:8,slow_period:21,signal_period:5`, `period:10,stddev:1.5`).
+
+
+        **Available indicators:** `rsi`, `macd`, `ema`, `sma`, `bbands`, `stoch`, `adx`, `atr`, `cci`, `obv`, `vwap`, `dmi`, `ichimoku`, `supertrend`.'
+      operationId: market-price-indicator
+      parameters:
+      - description: Technical indicator name. Can be `rsi`, `macd`, `ema`, `sma`, `bbands`, `stoch`, `adx`, `atr`, `cci`, `obv`, `vwap`, `dmi`, `ichimoku`, or `supertrend`.
+        explode: false
+        in: query
+        name: indicator
+        required: true
+        schema:
+          description: Technical indicator name. Can be `rsi`, `macd`, `ema`, `sma`, `bbands`, `stoch`, `adx`, `atr`, `cci`, `obv`, `vwap`, `dmi`, `ichimoku`, or `supertrend`.
+          enum:
+          - rsi
+          - macd
+          - ema
+          - sma
+          - bbands
+          - stoch
+          - adx
+          - atr
+          - cci
+          - obv
+          - vwap
+          - dmi
+          - ichimoku
+          - supertrend
+          examples:
+          - rsi
+          type: string
+      - description: Trading pair as `BTC/USDT` or bare symbol like `BTC`
+        explode: false
+        in: query
+        name: symbol
+        required: true
+        schema:
+          description: Trading pair as `BTC/USDT` or bare symbol like `BTC`
+          examples:
+          - BTC
+          type: string
+      - description: 'Candlestick interval — bucket size for each point in the indicator series: `1m`, `5m`, `15m`, `30m`, `1h`, `2h`, `4h`, `12h`, `1d`, or `1w`. This endpoint uses `interval` only; it does NOT accept `time_range`. Use `from`/`to` to bound the series.'
+        explode: false
+        in: query
+        name: interval
+        schema:
+          default: 1d
+          description: 'Candlestick interval — bucket size for each point in the indicator series: `1m`, `5m`, `15m`, `30m`, `1h`, `2h`, `4h`, `12h`, `1d`, or `1w`. This endpoint uses `interval` only; it does NOT accept `time_range`. Use `from`/`to` to bound the series.'
+          enum:
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 2h
+          - 4h
+          - 12h
+          - 1d
+          - 1w
+          examples:
+          - 1d
+          type: string
+      - description: Exchange for price data. Can be `binance`, `bybit`, `coinbase`, or `kraken`.
+        explode: false
+        in: query
+        name: exchange
+        schema:
+          default: binance
+          description: Exchange for price data. Can be `binance`, `bybit`, `coinbase`, or `kraken`.
+          enum:
+          - binance
+          - bybit
+          - coinbase
+          - kraken
+          examples:
+          - binance
+          type: string
+      - description: Start of time range. When set, returns time-series instead of latest value. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start of time range. When set, returns time-series instead of latest value. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+          examples:
+          - '2024-01-01'
+          type: string
+      - description: End of time range. Defaults to now when from is set. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End of time range. Defaults to now when from is set. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)
+          examples:
+          - '2024-02-01'
+          type: string
+      - description: 'Indicator-specific options as comma-separated key:value pairs. Available options by indicator: `period` — lookback period for rsi (default 14), sma (default 20), ema (default 20), bbands (default 20), adx (default 14), atr (default 14), cci (default 20), dmi (default 14), stoch (default 14), supertrend (default 10). `stddev` — standard deviation for bbands (default 2). `multiplier` — multiplier for supertrend (default 3). `fast_period` — MACD fast EMA (default 12). `slow_period` — MACD slow EMA (default 26). `signal_period` — MACD signal smoothing (default 9). Examples: `period:7`, `period:200`, `fast_period:8,slow_period:21,signal_period:5`, `period:10,stddev:1.5`.'
+        explode: false
+        in: query
+        name: options
+        schema:
+          description: 'Indicator-specific options as comma-separated key:value pairs. Available options by indicator: `period` — lookback period for rsi (default 14), sma (default 20), ema (default 20), bbands (default 20), adx (default 14), atr (default 14), cci (default 20), dmi (default 14), stoch (default 14), supertrend (default 10). `stddev` — standard deviation for bbands (default 2). `multiplier` — multiplier for supertrend (default 3). `fast_period` — MACD fast EMA (default 12). `slow_period` — MACD slow EMA (default 26). `signal_period` — MACD signal smoothing (default 9). Examples: `period:7`, `period:200`, `fast_period:8,slow_period:21,signal_period:5`, `period:10,stddev:1.5`.'
+          examples:
+          - period:7
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseMarketIndicatorItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Technical Indicator
+      tags:
+      - Market
+  /gateway/v1/market/public-sale:
+    get:
+      description: 'Returns public sale (IDO/ICO/IEO) information for a project.
+
+
+        Includes sale type, status, price, raise amount, and ROI data.'
+      operationId: market-public-sale
+      parameters:
+      - description: Surf project UUID
+        explode: false
+        in: query
+        name: id
+        schema:
+          description: Surf project UUID
+          examples:
+          - 25c6612a-395c-4974-94eb-3b5f9f4b2ed7
+          type: string
+      - description: Project name or symbol for entity resolution
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Project name or symbol for entity resolution
+          examples:
+          - bitcoin
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponsePublicSaleItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Public Sale / Crowdsale
+      tags:
+      - Market
+  /gateway/v1/market/ranking:
+    get:
+      description: 'Returns a token leaderboard sorted by market cap, 24h change, or volume. Each entry includes price, market cap, FDV, supply, ATH/ATL, and 24h range. Supports category filtering (MEME, AI, L1, L2, DEFI, GAMING, etc.).
+
+
+        **Available metrics:** `market_cap`, `top_gainers`, `top_losers`, `volume`.
+
+
+        **Note:** `top_gainers` and `top_losers` rank by 24h price change within the top 250 coins by market cap.
+
+
+        For circulating supply, FDV, ATH/ATL, use `/project/detail?fields=token_info`.'
+      operationId: market-ranking
+      parameters:
+      - description: Field to sort by. `market_cap` sorts by total market capitalisation, `change_24h` sorts by 24-hour price change percentage (fetches top 250 by market cap then sorts client-side), `volume_24h` sorts by 24-hour trading volume.
+        explode: false
+        in: query
+        name: sort_by
+        schema:
+          default: market_cap
+          description: Field to sort by. `market_cap` sorts by total market capitalisation, `change_24h` sorts by 24-hour price change percentage (fetches top 250 by market cap then sorts client-side), `volume_24h` sorts by 24-hour trading volume.
+          enum:
+          - market_cap
+          - change_24h
+          - volume_24h
+          examples:
+          - market_cap
+          type: string
+      - description: 'Sort order: `desc` (default, highest first) or `asc` (lowest first).'
+        explode: false
+        in: query
+        name: order
+        schema:
+          default: desc
+          description: 'Sort order: `desc` (default, highest first) or `asc` (lowest first).'
+          enum:
+          - asc
+          - desc
+          examples:
+          - desc
+          type: string
+      - description: 'Optional token category filter. When provided, results are limited to coins in that category. Supported values: MEME, AI, AI_AGENTS, L1, L2, DEFI, GAMING, STABLECOIN, RWA, DEPIN, SOL_ECO, BASE_ECO, LST.'
+        explode: false
+        in: query
+        name: category
+        schema:
+          description: 'Optional token category filter. When provided, results are limited to coins in that category. Supported values: MEME, AI, AI_AGENTS, L1, L2, DEFI, GAMING, STABLECOIN, RWA, DEPIN, SOL_ECO, BASE_ECO, LST.'
+          enum:
+          - MEME
+          - AI
+          - AI_AGENTS
+          - L1
+          - L2
+          - DEFI
+          - GAMING
+          - STABLECOIN
+          - RWA
+          - DEPIN
+          - SOL_ECO
+          - BASE_ECO
+          - LST
+          examples:
+          - MEME
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseMarketTopCoinItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Token Rankings
+      tags:
+      - Market
+  /gateway/v1/market/tge:
+    get:
+      description: 'Returns Token Generation Event (TGE) status for a project.
+
+
+        Includes current status, last event time, and listing exchanges.'
+      operationId: market-tge
+      parameters:
+      - description: Surf project UUID
+        explode: false
+        in: query
+        name: id
+        schema:
+          description: Surf project UUID
+          examples:
+          - 25c6612a-395c-4974-94eb-3b5f9f4b2ed7
+          type: string
+      - description: Project name or symbol for entity resolution
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Project name or symbol for entity resolution
+          examples:
+          - bitcoin
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectResponseTGEItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Token Generation Event
+      tags:
+      - Market
+      x-agent-views:
+        summary:
+          command_example: surf market-tge --q "nubit" --agent-view summary
+          description: Compact TGE fields for agents. If the response data is an array, returns one compact summary per row; otherwise returns one compact summary object.
+          output:
+            fields:
+              amount: number|string|null
+              circulating_supply: number|string|null
+              date: string|null
+              event_time: string|null
+              exchanges: array|null
+              fdv: number|string|null
+              initial_circulating_supply: number|string|null
+              last_event_time: string|null
+              launch_date: string|null
+              listing_date: string|null
+              listing_exchanges: array|null
+              listings: array|null
+              name: string|null
+              next_event_time: string|null
+              price: number|string|null
+              price_usd: number|string|null
+              project: object|string|null
+              project_name: string|null
+              public_sale: object|array|null
+              raise_amount: number|string|null
+              stage: string|null
+              status: string|null
+              symbol: string|null
+              tge_date: string|null
+              tge_status: string|null
+              token_price: number|string|null
+              unlock_percentage: number|string|null
+              valuation: number|string|null
+            type: object_or_array
+components:
+  schemas:
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    DataObjectResponseTGEItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseTGEItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/TGEItem'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseMarketIndicatorItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseMarketIndicatorItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MarketIndicatorItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    SimpleListResponseMarketFearGreedHistoryItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseMarketFearGreedHistoryItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MarketFearGreedHistoryItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    DataResponsePublicSaleItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponsePublicSaleItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/PublicSaleItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    PublicSaleItem:
+      additionalProperties: false
+      properties:
+        allocation_of_supply:
+          description: Percentage of total supply allocated
+          format: double
+          type: number
+        ath_roi:
+          description: All-time-high return on investment multiplier
+          format: double
+          type: number
+        crowdsale_end_date:
+          description: Sale end date (Unix seconds)
+          format: int64
+          type: integer
+        crowdsale_price:
+          description: Token sale price in USD
+          format: double
+          type: number
+        crowdsale_raise:
+          description: Total funds raised in USD
+          format: double
+          type: number
+        crowdsale_start_date:
+          description: Sale start date (Unix seconds)
+          format: int64
+          type: integer
+        crowdsale_status:
+          description: Sale status (UPCOMING, ACTIVE, ENDED)
+          type: string
+        crowdsale_type:
+          description: Sale type (IDO, ICO, IEO, etc.)
+          type: string
+        launchpad_name:
+          description: Launchpad platform name
+          type: string
+        name:
+          description: Project name
+          type: string
+        project_id:
+          description: Surf project UUID, for frontend entity linking.
+          type: string
+        symbol:
+          description: Token symbol
+          type: string
+      type: object
+    MarketIndicatorItem:
+      additionalProperties: false
+      properties:
+        interval:
+          description: Time interval used to compute the indicator like `1h`, `4h`, or `1d`
+          type: string
+        name:
+          description: Indicator name like `rsi`, `macd`, or `bbands`
+          type: string
+        project_id:
+          description: Surf project UUID this symbol resolved to, for frontend entity linking. Empty when unmapped.
+          type: string
+        symbol:
+          description: Token symbol this indicator is computed for
+          type: string
+        timestamp:
+          description: Candle open timestamp in Unix seconds (present in time-series responses)
+          format: int64
+          type: integer
+        updated_at:
+          description: Unix timestamp in seconds when the indicator was last computed
+          format: int64
+          type: integer
+        value:
+          description: Primary indicator value
+          format: double
+          type: number
+        values:
+          $ref: '#/components/schemas/IndicatorValues'
+          description: Component values for multi-value indicators. Present for macd, bbands, stoch, dmi, ichimoku, supertrend. Nil for single-value indicators (rsi, ema, sma, atr, cci, obv, vwap).
+      required:
+      - name
+      - symbol
+      - interval
+      - value
+      type: object
+    MarketETFFlowItem:
+      additionalProperties: false
+      properties:
+        etfs:
+          description: Flow breakdown by individual ETF ticker
+          items:
+            $ref: '#/components/schemas/ETFTickerFlow'
+          type:
+          - array
+          - 'null'
+        flow_usd:
+          description: Daily net flow in USD (positive=inflow, negative=outflow)
+          format: double
+          type: number
+        price_usd:
+          description: Token price in USD at close of day
+          format: double
+          type: number
+        project_id:
+          description: Surf project UUID of the underlying, for frontend entity linking. Empty when unmapped.
+          type: string
+        settled:
+          description: Whether this trading day is final. Current-day rows may still be pending upstream settlement.
+          type: boolean
+        symbol:
+          description: Underlying token symbol like `BTC`, `ETH`, `XRP`, `SOL`, or `HYPE`
+          type: string
+        timestamp:
+          description: Unix timestamp in seconds (midnight UTC for the trading day)
+          format: int64
+          type: integer
+      required:
+      - flow_usd
+      - price_usd
+      - timestamp
+      - settled
+      type: object
+    DataResponseLiquidationOrderItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseLiquidationOrderItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/LiquidationOrderItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    MarketTopCoinItem:
+      additionalProperties: false
+      properties:
+        ath:
+          description: All-time high price in USD
+          format: double
+          type: number
+        ath_date:
+          description: Unix timestamp in seconds when the all-time high price was reached
+          format: int64
+          type: integer
+        atl:
+          description: All-time low price in USD
+          format: double
+          type: number
+        atl_date:
+          description: Unix timestamp in seconds when the all-time low price was reached
+          format: int64
+          type: integer
+        change_24h_pct:
+          description: Price change percentage over the last 24 hours
+          format: double
+          type: number
+        circulating_supply:
+          description: Circulating token supply
+          format: double
+          type: number
+        fdv:
+          description: Fully diluted valuation in USD
+          format: double
+          type: number
+        high_24h:
+          description: Highest price in the last 24 hours in USD
+          format: double
+          type: number
+        id:
+          description: Surf project UUID. Empty when no matching Surf project metadata is available.
+          type: string
+        image:
+          description: Token logo image URL
+          type: string
+        low_24h:
+          description: Lowest price in the last 24 hours in USD
+          format: double
+          type: number
+        market_cap_usd:
+          description: Total market capitalization in USD
+          format: double
+          type: number
+        max_supply:
+          description: Maximum token supply (e.g. 21M for BTC). Not available for all tokens.
+          format: double
+          type: number
+        name:
+          description: Full token name
+          type: string
+        price_usd:
+          description: Current price in USD
+          format: double
+          type: number
+        rank:
+          description: Rank position in the list (1 = highest)
+          format: int64
+          type: integer
+        slug:
+          description: Surf project slug. Empty under the same conditions as id.
+          type: string
+        symbol:
+          description: Token ticker symbol like `BTC` or `ETH`
+          type: string
+        total_supply:
+          description: Total token supply
+          format: double
+          type: number
+        volume_24h_usd:
+          description: 24-hour trading volume in USD
+          format: double
+          type: number
+      required:
+      - rank
+      - symbol
+      - name
+      - price_usd
+      - change_24h_pct
+      - market_cap_usd
+      - volume_24h_usd
+      - high_24h
+      - low_24h
+      type: object
+    MarketOptionsItem:
+      additionalProperties: false
+      properties:
+        exchange:
+          description: Options exchange name
+          type: string
+        max_pain_price:
+          description: Max pain price for the nearest expiry in USD. Only available for individual exchanges (Deribit, OKX, Binance, Bybit), not present on the `All` aggregate row.
+          format: double
+          type: number
+        open_interest:
+          description: Total options open interest in USD
+          format: double
+          type: number
+        project_id:
+          description: Surf project UUID this symbol resolved to, for frontend entity linking. Empty when unmapped.
+          type: string
+        put_call_ratio:
+          description: Put/call open interest ratio (put OI / call OI). Values above 1 indicate bearish sentiment. Only available for individual exchanges (Deribit, OKX, Binance, Bybit), not present on the `All` aggregate row.
+          format: double
+          type: number
+        symbol:
+          description: Underlying token symbol like `BTC` or `ETH`
+          type: string
+        updated_at:
+          description: Unix timestamp (seconds) of last update
+          format: int64
+          type: integer
+        volume_24h:
+          description: 24-hour options trading volume in USD
+          format: double
+          type: number
+      required:
+      - symbol
+      - exchange
+      - open_interest
+      - volume_24h
+      - updated_at
+      type: object
+    ListingEventItem:
+      additionalProperties: false
+      properties:
+        base_symbol:
+          description: Base currency symbol
+          type: string
+        effective_at:
+          description: When the listing/delisting takes effect (Unix seconds)
+          format: int64
+          type: integer
+        event_type:
+          description: LISTING or DELISTING
+          type: string
+        exchange_name:
+          description: Exchange name
+          type: string
+        product:
+          description: Product type (SPOT, PERP, etc.)
+          type: string
+        published_at:
+          description: When the announcement was published (Unix seconds)
+          format: int64
+          type: integer
+        quote_symbol:
+          description: Quote currency symbol
+          type: string
+        trading_pair:
+          description: Trading pair like BTC/USDT
+          type: string
+      required:
+      - exchange_name
+      - product
+      - trading_pair
+      - event_type
+      - effective_at
+      type: object
+    SimpleListResponseMarketFuturesItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseMarketFuturesItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MarketFuturesItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    SimpleListResponseLiquidationExchangeItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseLiquidationExchangeItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/LiquidationExchangeItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    ETFTickerFlow:
+      additionalProperties: false
+      properties:
+        flow_usd:
+          description: Daily net flow in USD for this ticker
+          format: double
+          type: number
+        ticker:
+          description: ETF ticker symbol like `IBIT`, `GBTC`, or `ETHA`
+          type: string
+      required:
+      - ticker
+      - flow_usd
+      type: object
+    DataResponseListingEventItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseListingEventItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ListingEventItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseMarketMetricPoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseMarketMetricPoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MarketMetricPoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    TGEItem:
+      additionalProperties: false
+      properties:
+        current_status:
+          description: Current TGE status
+          type: string
+        exchanges:
+          description: Exchanges where token launched
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        last_event_time:
+          description: Last status change (Unix seconds)
+          format: int64
+          type: integer
+        project_id:
+          description: Surf project UUID
+          type: string
+        project_name:
+          description: Surf project name, for frontend entity linking.
+          type: string
+      required:
+      - project_id
+      - current_status
+      type: object
+    SimpleListResponseLiquidationChartItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseLiquidationChartItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/LiquidationChartItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    MarketPriceResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/MarketPriceResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          description: Historical price points
+          items:
+            $ref: '#/components/schemas/MarketMetricPoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+          description: Cost and cache metadata for this response
+        project_id:
+          description: Surf project UUID the `--symbol` resolved to, for frontend entity linking. Empty when the symbol is unmapped.
+          type: string
+        summary:
+          $ref: '#/components/schemas/MarketPriceSummary'
+          description: Rollup statistics over the requested time range
+        symbol:
+          description: The queried ticker, normalized.
+          type: string
+      required:
+      - data
+      - summary
+      - meta
+      type: object
+    LiquidationExchangeItem:
+      additionalProperties: false
+      properties:
+        exchange:
+          description: Exchange name like `Binance` or `OKX`. `All` = aggregate across all exchanges
+          type: string
+        liquidation_usd:
+          description: Total liquidation volume (USD)
+          format: double
+          type: number
+        long_liquidation_usd:
+          description: Long-side liquidation volume (USD)
+          format: double
+          type: number
+        short_liquidation_usd:
+          description: Short-side liquidation volume (USD)
+          format: double
+          type: number
+      required:
+      - exchange
+      - liquidation_usd
+      - long_liquidation_usd
+      - short_liquidation_usd
+      type: object
+    MarketFuturesItem:
+      additionalProperties: false
+      properties:
+        funding_rate:
+          description: Current funding rate as a decimal (`0.0001` = 0.01%)
+          format: double
+          type: number
+        long_short_ratio:
+          description: Ratio of long to short positions
+          format: double
+          type: number
+        open_interest:
+          description: Total open interest in USD
+          format: double
+          type: number
+        project_id:
+          description: Surf project UUID this symbol resolved to, for frontend entity linking. Empty when unmapped.
+          type: string
+        symbol:
+          description: Trading symbol like `BTC` or `ETH`
+          type: string
+        updated_at:
+          description: Unix timestamp (seconds) of last update
+          format: int64
+          type: integer
+        volume_24h:
+          description: 24-hour trading volume in USD
+          format: double
+          type: number
+        volume_change_24h:
+          description: 24-hour volume change in USD (positive=increase, negative=decrease)
+          format: double
+          type: number
+      required:
+      - symbol
+      - open_interest
+      - funding_rate
+      - long_short_ratio
+      - volume_24h
+      - volume_change_24h
+      - updated_at
+      type: object
+    SimpleListResponseMarketETFFlowItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseMarketETFFlowItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MarketETFFlowItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    LiquidationChartItem:
+      additionalProperties: false
+      properties:
+        contributing_exchanges:
+          description: Exchanges that contributed to this liquidation point
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        excluded_exchanges:
+          description: Requested exchanges omitted because liquidation data is unavailable
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        long_liquidation_usd:
+          description: Long-side aggregated liquidation volume (USD)
+          format: double
+          type: number
+        short_liquidation_usd:
+          description: Short-side aggregated liquidation volume (USD)
+          format: double
+          type: number
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type: integer
+      required:
+      - timestamp
+      - long_liquidation_usd
+      - short_liquidation_usd
+      type: object
+    MarketPriceSummary:
+      additionalProperties: false
+      properties:
+        change_abs:
+          description: 'Absolute change in the quote currency: last - first'
+          format: double
+          type: number
+        change_pct:
+          description: 'Percentage change rounded to 4 decimals: (last - first) / first * 100. Zero when first is zero.'
+          format: double
+          type: number
+        first:
+          description: Value of the earliest-timestamp point in the requested time range
+          format: double
+          type: number
+        high:
+          description: Highest value observed in the requested time range
+          format: double
+          type: number
+        last:
+          description: Value of the latest-timestamp point in the requested time range
+          format: double
+          type: number
+        latest_dt:
+          description: Unix seconds of the latest-timestamp point
+          format: int64
+          type: integer
+        low:
+          description: Lowest value observed in the requested time range
+          format: double
+          type: number
+        n_points:
+          description: Number of points in the underlying time-series
+          format: int64
+          type: integer
+      required:
+      - first
+      - last
+      - high
+      - low
+      - change_abs
+      - change_pct
+      - latest_dt
+      - n_points
+      type: object
+    DataResponseMarketExchangeFlowExchangeItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseMarketExchangeFlowExchangeItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MarketExchangeFlowExchangeItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    MarketFearGreedHistoryItem:
+      additionalProperties: false
+      properties:
+        classification:
+          description: Human-readable classification (Extreme Fear, Fear, Neutral, Greed, Extreme Greed)
+          type: string
+        price:
+          description: BTC price in USD at this point in time
+          format: double
+          type: number
+        timestamp:
+          description: Unix timestamp in seconds for this data point
+          format: int64
+          type: integer
+        value:
+          description: Fear and Greed Index score from 0 (extreme fear) to 100 (extreme greed)
+          format: int64
+          type: integer
+      required:
+      - value
+      - classification
+      - price
+      - timestamp
+      type: object
+    IndicatorValues:
+      additionalProperties: false
+      properties:
+        bbands_lower:
+          description: Bollinger lower band
+          format: double
+          type: number
+        bbands_middle:
+          description: Bollinger middle band (SMA)
+          format: double
+          type: number
+        bbands_upper:
+          description: Bollinger upper band
+          format: double
+          type: number
+        dmi_adx:
+          description: Average Directional Index value
+          format: double
+          type: number
+        dmi_mdi:
+          description: Negative Directional Indicator (-DI)
+          format: double
+          type: number
+        dmi_pdi:
+          description: Positive Directional Indicator (+DI)
+          format: double
+          type: number
+        ichimoku_base:
+          description: Ichimoku baseline (Kijun-sen)
+          format: double
+          type: number
+        ichimoku_conversion:
+          description: Ichimoku conversion line (Tenkan-sen)
+          format: double
+          type: number
+        ichimoku_current_span_a:
+          description: Ichimoku current span A
+          format: double
+          type: number
+        ichimoku_current_span_b:
+          description: Ichimoku current span B
+          format: double
+          type: number
+        ichimoku_lagging_span_a:
+          description: Ichimoku lagging span A
+          format: double
+          type: number
+        ichimoku_lagging_span_b:
+          description: Ichimoku lagging span B
+          format: double
+          type: number
+        ichimoku_span_a:
+          description: Ichimoku leading span A (Senkou A)
+          format: double
+          type: number
+        ichimoku_span_b:
+          description: Ichimoku leading span B (Senkou B)
+          format: double
+          type: number
+        macd_hist:
+          description: MACD histogram (MACD minus signal)
+          format: double
+          type: number
+        macd_signal:
+          description: MACD signal line
+          format: double
+          type: number
+        macd_value:
+          description: MACD line value
+          format: double
+          type: number
+        stoch_d:
+          description: Stochastic %D (slow line)
+          format: double
+          type: number
+        stoch_k:
+          description: Stochastic %K (fast line)
+          format: double
+          type: number
+        supertrend_advice:
+          description: 'Supertrend direction: `buy` (price above supertrend, bullish) or `sell` (price below supertrend, bearish)'
+          type: string
+        supertrend_value:
+          description: Supertrend line value
+          format: double
+          type: number
+      type: object
+    MarketMetricPoint:
+      additionalProperties: false
+      properties:
+        exchange:
+          description: Exchange filter used for exchange-flow metrics. Omitted for non-exchange-flow metrics.
+          type: string
+        exchange_name:
+          description: Human-readable exchange name for exchange-flow metrics. Omitted for non-exchange-flow metrics.
+          type: string
+        metric:
+          description: Metric name like `nupl`, `sopr`, or `exchange-flows/inflow`
+          type: string
+        project_id:
+          description: Surf project UUID this symbol resolved to, for frontend entity linking. Empty when unmapped.
+          type: string
+        symbol:
+          description: Token symbol this data point belongs to
+          type: string
+        timestamp:
+          description: Unix timestamp in seconds for this data point
+          format: int64
+          type: integer
+        value:
+          description: Metric value at this timestamp
+          format: double
+          type: number
+      required:
+      - value
+      - timestamp
+      type: object
+    DataResponseMarketTopCoinItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseMarketTopCoinItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MarketTopCoinItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    MarketExchangeFlowExchangeItem:
+      additionalProperties: false
+      properties:
+        name:
+          description: Human-readable exchange name
+          type: string
+        supported_flow_filter:
+          description: Whether this filter is in Hermod's curated exchange-flow allowlist
+          type: boolean
+        symbol:
+          description: Exchange filter value to pass as the `exchange` query parameter
+          type: string
+        type:
+          description: 'Filter type: `aggregate` for upstream exchange categories or `exchange` for individual exchanges'
+          type: string
+      required:
+      - symbol
+      - name
+      - type
+      - supported_flow_filter
+      type: object
+    LiquidationOrderItem:
+      additionalProperties: false
+      properties:
+        base_asset:
+          description: Base token symbol like `BTC`
+          type: string
+        exchange:
+          description: Exchange name like `Binance` or `OKX`
+          type: string
+        order_id:
+          description: Deterministic fingerprint for this liquidation row
+          type: string
+        price:
+          description: Liquidation execution price (USD)
+          format: double
+          type: number
+        side:
+          description: 'Liquidation side: `long` or `short`'
+          type: string
+        symbol:
+          description: Full trading pair like `BTCUSDT`
+          type: string
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type: integer
+        usd_value:
+          description: Liquidated position size (USD)
+          format: double
+          type: number
+      required:
+      - order_id
+      - exchange
+      - symbol
+      - base_asset
+      - price
+      - usd_value
+      - side
+      - timestamp
+      type: object
+    SimpleListResponseMarketOptionsItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseMarketOptionsItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MarketOptionsItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+  securitySchemes:
+    AccessToken:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    AdminToken:
+      in: header
+      name: X-Admin-Token
+      type: apiKey
+    InternalKey:
+      in: header
+      name: X-Internal-Key
+      type: apiKey

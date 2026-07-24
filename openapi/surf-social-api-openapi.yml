@@ -1,0 +1,1593 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: backend@cybertinolab.com
+    name: Cyber team
+  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
+  title: Hermod DEX Social API
+  version: sha-80d3407
+servers:
+- url: /
+tags:
+- description: Monitor crypto social activity on X (Twitter). Look up user profiles and their posts, track project sentiment scores and follower geography, discover smart followers, and analyze mindshare trends over time to gauge social momentum.
+  name: Social
+paths:
+  /gateway/v1/social/detail:
+    get:
+      description: 'Returns Twitter/X analytics for a crypto project: sentiment score, follower geography, and smart follower breakdown (VCs, KOLs, developers). For individual user profiles use `social-user` instead.
+
+
+        **Available fields** (via `fields`): `sentiment`, `follower_geo`, `smart_followers`.
+
+
+        **Lookup:** by X account ID (`x_id`) or project name (`q`, e.g. `uniswap`, `solana`). The `q` parameter must be a crypto project name, not a personal Twitter handle. Returns 404 if the project has no linked Twitter account.
+
+
+        For sentiment **trends over time**, use `/social/mindshare` instead.'
+      operationId: social-detail
+      parameters:
+      - description: Numeric X (Twitter) account ID (takes priority over `q`)
+        explode: false
+        in: query
+        name: x_id
+        schema:
+          description: Numeric X (Twitter) account ID (takes priority over `q`)
+          examples:
+          - '984188226826010624'
+          type: string
+      - description: Entity name to resolve like `uniswap`, `ethereum`, or `aave`
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Entity name to resolve like `uniswap`, `ethereum`, or `aave`
+          examples:
+          - uniswap
+          type: string
+      - description: Comma-separated sub-resources to include. Can be `sentiment`, `follower_geo`, or `smart_followers`.
+        explode: false
+        in: query
+        name: fields
+        schema:
+          default: sentiment,follower_geo,smart_followers
+          description: Comma-separated sub-resources to include. Can be `sentiment`, `follower_geo`, or `smart_followers`.
+          examples:
+          - sentiment
+          type: string
+      - description: 'Window to aggregate sentiment data over: `24h`, `48h`, `7d`, `30d`, `3m`, `6m`, or `1y`. Returns a single snapshot (not a time-series). This endpoint uses `time_range` only — it does NOT accept `interval`. For mindshare time-series use /v1/social/mindshare.'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 7d
+          description: 'Window to aggregate sentiment data over: `24h`, `48h`, `7d`, `30d`, `3m`, `6m`, or `1y`. Returns a single snapshot (not a time-series). This endpoint uses `time_range` only — it does NOT accept `interval`. For mindshare time-series use /v1/social/mindshare.'
+          enum:
+          - 24h
+          - 48h
+          - 7d
+          - 30d
+          - 3m
+          - 6m
+          - 1y
+          examples:
+          - 7d
+          type: string
+      - description: Max geo locations to return
+        explode: false
+        in: query
+        name: geo_limit
+        schema:
+          default: 20
+          description: Max geo locations to return
+          examples:
+          - 10
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectResponseSocialDetailBody'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Aggregated Social Analytics
+      tags:
+      - Social
+  /gateway/v1/social/mindshare:
+    get:
+      description: 'Returns mindshare (social view count) **time-series trend** for a project, aggregated by `interval`.
+
+
+        **Intervals:** `5m`, `1h`, `1d`, `7d`. `interval` is REQUIRED.
+
+
+        **Filters:** date range with `from`/`to` (Unix seconds). Lookup by Surf project UUID (`id`) or by name (`q`) — exactly one of the two is required.
+
+
+        **No pagination and no `time_range`** — this endpoint does NOT accept `limit`, `offset`, or `time_range`. Size of the returned series is controlled by `from`/`to` divided by `interval`.
+
+
+        Use this for sentiment **trends**, mindshare **over time**, or social momentum changes.
+
+
+        For a **point-in-time snapshot** of social analytics (sentiment score, follower geo, smart followers), use `/social/detail` instead.'
+      operationId: social-mindshare
+      parameters:
+      - description: Surf project UUID. Provide one of `id` or `q`.
+        explode: false
+        in: query
+        name: id
+        schema:
+          description: Surf project UUID. Provide one of `id` or `q`.
+          examples:
+          - 25c6612a-395c-4974-94eb-3b5f9f4b2ed7
+          type: string
+      - description: Entity name to resolve like `uniswap`, `ethereum`, or `aave`. Provide one of `id` or `q`.
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Entity name to resolve like `uniswap`, `ethereum`, or `aave`. Provide one of `id` or `q`.
+          examples:
+          - uniswap
+          type: string
+      - description: 'Bucket size for each point in the returned time-series: `5m`, `1h`, `1d`, or `7d`. This is NOT a window — this endpoint has no default window, pass `from`/`to` to bound the range. Not the same parameter as `time_range` (which does not exist on this endpoint). Note: when `include_tag_percents=true`, `5m` falls back to hourly data for the per-tag series (Argus has no 5m granularity for tag percentages).'
+        explode: false
+        in: query
+        name: interval
+        required: true
+        schema:
+          description: 'Bucket size for each point in the returned time-series: `5m`, `1h`, `1d`, or `7d`. This is NOT a window — this endpoint has no default window, pass `from`/`to` to bound the range. Not the same parameter as `time_range` (which does not exist on this endpoint). Note: when `include_tag_percents=true`, `5m` falls back to hourly data for the per-tag series (Argus has no 5m granularity for tag percentages).'
+          enum:
+          - 5m
+          - 1h
+          - 1d
+          - 7d
+          examples:
+          - 1d
+          type: string
+      - description: Start timestamp. Accepts Unix seconds (1704067200) or date string (2024-01-01)
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start timestamp. Accepts Unix seconds (1704067200) or date string (2024-01-01)
+          examples:
+          - '1704067200'
+          type: string
+      - description: End timestamp. Accepts Unix seconds (1706745600) or date string (2024-02-01)
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End timestamp. Accepts Unix seconds (1706745600) or date string (2024-02-01)
+          examples:
+          - '1706745600'
+          type: string
+      - description: Set to `true` to additionally return per-tag mindshare percentage time-series in the `tag_percents` field. A project can belong to multiple tags; each tag returns its own sparse time-series (values are 0~100 percentages, not ratios). Default `false` — response shape is byte-identical to the legacy format.
+        explode: false
+        in: query
+        name: include_tag_percents
+        schema:
+          description: Set to `true` to additionally return per-tag mindshare percentage time-series in the `tag_percents` field. A project can belong to multiple tags; each tag returns its own sparse time-series (values are 0~100 percentages, not ratios). Default `false` — response shape is byte-identical to the legacy format.
+          examples:
+          - true
+          type: boolean
+      - description: 'Data lane: `x` (X/Twitter, default) or `binance_square` (Binance Square). Response shape is identical across sources.'
+        explode: false
+        in: query
+        name: source
+        schema:
+          default: x
+          description: 'Data lane: `x` (X/Twitter, default) or `binance_square` (Binance Square). Response shape is identical across sources.'
+          enum:
+          - x
+          - binance_square
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialMindshareBody'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Project Mindshare Time Series
+      tags:
+      - Social
+  /gateway/v1/social/ranking:
+    get:
+      description: 'Returns top crypto projects ranked by mindshare (social view count), refreshed every 5 minutes.
+
+
+        **Filters:**
+
+        - `tag` — scope to a category (e.g. `dex`, `l1`, `meme`)
+
+        - `time_range` — ranking window (`24h`, `48h`, `7d`, `30d`)
+
+
+        Supports `limit`/`offset` pagination.'
+      operationId: social-ranking
+      parameters:
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Filter by project category. `l1` = Layer 1, `l2` = Layer 2/scaling, `dex` = DEX/AMM, `derivatives` = perps/options, `cex` = centralized exchange, `gamefi` = gaming, `nft` = NFT collections, `oracle` = oracle, `prediction` = prediction market, `rwa` = real-world assets, `yield` = yield/asset management, `data` = data/analytics, `devtool` = developer tooling, `compliance` = compliance/regtech, `meme` = meme/token launchpad.
+        explode: false
+        in: query
+        name: tag
+        schema:
+          description: Filter by project category. `l1` = Layer 1, `l2` = Layer 2/scaling, `dex` = DEX/AMM, `derivatives` = perps/options, `cex` = centralized exchange, `gamefi` = gaming, `nft` = NFT collections, `oracle` = oracle, `prediction` = prediction market, `rwa` = real-world assets, `yield` = yield/asset management, `data` = data/analytics, `devtool` = developer tooling, `compliance` = compliance/regtech, `meme` = meme/token launchpad.
+          enum:
+          - l1
+          - l2
+          - dex
+          - derivatives
+          - cex
+          - gamefi
+          - nft
+          - oracle
+          - prediction
+          - rwa
+          - yield
+          - data
+          - devtool
+          - compliance
+          - meme
+          - ''
+          examples:
+          - dex
+          type: string
+      - description: 'Window to compute the ranking over: `24h`, `48h`, `7d`, or `30d`. Returns a single ranked snapshot (not a time-series). This endpoint uses `time_range` only — it does NOT accept `interval`.'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 7d
+          description: 'Window to compute the ranking over: `24h`, `48h`, `7d`, or `30d`. Returns a single ranked snapshot (not a time-series). This endpoint uses `time_range` only — it does NOT accept `interval`.'
+          enum:
+          - 24h
+          - 48h
+          - 7d
+          - 30d
+          examples:
+          - 7d
+          type: string
+      - description: Filter by sentiment polarity. Only projects with sufficient tweet data are classified.
+        explode: false
+        in: query
+        name: sentiment
+        schema:
+          description: Filter by sentiment polarity. Only projects with sufficient tweet data are classified.
+          enum:
+          - positive
+          - negative
+          - ''
+          examples:
+          - positive
+          type: string
+      - description: 'Data lane: `x` (X/Twitter, default) or `binance_square` (Binance Square). Response shape is identical across sources.'
+        explode: false
+        in: query
+        name: source
+        schema:
+          default: x
+          description: 'Data lane: `x` (X/Twitter, default) or `binance_square` (Binance Square). Response shape is identical across sources.'
+          enum:
+          - x
+          - binance_square
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseMindshareTopProject'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Social Mindshare Ranking
+      tags:
+      - Social
+  /gateway/v1/social/sentiment:
+    get:
+      description: 'Returns the aggregate social sentiment score for a project.
+
+
+        Score ranges from -1.0 (bearish) to 1.0 (bullish).'
+      operationId: social-sentiment
+      parameters:
+      - description: Surf project UUID
+        explode: false
+        in: query
+        name: id
+        schema:
+          description: Surf project UUID
+          examples:
+          - 25c6612a-395c-4974-94eb-3b5f9f4b2ed7
+          type: string
+      - description: Project name or symbol for entity resolution
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Project name or symbol for entity resolution
+          examples:
+          - bitcoin
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectResponseSocialSentimentItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Social Sentiment
+      tags:
+      - Social
+  /gateway/v1/social/smart-followers/history:
+    get:
+      description: 'Returns smart follower count time-series for a project, sorted by date descending.
+
+
+        **Lookup:** by X account ID (`x_id`) or project name (`q`). The `q` parameter must be a project name (e.g. `uniswap`, `ethereum`), not a personal X handle — use `x_id` for individual accounts. Returns 404 if the project has no linked X account.'
+      operationId: social-smart-followers-history
+      parameters:
+      - description: Numeric X (Twitter) account ID (takes priority over `q`)
+        explode: false
+        in: query
+        name: x_id
+        schema:
+          description: Numeric X (Twitter) account ID (takes priority over `q`)
+          examples:
+          - '984188226826010624'
+          type: string
+      - description: Project name to resolve (e.g. `uniswap`, `ethereum`). Must be a project with a linked X account — personal handles like `VitalikButerin` return 404. Use `x_id` for individual accounts.
+        explode: false
+        in: query
+        name: q
+        schema:
+          description: Project name to resolve (e.g. `uniswap`, `ethereum`). Must be a project with a linked X account — personal handles like `VitalikButerin` return 404. Use `x_id` for individual accounts.
+          examples:
+          - uniswap
+          type: string
+      - description: Max data points to return (upstream typically provides ~36 daily points)
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 36
+          description: Max data points to return (upstream typically provides ~36 daily points)
+          examples:
+          - 36
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseSmartFollowerHistoryPoint'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Smart Follower Count History
+      tags:
+      - Social
+  /gateway/v1/social/tweet/replies:
+    get:
+      description: 'Returns replies/comments on a specific tweet.
+
+
+        **Lookup:** by `tweet_id`.'
+      operationId: social-tweet-replies
+      parameters:
+      - description: Tweet ID to get replies for
+        explode: false
+        in: query
+        name: tweet_id
+        required: true
+        schema:
+          description: Tweet ID to get replies for
+          examples:
+          - '1999187154530898007'
+          type: string
+      - description: Max results to return
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Max results to return
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+        explode: false
+        in: query
+        name: cursor
+        schema:
+          description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CursorDataResponseXTweet'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Tweet Replies
+      tags:
+      - Social
+  /gateway/v1/social/tweets:
+    get:
+      description: 'Returns X (Twitter) posts by numeric post ID strings.
+
+
+        Pass up to 100 comma-separated IDs via the `ids` query parameter.'
+      operationId: social-tweets
+      parameters:
+      - description: Comma-separated numeric post ID strings, max 100
+        explode: false
+        in: query
+        name: ids
+        required: true
+        schema:
+          description: Comma-separated numeric post ID strings, max 100
+          examples:
+          - 1880293339000000000,1880293339000000001
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseXTweet'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Social Posts by IDs
+      tags:
+      - Social
+  /gateway/v1/social/user:
+    get:
+      description: 'Returns a basic X/Twitter profile (name, bio, avatar, follower/following counts) for any handle. For crypto project social analytics (sentiment, smart followers, geo), use `social-detail` instead.
+
+
+        **Lookup:** by `handle` (without @).'
+      operationId: social-user
+      parameters:
+      - description: X (Twitter) username without @ like `cz_binance` or `vitalikbuterin`
+        explode: false
+        in: query
+        name: handle
+        required: true
+        schema:
+          description: X (Twitter) username without @ like `cz_binance` or `vitalikbuterin`
+          examples:
+          - vitalikbuterin
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectResponseXUser'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Social User Profile
+      tags:
+      - Social
+  /gateway/v1/social/user/followers:
+    get:
+      description: 'Returns a list of followers for the specified handle on X (Twitter).
+
+
+        **Lookup:** by `handle` (without @).'
+      operationId: social-user-followers
+      parameters:
+      - description: X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`
+        explode: false
+        in: query
+        name: handle
+        required: true
+        schema:
+          description: X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`
+          examples:
+          - vitalikbuterin
+          type: string
+      - description: Max results to return
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Max results to return
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+        explode: false
+        in: query
+        name: cursor
+        schema:
+          description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CursorDataResponseXUser'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: User Followers List
+      tags:
+      - Social
+  /gateway/v1/social/user/following:
+    get:
+      description: 'Returns a list of users that the specified handle follows on X (Twitter).
+
+
+        **Lookup:** by `handle` (without @).'
+      operationId: social-user-following
+      parameters:
+      - description: X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`
+        explode: false
+        in: query
+        name: handle
+        required: true
+        schema:
+          description: X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`
+          examples:
+          - vitalikbuterin
+          type: string
+      - description: Max results to return
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Max results to return
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+        explode: false
+        in: query
+        name: cursor
+        schema:
+          description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CursorDataResponseXUser'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: User Following List
+      tags:
+      - Social
+  /gateway/v1/social/user/posts:
+    get:
+      description: 'Returns recent X (Twitter) posts by a specific user, ordered by recency.
+
+
+        **Lookup:** by `handle` (without @). Use `filter=original` to exclude retweets.
+
+
+        **Pagination:** check `meta.has_more`; if true, pass `meta.next_cursor` as the `cursor` query parameter in the next request.'
+      operationId: social-user-posts
+      parameters:
+      - description: X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`
+        explode: false
+        in: query
+        name: handle
+        required: true
+        schema:
+          description: X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`
+          examples:
+          - vitalikbuterin
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+        explode: false
+        in: query
+        name: cursor
+        schema:
+          description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+          type: string
+      - description: 'Filter tweets: `all` returns everything, `original` excludes retweets'
+        explode: false
+        in: query
+        name: filter
+        schema:
+          default: all
+          description: 'Filter tweets: `all` returns everything, `original` excludes retweets'
+          enum:
+          - all
+          - original
+          examples:
+          - all
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CursorDataResponseXTweet'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: User Social Posts
+      tags:
+      - Social
+  /gateway/v1/social/user/replies:
+    get:
+      description: 'Returns recent replies by the specified handle on X (Twitter).
+
+
+        **Lookup:** by `handle` (without @).'
+      operationId: social-user-replies
+      parameters:
+      - description: X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`
+        explode: false
+        in: query
+        name: handle
+        required: true
+        schema:
+          description: X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`
+          examples:
+          - vitalikbuterin
+          type: string
+      - description: Max results to return
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Max results to return
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+        explode: false
+        in: query
+        name: cursor
+        schema:
+          description: Opaque cursor token from a previous response's next_cursor field for fetching the next page
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CursorDataResponseXTweet'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: User Replies
+      tags:
+      - Social
+components:
+  schemas:
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    SocialMindshareBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SocialMindshareBody.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/SocialMindsharePoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+        tag_percents:
+          description: Per-tag mindshare percentage time-series. Only present when `include_tag_percents=true` was passed. Empty array means the project has no tag data; omitted means the field was not requested. Tags are sorted by the last point's percent descending, with tag-name ascending as tiebreaker.
+          items:
+            $ref: '#/components/schemas/ProjectTagMindshareSeries'
+          type: array
+      required:
+      - data
+      - meta
+      type: object
+    XAuthor:
+      additionalProperties: false
+      properties:
+        avatar:
+          description: Profile picture URL
+          type: string
+        handle:
+          description: X/Twitter handle without the @ prefix (e.g. 'cz_binance')
+          type: string
+        name:
+          description: Display name on X/Twitter
+          type: string
+        user_id:
+          description: Numeric X/Twitter user ID as a string
+          type: string
+      required:
+      - user_id
+      - handle
+      - name
+      type: object
+    MindshareTopTwitterInfo:
+      additionalProperties: false
+      properties:
+        avatar_url:
+          description: Profile image URL
+          type: string
+        display_name:
+          description: X (Twitter) display name
+          type: string
+        twitter_id:
+          description: Numeric X (Twitter) user ID
+          type: string
+        x_handle:
+          description: X (Twitter) handle without the @ prefix
+          type: string
+      required:
+      - twitter_id
+      - display_name
+      - x_handle
+      type: object
+    DataResponseXTweet:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseXTweet.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/XTweet'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    XUser:
+      additionalProperties: false
+      properties:
+        avatar:
+          description: Profile picture URL
+          type: string
+        bio:
+          description: Profile biography text
+          type: string
+        followers_count:
+          description: Number of followers
+          format: int64
+          type: integer
+        following_count:
+          description: Number of accounts this user follows
+          format: int64
+          type: integer
+        handle:
+          description: X/Twitter handle without the @ prefix
+          type: string
+        name:
+          description: Display name on X/Twitter
+          type: string
+        user_id:
+          description: Numeric X/Twitter user ID as a string
+          type: string
+      required:
+      - user_id
+      - handle
+      - name
+      - followers_count
+      - following_count
+      type: object
+    CursorDataResponseXTweet:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/CursorDataResponseXTweet.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/XTweet'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/CursorMeta'
+      required:
+      - data
+      - meta
+      type: object
+    SmartFollowersData:
+      additionalProperties: false
+      properties:
+        count:
+          description: Total number of smart followers
+          format: int64
+          type: integer
+        followers:
+          description: List of top smart followers sorted by influence score
+          items:
+            $ref: '#/components/schemas/SmartFollowerItem'
+          type:
+          - array
+          - 'null'
+      required:
+      - count
+      - followers
+      type: object
+    DataResponseMindshareTopProject:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseMindshareTopProject.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MindshareTopProject'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    MindshareTagPercentPoint:
+      additionalProperties: false
+      properties:
+        percent:
+          description: Project share within this tag at this timestamp, scaled 0~100 (e.g. 15.23 = 15.23%)
+          format: double
+          type: number
+        timestamp:
+          description: Bucket start Unix timestamp in seconds
+          format: int64
+          type: integer
+      required:
+      - timestamp
+      - percent
+      type: object
+    FollowerGeoData:
+      additionalProperties: false
+      properties:
+        locations:
+          description: Follower count breakdown by geographic location
+          items:
+            $ref: '#/components/schemas/FollowerGeoItem'
+          type:
+          - array
+          - 'null'
+        total_follower_count:
+          description: Total number of followers across all locations
+          format: int64
+          type: integer
+      required:
+      - total_follower_count
+      - locations
+      type: object
+    ProjectTagMindshareSeries:
+      additionalProperties: false
+      properties:
+        points:
+          description: Sparse time-series of this tag's mindshare percentage
+          items:
+            $ref: '#/components/schemas/MindshareTagPercentPoint'
+          type:
+          - array
+          - 'null'
+        rank:
+          description: Project's rank within this tag (1 = top) from Argus's 7d rank snapshot. Absent when Argus has no rank row for this (project, tag) pair.
+          format: int64
+          type: integer
+        share_ratio:
+          description: Project's share of total views within this tag over the rank window (0~1). Distinct from `points[].percent` which is the project's own per-tag percentage time-series. Absent when rank data is unavailable.
+          format: double
+          type: number
+        tag:
+          description: Tag / category name, e.g. 'AI', 'DeFi'
+          type: string
+      required:
+      - tag
+      - points
+      type: object
+    XStats:
+      additionalProperties: false
+      properties:
+        likes:
+          description: Number of likes (hearts)
+          format: int64
+          type: integer
+        replies:
+          description: Number of replies
+          format: int64
+          type: integer
+        reposts:
+          description: Number of retweets/reposts
+          format: int64
+          type: integer
+        views:
+          description: Total view count
+          format: int64
+          type: integer
+      required:
+      - views
+      - likes
+      - reposts
+      - replies
+      type: object
+    SocialMindsharePoint:
+      additionalProperties: false
+      properties:
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type: integer
+        value:
+          description: Mindshare view count at this timestamp
+          format: int64
+          type: integer
+      required:
+      - timestamp
+      - value
+      type: object
+    DataObjectResponseSocialSentimentItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseSocialSentimentItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/SocialSentimentItem'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataObjectResponseXUser:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseXUser.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/XUser'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    MindshareTopProjectInfo:
+      additionalProperties: false
+      properties:
+        id:
+          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup
+          type: string
+        name:
+          description: Project name
+          type: string
+        slug:
+          description: URL-friendly project slug
+          type: string
+      required:
+      - id
+      - name
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    SocialSentimentItem:
+      additionalProperties: false
+      properties:
+        insufficient_social_data:
+          description: True when fewer than the minimum number of scored tweets were available in the timeframe (or all view counts were 0). The numeric score is then a neutral fallback (0). Absent (or false) for normal responses.
+          type: boolean
+        project_id:
+          description: Surf project UUID
+          type: string
+        project_name:
+          description: Project name
+          type: string
+        sentiment_score:
+          description: Sentiment score from -1.0 (bearish) to 1.0 (bullish). Treat as unreliable when insufficient_social_data=true.
+          format: double
+          type: number
+        symbol:
+          description: Token symbol
+          type: string
+      required:
+      - project_id
+      - project_name
+      - sentiment_score
+      type: object
+    DataObjectResponseSocialDetailBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseSocialDetailBody.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/SocialDetailBody'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    MindshareTopTokenInfo:
+      additionalProperties: false
+      properties:
+        id:
+          description: Surf token UUID
+          type: string
+        image:
+          description: Token image URL
+          type: string
+        name:
+          description: Token name
+          type: string
+        symbol:
+          description: Token ticker symbol
+          type: string
+      required:
+      - name
+      type: object
+    SmartFollowerItem:
+      additionalProperties: false
+      properties:
+        avatar:
+          description: Profile image URL
+          type: string
+        description:
+          description: Human-readable description of the follower's role
+          type: string
+        followers_count:
+          description: Number of followers this account has
+          format: int64
+          type: integer
+        handle:
+          description: X (Twitter) handle without the @ prefix
+          type: string
+        name:
+          description: Display name of the follower
+          type: string
+        rank:
+          description: Rank position among smart followers (1 = highest)
+          format: int32
+          type: integer
+        score:
+          description: Smart follower influence score
+          format: double
+          type: number
+        tag:
+          description: Smart follower category tag like VC, KOL, or Developer
+          type: string
+        twitter_id:
+          description: Numeric X (Twitter) user ID
+          type: string
+      required:
+      - twitter_id
+      - tag
+      - name
+      - handle
+      - avatar
+      - followers_count
+      - rank
+      - score
+      type: object
+    SocialDetailBody:
+      additionalProperties: false
+      properties:
+        follower_geo:
+          $ref: '#/components/schemas/FollowerGeoData'
+          description: Geographic breakdown of followers
+        project_id:
+          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics. Omitted for direct x_id lookups.
+          type: string
+        project_name:
+          description: Project name (omitted for direct x_id lookups)
+          type: string
+        sentiment:
+          $ref: '#/components/schemas/SentimentData'
+          description: Sentiment analysis data for the project
+        smart_followers:
+          $ref: '#/components/schemas/SmartFollowersData'
+          description: Top smart followers for the project
+        twitter_id:
+          description: Numeric X (Twitter) account ID
+          type: string
+      required:
+      - twitter_id
+      type: object
+    CursorDataResponseXUser:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/CursorDataResponseXUser.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/XUser'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/CursorMeta'
+      required:
+      - data
+      - meta
+      type: object
+    FollowerGeoItem:
+      additionalProperties: false
+      properties:
+        follower_count:
+          description: Number of followers in this location
+          format: int64
+          type: integer
+        location:
+          description: Geographic location name like a country or region
+          type: string
+        percentage:
+          description: Percentage of total followers in this location (0-100)
+          format: double
+          type: number
+      required:
+      - location
+      - follower_count
+      - percentage
+      type: object
+    XTweet:
+      additionalProperties: false
+      properties:
+        author:
+          $ref: '#/components/schemas/XAuthor'
+          description: Author of the tweet
+        cover_image_url:
+          description: Article cover image URL; present only when type is 'article'
+          type: string
+        created_at:
+          description: Unix timestamp (seconds) when the tweet was posted
+          format: int64
+          type: integer
+        lang:
+          description: Tweet language code when available
+          type: string
+        media:
+          description: Attached media items (photos, videos, GIFs)
+          items:
+            $ref: '#/components/schemas/XMedia'
+          type:
+          - array
+          - 'null'
+        stats:
+          $ref: '#/components/schemas/XStats'
+          description: Engagement statistics (likes, reposts, replies, views)
+        text:
+          description: Full text content of the tweet
+          type: string
+        title:
+          description: Article title; present only when type is 'article'
+          type: string
+        tweet_id:
+          description: Numeric tweet ID as a string (e.g. '1234567890123456789')
+          type: string
+        type:
+          description: Tweet type when available (e.g. 'article' for long-form posts)
+          type: string
+        url:
+          description: Permanent link to the tweet on X/Twitter
+          type: string
+      required:
+      - tweet_id
+      - text
+      - url
+      - created_at
+      - author
+      - stats
+      type: object
+    MindshareTopProject:
+      additionalProperties: false
+      properties:
+        project:
+          $ref: '#/components/schemas/MindshareTopProjectInfo'
+          description: Project metadata
+        rank:
+          description: Rank position in the mindshare leaderboard
+          format: int64
+          type: integer
+        sentiment:
+          description: 'Sentiment polarity: positive or negative'
+          type: string
+        sentiment_score:
+          description: Weighted sentiment score from -1 (very negative) to 1 (very positive)
+          format: double
+          type: number
+        tags:
+          description: Project category tags
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        token:
+          $ref: '#/components/schemas/MindshareTopTokenInfo'
+          description: Token metadata
+        trending_short_reason:
+          description: 'Deprecated: no longer populated.'
+          type: string
+        trending_summary:
+          description: 'Deprecated: no longer populated.'
+          type: string
+        twitter:
+          $ref: '#/components/schemas/MindshareTopTwitterInfo'
+          description: X (Twitter) account metadata
+      required:
+      - rank
+      type: object
+    SentimentData:
+      additionalProperties: false
+      properties:
+        insufficient_social_data:
+          description: True when fewer than the minimum number of scored tweets were available in the timeframe (or all view counts were 0). The score is null in that case rather than a meaningful neutral. Absent (or false) for normal responses.
+          type: boolean
+        score:
+          description: Sentiment score from -1 (very negative) to 1 (very positive). Null when insufficient_social_data is true.
+          format: double
+          type:
+          - number
+          - 'null'
+        time_range:
+          description: Time range for the sentiment analysis like 7d or 30d
+          type: string
+      required:
+      - score
+      - time_range
+      type: object
+    DataResponseSmartFollowerHistoryPoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseSmartFollowerHistoryPoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/SmartFollowerHistoryPoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    SmartFollowerHistoryPoint:
+      additionalProperties: false
+      properties:
+        count:
+          description: Number of smart followers on this date
+          format: int32
+          type: integer
+        date:
+          description: Date in YYYY-MM-DD format
+          type: string
+      required:
+      - date
+      - count
+      type: object
+    CursorMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items exist beyond the current page.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        next_cursor:
+          description: Opaque cursor token for fetching the next page. Empty when no more pages exist.
+          type: string
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - has_more
+      - limit
+      - credits_used
+      - cached
+      type: object
+    XMedia:
+      additionalProperties: false
+      properties:
+        type:
+          description: 'Media type: photo, video, or animated_gif'
+          type: string
+        url:
+          description: Direct URL to the media asset
+          type: string
+      required:
+      - type
+      - url
+      type: object
+  securitySchemes:
+    AccessToken:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    AdminToken:
+      in: header
+      name: X-Admin-Token
+      type: apiKey
+    InternalKey:
+      in: header
+      name: X-Internal-Key
+      type: apiKey

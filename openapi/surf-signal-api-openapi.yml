@@ -1,0 +1,612 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: backend@cybertinolab.com
+    name: Cyber team
+  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
+  title: Hermod DEX Signal API
+  version: sha-80d3407
+servers:
+- url: /
+tags:
+- description: Explore ranked project signal score snapshots, token-of-day/week highlights, and project-level signal cards with latest price, price-change, dimension scores, compact signals, and AI summaries.
+  name: Signal
+paths:
+  /gateway/v1/heatscore/detail:
+    get:
+      description: 'Returns one project signal card.
+
+
+        **Lookup:** pass exactly one of `id` (Surf token UUID) or `project_slug`. Use `time_range` (`24h` or `7d`) to select the score window.'
+      operationId: signal-detail
+      parameters:
+      - description: Surf token UUID. Pass exactly one of id or project_slug.
+        explode: false
+        in: query
+        name: id
+        schema:
+          description: Surf token UUID. Pass exactly one of id or project_slug.
+          examples:
+          - 25c6612a-395c-4974-94eb-3b5f9f4b2ed7
+          type: string
+      - description: Project slug. Pass exactly one of id or project_slug.
+        explode: false
+        in: query
+        name: project_slug
+        schema:
+          description: Project slug. Pass exactly one of id or project_slug.
+          examples:
+          - synapse
+          type: string
+      - description: 'Window to compute signal score over: 24h or 7d.'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 24h
+          description: 'Window to compute signal score over: 24h or 7d.'
+          enum:
+          - 24h
+          - 7d
+          examples:
+          - 24h
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataObjectResponseSignalProject'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Signal Detail
+      tags:
+      - Signal
+  /gateway/v1/heatscore/projects:
+    get:
+      description: 'Returns a paginated ranked snapshot of project signal cards.
+
+
+        **Included fields:** project identity, score, latest price, price-change percentages, core state, dimension scores, compact token signals, AI summaries, and supporting market metrics.
+
+
+        **Filters:** `time_range` (`24h` or `7d`). Supports `limit`/`offset` pagination.'
+      operationId: signal-projects
+      parameters:
+      - description: 'Window to compute signal scores over: 24h or 7d. Returns a ranked snapshot, not a time-series.'
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 24h
+          description: 'Window to compute signal scores over: 24h or 7d. Returns a ranked snapshot, not a time-series.'
+          enum:
+          - 24h
+          - 7d
+          examples:
+          - 24h
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseSignalProject'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Signal Projects
+      tags:
+      - Signal
+  /gateway/v1/heatscore/token-of-the-day:
+    get:
+      description: Returns the token-of-the-day project signal cards with latest price, price-change percentages, dimension scores, compact signals, and AI summaries. Supports `limit`/`offset` pagination.
+      operationId: signal-token-of-the-day
+      parameters:
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseSignalProject'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Signal Token Of The Day
+      tags:
+      - Signal
+  /gateway/v1/heatscore/token-of-week:
+    get:
+      description: Returns the token-of-week project signal cards with latest price, price-change percentages, dimension scores, compact signals, and AI summaries. Supports `limit`/`offset` pagination.
+      operationId: signal-token-of-week
+      parameters:
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseSignalProject'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Signal Token Of The Week
+      tags:
+      - Signal
+components:
+  schemas:
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    SignalCoreState:
+      additionalProperties: false
+      properties:
+        driver:
+          description: Primary state driver
+          type: string
+        priority:
+          description: State priority
+          format: int64
+          type: integer
+        reason:
+          description: Short reason behind the state
+          type: string
+        state:
+          description: State label
+          type: string
+        state_type:
+          description: State type
+          type: string
+        strength:
+          description: Directional state strength
+          type: string
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
+    SignalProject:
+      additionalProperties: false
+      properties:
+        ai_summary:
+          additionalProperties:
+            type: string
+          description: AI-generated summary by language code
+          type: object
+        baseline:
+          description: Baseline primary metric value
+          format: double
+          type: number
+        change_percent:
+          description: Primary metric percent change
+          format: double
+          type: number
+        change_vs_previous_percent:
+          description: Primary metric percent change versus previous snapshot
+          format: double
+          type: number
+        computed_hour:
+          description: Snapshot computation hour as Unix seconds
+          format: int64
+          type: integer
+        core_state:
+          $ref: '#/components/schemas/SignalCoreState'
+          description: Current classified market/social state
+        driver:
+          description: Primary driver label
+          type: string
+        evidence_score:
+          description: Evidence strength score
+          format: double
+          type: number
+        heat_dimensions:
+          $ref: '#/components/schemas/SignalDimensions'
+          description: Dimension-level signal scores
+        heat_score:
+          description: Signal score value
+          format: double
+          type: number
+        heat_score_by_range:
+          additionalProperties:
+            format: double
+            type: number
+          description: Signal score by supported window
+          type: object
+        heat_score_change_vs_previous_percent_by_range:
+          additionalProperties:
+            format: double
+            type: number
+          description: Signal score percent change versus previous snapshot by window
+          type: object
+        heat_score_previous_by_range:
+          additionalProperties:
+            format: double
+            type: number
+          description: Previous signal score by supported window
+          type: object
+        liquidation_long_24h:
+          description: 24h long liquidation volume in USD
+          format: double
+          type: number
+        liquidation_long_short_ratio_24h:
+          description: 24h long/short liquidation ratio
+          format: double
+          type: number
+        liquidation_short_24h:
+          description: 24h short liquidation volume in USD
+          format: double
+          type: number
+        logo:
+          description: Project logo URL
+          type: string
+        market_relevance:
+          description: Market relevance score
+          format: double
+          type: number
+        metric:
+          description: Metric used for this snapshot
+          type: string
+        name:
+          description: Project name
+          type: string
+        open_interest:
+          description: Open interest in USD
+          format: double
+          type: number
+        points_used:
+          description: Number of points used in the score calculation
+          format: int64
+          type: integer
+        previous_value:
+          description: Previous primary metric value
+          format: double
+          type: number
+        price:
+          description: Latest token price in USD
+          format: double
+          type: number
+        price_change_percent:
+          $ref: '#/components/schemas/SignalPriceChange'
+          description: Latest price change percentages
+        project_id:
+          description: Surf project UUID
+          type: string
+        project_slug:
+          description: Project slug
+          type: string
+        rank:
+          description: Rank within the returned signal score snapshot
+          format: int64
+          type: integer
+        score:
+          description: Signal score used for display
+          format: double
+          type: number
+        signed_z:
+          description: Signed z-score for the primary metric
+          format: double
+          type: number
+        symbol:
+          description: Token symbol
+          type: string
+        time_range:
+          description: Window used for this snapshot
+          type: string
+        token_id:
+          description: Surf token UUID
+          type: string
+        token_signals:
+          additionalProperties:
+            type: string
+          description: Compact token signal labels
+          type: object
+        updated_at:
+          description: Last update time as Unix seconds
+          format: int64
+          type: integer
+        value:
+          description: Primary metric value for this snapshot
+          format: double
+          type: number
+        volume_24h:
+          description: 24h trading volume in USD
+          format: double
+          type: number
+        volume_24h_change_percent:
+          description: 24h trading volume percent change
+          format: double
+          type: number
+      required:
+      - price_change_percent
+      - core_state
+      - heat_dimensions
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    SignalDerivativeComponent:
+      additionalProperties: false
+      properties:
+        metric:
+          description: Derivative component metric
+          type: string
+        score:
+          description: Component score
+          format: double
+          type: number
+        used:
+          description: Whether the component contributed to the derivative score
+          type: boolean
+        weight:
+          description: Component weight
+          format: double
+          type: number
+      required:
+      - used
+      type: object
+    SignalDimensions:
+      additionalProperties: false
+      properties:
+        derivative:
+          description: Derivative dimension score
+          format: double
+          type: number
+        derivative_components:
+          description: Derivative sub-component scores
+          items:
+            $ref: '#/components/schemas/SignalDerivativeComponent'
+          type:
+          - array
+          - 'null'
+        flow:
+          description: Flow dimension score
+          format: double
+          type: number
+        movement:
+          description: Movement dimension score
+          format: double
+          type: number
+        social:
+          description: Social dimension score
+          format: double
+          type: number
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    SignalPriceChange:
+      additionalProperties: false
+      properties:
+        1h:
+          description: 1 hour price change percent
+          format: double
+          type: number
+        24h:
+          description: 24 hour price change percent
+          format: double
+          type: number
+        7d:
+          description: 7 day price change percent
+          format: double
+          type: number
+      type: object
+    DataObjectResponseSignalProject:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseSignalProject.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/SignalProject'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseSignalProject:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseSignalProject.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/SignalProject'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+  securitySchemes:
+    AccessToken:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    AdminToken:
+      in: header
+      name: X-Admin-Token
+      type: apiKey
+    InternalKey:
+      in: header
+      name: X-Internal-Key
+      type: apiKey

@@ -1,0 +1,1154 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: backend@cybertinolab.com
+    name: Cyber team
+  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
+  title: Hermod DEX Token API
+  version: sha-80d3407
+servers:
+- url: /
+tags:
+- description: Analyze individual tokens on-chain. Look up top holders and their share of supply, track ERC-20/SPL token transfers, browse DEX swap history, and view upcoming token unlock schedules with allocation breakdowns.
+  name: Token
+paths:
+  /gateway/v1/token/dex-trades:
+    get:
+      description: 'Returns recent DEX swap events for a token contract address.
+
+
+        **Covered DEXes:** `uniswap`, `sushiswap`, `curve`, `balancer`, `pancakeswap` (and other major DEXes per chain).
+
+
+        **Included fields:** trading pair, amounts, USD value, taker address.
+
+
+        **Data refresh:** ~24 hours · **Chains:** Ethereum, Base, BSC, Arbitrum, Tron'
+      operationId: token-dex-trades
+      parameters:
+      - description: Token CONTRACT ADDRESS — 0x-prefixed hex (EVM chains only; Tron also accepts base58 `T...`). This is NOT a ticker symbol (e.g. do NOT pass `USDC` or `BTC`). To resolve a ticker symbol to a contract address, call GET /v1/search/token?q={symbol}&chain={chain} and use the `address` whose `chain` is supported by this endpoint. This endpoint has no `symbol` parameter.
+        explode: false
+        in: query
+        name: address
+        required: true
+        schema:
+          description: Token CONTRACT ADDRESS — 0x-prefixed hex (EVM chains only; Tron also accepts base58 `T...`). This is NOT a ticker symbol (e.g. do NOT pass `USDC` or `BTC`). To resolve a ticker symbol to a contract address, call GET /v1/search/token?q={symbol}&chain={chain} and use the `address` whose `chain` is supported by this endpoint. This endpoint has no `symbol` parameter.
+          examples:
+          - '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+          type: string
+      - description: Chain. Can be `ethereum`, `base`, `bsc`, `arbitrum`, or `tron`.
+        explode: false
+        in: query
+        name: chain
+        schema:
+          default: ethereum
+          description: Chain. Can be `ethereum`, `base`, `bsc`, `arbitrum`, or `tron`.
+          enum:
+          - ethereum
+          - base
+          - bsc
+          - arbitrum
+          - tron
+          examples:
+          - ethereum
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Comma-separated enrichments to attach to each trade. Currently valid: `labels` — adds a `taker_label` field with entity information for the taker address.'
+        explode: false
+        in: query
+        name: include
+        schema:
+          description: 'Comma-separated enrichments to attach to each trade. Currently valid: `labels` — adds a `taker_label` field with entity information for the taker address.'
+          examples:
+          - labels
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseDexTradeItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Token DEX Trade History
+      tags:
+      - Token
+  /gateway/v1/token/holders:
+    get:
+      description: 'Returns top token holders for a contract address.
+
+
+        **Included fields:** wallet address, balance, and percentage.
+
+
+        **Lookup:** by `address` and `chain`. Supports EVM chains and Solana.'
+      operationId: token-holders
+      parameters:
+      - description: Token CONTRACT ADDRESS — 0x-prefixed hex for EVM chains, base58 for Solana. This is NOT a ticker symbol (e.g. do NOT pass `USDC` or `BTC`). To resolve a ticker symbol to a contract address, call GET /v1/search/token?q={symbol}&chain={chain} and use the `address` whose `chain` is supported by this endpoint. This endpoint has no `symbol` parameter.
+        explode: false
+        in: query
+        name: address
+        required: true
+        schema:
+          description: Token CONTRACT ADDRESS — 0x-prefixed hex for EVM chains, base58 for Solana. This is NOT a ticker symbol (e.g. do NOT pass `USDC` or `BTC`). To resolve a ticker symbol to a contract address, call GET /v1/search/token?q={symbol}&chain={chain} and use the `address` whose `chain` is supported by this endpoint. This endpoint has no `symbol` parameter.
+          examples:
+          - '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+          type: string
+      - description: Chain. Can be `ethereum`, `polygon`, `bsc`, `solana`, `avalanche`, `arbitrum`, `optimism`, or `base`.
+        explode: false
+        in: query
+        name: chain
+        required: true
+        schema:
+          description: Chain. Can be `ethereum`, `polygon`, `bsc`, `solana`, `avalanche`, `arbitrum`, `optimism`, or `base`.
+          enum:
+          - ethereum
+          - polygon
+          - bsc
+          - solana
+          - avalanche
+          - arbitrum
+          - optimism
+          - base
+          examples:
+          - ethereum
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Comma-separated enrichments to attach to each holder. Currently valid: `labels` — adds a full `label` record alongside the flat `entity_name` / `entity_type` fields.'
+        explode: false
+        in: query
+        name: include
+        schema:
+          description: 'Comma-separated enrichments to attach to each holder. Currently valid: `labels` — adds a full `label` record alongside the flat `entity_name` / `entity_type` fields.'
+          examples:
+          - labels
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseTokenHolderItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Token Holders
+      tags:
+      - Token
+  /gateway/v1/token/tokenomics:
+    get:
+      description: 'Returns token unlock time-series with cumulative amounts, allocation breakdowns, total supply denominator, and unlocked-supply percentage.
+
+
+        **Lookup:** by project UUID (`id`) or token `symbol`. Filter by date range with `from`/`to` — defaults to the current calendar month when omitted.
+
+
+        **Important:** `unlock_amount` is a legacy alias for `cumulative_unlocked_amount`; it is already cumulative at each timestamp and must not be summed across rows. Use `unlocked_percentage_of_total_supply` for the unlock ratio.
+
+
+        Returns 404 if no token found.'
+      operationId: token-tokenomics
+      parameters:
+      - description: Surf project UUID. PREFERRED — always use this when available from a previous response. Takes priority over symbol.
+        explode: false
+        in: query
+        name: id
+        schema:
+          description: Surf project UUID. PREFERRED — always use this when available from a previous response. Takes priority over symbol.
+          examples:
+          - 25c6612a-395c-4974-94eb-3b5f9f4b2ed7
+          type: string
+      - description: Token symbol like `ARB`, `OP`, or `APT`
+        explode: false
+        in: query
+        name: symbol
+        schema:
+          description: Token symbol like `ARB`, `OP`, or `APT`
+          examples:
+          - ARB
+          type: string
+      - description: Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)
+          examples:
+          - '2024-01-01'
+          type: string
+      - description: End of time range. Accepts Unix seconds (`1735689600`) or date string (`2025-01-01`)
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End of time range. Accepts Unix seconds (`1735689600`) or date string (`2025-01-01`)
+          examples:
+          - '2025-01-01'
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseTokenUnlockPoint'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Token Unlock Schedule
+      tags:
+      - Token
+  /gateway/v1/token/transfer-counterparties:
+    get:
+      description: 'Ranked top counterparties (receivers or senders) of a token over a window — answers "who are the top receivers/senders?".
+
+
+        **Lookup:** `address` (token contract) + `chain` + `direction` (`to` = top receivers, `from` = top senders). Rank by `metric` (`count`, `amount`, `amount_usd`).
+
+
+        **Related:** raw rows → `/v1/token/transfers`; aggregate summary → `/v1/token/transfer-stats`.
+
+
+        **Chains:** Ethereum, Base, BSC, Arbitrum, Tron · **Refresh:** ~24h'
+      operationId: token-transfer-counterparties
+      parameters:
+      - description: Token CONTRACT ADDRESS (0x-hex for EVM; Tron accepts base58 `T...` or 0x-hex). Not a ticker — resolve a symbol via GET /v1/search/token?q={symbol}&chain={chain} and use a returned address whose chain is supported by this endpoint.
+        explode: false
+        in: query
+        name: address
+        required: true
+        schema:
+          description: Token CONTRACT ADDRESS (0x-hex for EVM; Tron accepts base58 `T...` or 0x-hex). Not a ticker — resolve a symbol via GET /v1/search/token?q={symbol}&chain={chain} and use a returned address whose chain is supported by this endpoint.
+          examples:
+          - '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+          type: string
+      - description: Chain the token contract is deployed on.
+        explode: false
+        in: query
+        name: chain
+        required: true
+        schema:
+          description: Chain the token contract is deployed on.
+          enum:
+          - ethereum
+          - base
+          - bsc
+          - arbitrum
+          - tron
+          examples:
+          - ethereum
+          type: string
+      - description: 'Ranking direction: `to` = top receivers, `from` = top senders.'
+        explode: false
+        in: query
+        name: direction
+        required: true
+        schema:
+          description: 'Ranking direction: `to` = top receivers, `from` = top senders.'
+          enum:
+          - to
+          - from
+          examples:
+          - to
+          type: string
+      - description: 'Ranking key: `count` = transfer frequency, `amount` = decimal-adjusted token sum, `amount_usd` = USD value sum (USD lags ~3 days; unreliable for recent windows).'
+        explode: false
+        in: query
+        name: metric
+        schema:
+          default: count
+          description: 'Ranking key: `count` = transfer frequency, `amount` = decimal-adjusted token sum, `amount_usd` = USD value sum (USD lags ~3 days; unreliable for recent windows).'
+          enum:
+          - count
+          - amount
+          - amount_usd
+          type: string
+      - description: Look-back window (hard 90d cap).
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 7d
+          description: Look-back window (hard 90d cap).
+          enum:
+          - 1d
+          - 7d
+          - 30d
+          - 90d
+          type: string
+      - description: Results per page.
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page.
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset.
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset.
+          format: int64
+          minimum: 0
+          type: integer
+      - description: Comma-separated enrichments. `labels` attaches an entity label per counterparty.
+        explode: false
+        in: query
+        name: include
+        schema:
+          description: Comma-separated enrichments. `labels` attaches an entity label per counterparty.
+          examples:
+          - labels
+          type: string
+      - description: 'Comma-separated entity categories to drop (best-effort): `cex`, `router`, `amm`, `bridge`. Results may be fewer than `limit` when top counterparties are infrastructure.'
+        explode: false
+        in: query
+        name: exclude_labels
+        schema:
+          description: 'Comma-separated entity categories to drop (best-effort): `cex`, `router`, `amm`, `bridge`. Results may be fewer than `limit` when top counterparties are infrastructure.'
+          examples:
+          - cex,router
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseTransferCounterpartyItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Top Transfer Counterparties
+      tags:
+      - Token
+  /gateway/v1/token/transfer-stats:
+    get:
+      description: 'Aggregate transfer-activity summary for a token over a window — total transfers, unique senders/receivers, total amount, first/last activity, and an optional daily series (`include=series`).
+
+
+        **Lookup:** `address` (token contract) + `chain`.
+
+
+        **Related:** per-counterparty ranking → `/v1/token/transfer-counterparties`; raw rows → `/v1/token/transfers`.
+
+
+        **Chains:** Ethereum, Base, BSC, Arbitrum, Tron · **Refresh:** ~24h · USD value lags ~3 days (see `enriched_ratio`).'
+      operationId: token-transfer-stats
+      parameters:
+      - description: Token CONTRACT ADDRESS (0x-hex for EVM; Tron accepts base58 `T...` or 0x-hex). Not a ticker — resolve a symbol via GET /v1/search/token?q={symbol}&chain={chain} and use a returned address whose chain is supported by this endpoint.
+        explode: false
+        in: query
+        name: address
+        required: true
+        schema:
+          description: Token CONTRACT ADDRESS (0x-hex for EVM; Tron accepts base58 `T...` or 0x-hex). Not a ticker — resolve a symbol via GET /v1/search/token?q={symbol}&chain={chain} and use a returned address whose chain is supported by this endpoint.
+          examples:
+          - '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+          type: string
+      - description: Chain the token contract is deployed on.
+        explode: false
+        in: query
+        name: chain
+        required: true
+        schema:
+          description: Chain the token contract is deployed on.
+          enum:
+          - ethereum
+          - base
+          - bsc
+          - arbitrum
+          - tron
+          examples:
+          - ethereum
+          type: string
+      - description: Look-back window (hard 90d cap).
+        explode: false
+        in: query
+        name: time_range
+        schema:
+          default: 7d
+          description: Look-back window (hard 90d cap).
+          enum:
+          - 1d
+          - 7d
+          - 30d
+          - 90d
+          type: string
+      - description: Comma-separated extras. `series` adds a daily trend breakdown (volume only).
+        explode: false
+        in: query
+        name: include
+        schema:
+          description: Comma-separated extras. `series` adds a daily trend breakdown (volume only).
+          examples:
+          - series
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferStatsResponse'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Token Transfer Activity Summary
+      tags:
+      - Token
+  /gateway/v1/token/transfers:
+    get:
+      description: 'Returns recent transfer events **for a specific token** (ERC-20/TRC-20 contract).
+
+
+        Pass the **token contract address** in `address` — returns every on-chain transfer of that token regardless of sender/receiver.
+
+
+        **Included fields:** sender, receiver, raw amount, block timestamp.
+
+
+        Use this to analyze a token''s on-chain activity (e.g. large movements, distribution patterns).
+
+
+        **Lookup:** `address` (token contract) + `chain`. Sort by `asc` or `desc`.
+
+
+        **Data refresh:** ~24 hours · **Chains:** Ethereum, Base, BSC, Arbitrum, Tron (Solana uses a different source with no delay)'
+      operationId: token-transfers
+      parameters:
+      - description: Token CONTRACT ADDRESS — 0x-prefixed hex for EVM chains, base58 for Solana. This is NOT a ticker symbol (e.g. do NOT pass `USDC` or `BTC`). To resolve a ticker symbol to a contract address, call GET /v1/search/token?q={symbol}&chain={chain} and use the `address` whose `chain` is supported by this endpoint. This endpoint has no `symbol` parameter.
+        explode: false
+        in: query
+        name: address
+        required: true
+        schema:
+          description: Token CONTRACT ADDRESS — 0x-prefixed hex for EVM chains, base58 for Solana. This is NOT a ticker symbol (e.g. do NOT pass `USDC` or `BTC`). To resolve a ticker symbol to a contract address, call GET /v1/search/token?q={symbol}&chain={chain} and use the `address` whose `chain` is supported by this endpoint. This endpoint has no `symbol` parameter.
+          examples:
+          - '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+          type: string
+      - description: Chain. Can be `ethereum`, `base`, `solana`, `tron`, `bsc`, or `arbitrum`.
+        explode: false
+        in: query
+        name: chain
+        required: true
+        schema:
+          description: Chain. Can be `ethereum`, `base`, `solana`, `tron`, `bsc`, or `arbitrum`.
+          enum:
+          - ethereum
+          - base
+          - solana
+          - tron
+          - bsc
+          - arbitrum
+          examples:
+          - ethereum
+          type: string
+      - description: Start of date range. Accepts Unix seconds or YYYY-MM-DD. Defaults to 30 days ago.
+        explode: false
+        in: query
+        name: from
+        schema:
+          description: Start of date range. Accepts Unix seconds or YYYY-MM-DD. Defaults to 30 days ago.
+          examples:
+          - '2025-01-01'
+          type: string
+      - description: End of date range. Accepts Unix seconds or YYYY-MM-DD. Defaults to today.
+        explode: false
+        in: query
+        name: to
+        schema:
+          description: End of date range. Accepts Unix seconds or YYYY-MM-DD. Defaults to today.
+          examples:
+          - '2025-03-01'
+          type: string
+      - description: Results per page
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 20
+          description: Results per page
+          examples:
+          - 20
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+      - description: Pagination offset
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: 0
+          description: Pagination offset
+          examples:
+          - 0
+          format: int64
+          minimum: 0
+          type: integer
+      - description: 'Comma-separated enrichments to attach to each transfer. Currently valid: `labels` — adds `from_label` and `to_label` fields.'
+        explode: false
+        in: query
+        name: include
+        schema:
+          description: 'Comma-separated enrichments to attach to each transfer. Currently valid: `labels` — adds `from_label` and `to_label` fields.'
+          examples:
+          - labels
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponseTokenTransferItem'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataAPIError'
+          description: Error
+      security:
+      - AccessToken: []
+      summary: Token Transfer History
+      tags:
+      - Token
+components:
+  schemas:
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    DataResponseDexTradeItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseDexTradeItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/DexTradeItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    DataResponseTokenTransferItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseTokenTransferItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/TokenTransferItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DexTradeItem:
+      additionalProperties: false
+      properties:
+        amount_usd:
+          description: Trade value in USD at execution time
+          format: double
+          type: number
+        block_time:
+          description: Unix timestamp in seconds when the trade was executed
+          format: int64
+          type: integer
+        project:
+          description: DEX project name like `uniswap`, `sushiswap`, or `curve`
+          type: string
+        taker:
+          description: Wallet address that initiated the swap
+          type: string
+        taker_label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity labels for the taker address. Only present when the request sets `include=labels`.
+        token_bought_address:
+          description: Contract address of the token bought
+          type: string
+        token_bought_amount:
+          description: Amount of tokens bought (decimal-adjusted)
+          format: double
+          type: number
+        token_bought_symbol:
+          description: Symbol of the token bought in this trade
+          type: string
+        token_pair:
+          description: Trading pair symbol like `WETH-USDC`
+          type: string
+        token_sold_address:
+          description: Contract address of the token sold
+          type: string
+        token_sold_amount:
+          description: Amount of tokens sold (decimal-adjusted)
+          format: double
+          type: number
+        token_sold_symbol:
+          description: Symbol of the token sold in this trade
+          type: string
+        tx_hash:
+          description: Transaction hash
+          type: string
+        version:
+          description: DEX version like `v2` or `v3`
+          type: string
+      required:
+      - block_time
+      - project
+      - version
+      - token_pair
+      - token_bought_symbol
+      - token_sold_symbol
+      - token_bought_amount
+      - token_sold_amount
+      - amount_usd
+      - taker
+      - tx_hash
+      type: object
+    WalletLabelItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address
+          type: string
+        entity_name:
+          description: Name of the associated entity like `Binance` or `Aave`
+          type: string
+        entity_type:
+          description: Type of entity like `exchange`, `fund`, or `whale`
+          type: string
+        labels:
+          description: List of labels assigned to this address
+          items:
+            $ref: '#/components/schemas/WalletLabelInfo'
+          type:
+          - array
+          - 'null'
+      required:
+      - address
+      - labels
+      type: object
+    TransferStatsResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/TransferStatsResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/TransferStatsBody'
+        meta:
+          $ref: '#/components/schemas/TransferStatsMeta'
+      required:
+      - data
+      - meta
+      type: object
+    TransferCounterpartyItem:
+      additionalProperties: false
+      properties:
+        amount:
+          description: Decimal-adjusted token amount transferred (summed).
+          type: string
+        amount_usd:
+          description: Summed USD value. Absent when no transfers in the window are USD-priced.
+          format: double
+          type: number
+        counterparty_address:
+          description: Receiver (direction=to) or sender (direction=from) address.
+          type: string
+        first_transfer_at:
+          description: Unix seconds of the first transfer seen in the window.
+          format: int64
+          type: integer
+        label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity label for this counterparty. Only present when include=labels.
+        last_transfer_at:
+          description: Unix seconds of the last transfer seen in the window.
+          format: int64
+          type: integer
+        transfer_count:
+          description: Number of transfers in the window.
+          format: int64
+          type: integer
+      required:
+      - counterparty_address
+      - transfer_count
+      - amount
+      - first_transfer_at
+      - last_transfer_at
+      type: object
+    TokenHolderItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address of the token holder
+          type: string
+        balance:
+          description: Token balance (decimal-adjusted, human-readable)
+          type: string
+        entity_name:
+          description: Name of the associated entity like `Binance` or `Aave`
+          type: string
+        entity_type:
+          description: Type of entity like `exchange`, `fund`, or `whale`
+          type: string
+        label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Full entity label record for this address. Only present when the request sets `include=labels`.
+        percentage:
+          description: Share of total supply held as a percentage (5.2 means 5.2%)
+          format: double
+          type: number
+      required:
+      - address
+      - balance
+      type: object
+    TokenUnlockPoint:
+      additionalProperties: false
+      properties:
+        allocations:
+          description: Breakdown by allocation
+          items:
+            $ref: '#/components/schemas/TokenUnlockAllocationItem'
+          type:
+          - array
+          - 'null'
+        cumulative_unlocked_amount:
+          description: Cumulative total tokens unlocked up to this timestamp (decimal-adjusted). Use this for unlocked-supply ratios.
+          format: double
+          type: number
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type: integer
+        total_supply:
+          description: Token total supply used as the denominator for unlocked_percentage_of_total_supply
+          format: double
+          type: number
+        unlock_amount:
+          description: Legacy alias for cumulative_unlocked_amount. This is cumulative and must not be summed across rows.
+          format: double
+          type: number
+        unlocked_percentage_of_total_supply:
+          description: Cumulative unlocked amount divided by total_supply, expressed as a percentage from 0 to 100
+          format: double
+          type: number
+      required:
+      - timestamp
+      - unlock_amount
+      - cumulative_unlocked_amount
+      type: object
+    WalletLabelInfo:
+      additionalProperties: false
+      properties:
+        confidence:
+          description: Confidence score 0.0-1.0
+          format: double
+          type: number
+        label:
+          description: Human-readable label for this address like `Binance Hot Wallet`
+          type: string
+      required:
+      - label
+      type: object
+    DataResponseTransferCounterpartyItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseTransferCounterpartyItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/TransferCounterpartyItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseTokenUnlockPoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseTokenUnlockPoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/TokenUnlockPoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    TransferSeriesPoint:
+      additionalProperties: false
+      properties:
+        amount:
+          description: Decimal-adjusted token amount transferred on this day.
+          type: string
+        amount_usd:
+          description: Summed USD value for the day. Absent when the day is not yet USD-priced.
+          format: double
+          type: number
+        date:
+          description: Start-of-day Unix seconds (UTC).
+          format: int64
+          type: integer
+        enriched_ratio:
+          description: Fraction of the day's transfers with a USD price (0..1).
+          format: double
+          type: number
+        transfer_count:
+          description: Transfers on this day.
+          format: int64
+          type: integer
+      required:
+      - date
+      - transfer_count
+      - amount
+      type: object
+    TransferStatsMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data object is empty, when applicable
+          type: string
+        enriched_ratio:
+          description: Fraction of transfers with a USD price (0..1). Low/zero means USD-value fields are partial.
+          format: double
+          type: number
+      required:
+      - credits_used
+      - cached
+      type: object
+    TransferStatsBody:
+      additionalProperties: false
+      properties:
+        enriched_ratio:
+          description: Fraction of transfers with a USD price (0..1). Low/zero on recent windows where USD pricing lags ~3 days.
+          format: double
+          type: number
+        first_transfer_at:
+          description: Unix seconds of the first transfer in the window (0 if none).
+          format: int64
+          type: integer
+        last_transfer_at:
+          description: Unix seconds of the last transfer in the window (0 if none).
+          format: int64
+          type: integer
+        series:
+          description: Daily breakdown, newest first. Present only when include=series.
+          items:
+            $ref: '#/components/schemas/TransferSeriesPoint'
+          type:
+          - array
+          - 'null'
+        total_amount:
+          description: Decimal-adjusted total token amount transferred.
+          type: string
+        total_amount_usd:
+          description: Summed USD value. Absent when nothing in the window is USD-priced.
+          format: double
+          type: number
+        total_transfers:
+          description: Total transfers in the window.
+          format: int64
+          type: integer
+        unique_receivers:
+          description: Approximate distinct receivers (uniq, ~1% error).
+          format: int64
+          type: integer
+        unique_senders:
+          description: Approximate distinct senders (uniq, ~1% error).
+          format: int64
+          type: integer
+      required:
+      - total_transfers
+      - unique_senders
+      - unique_receivers
+      - total_amount
+      - first_transfer_at
+      - last_transfer_at
+      type: object
+    DataResponseTokenHolderItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseTokenHolderItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/TokenHolderItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    TokenTransferItem:
+      additionalProperties: false
+      properties:
+        amount:
+          description: Transfer amount (decimal-adjusted, human-readable)
+          type: string
+        amount_usd:
+          description: Transfer value in USD at the time of the transaction. Not available for all transfers.
+          format: double
+          type: number
+        block_number:
+          description: Block number in which this transfer was included
+          format: int64
+          type: integer
+        from_address:
+          description: Sender wallet address
+          type: string
+        from_label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity labels for from_address. Only present when the request sets `include=labels`.
+        symbol:
+          description: Token symbol like ETH, USDC, or WETH
+          type: string
+        timestamp:
+          description: Unix timestamp in seconds when the transfer occurred
+          format: int64
+          type: integer
+        to_address:
+          description: Recipient wallet address
+          type: string
+        to_label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity labels for to_address. Only present when the request sets `include=labels`.
+        tx_hash:
+          description: Transaction hash
+          type: string
+      required:
+      - tx_hash
+      - from_address
+      - to_address
+      - amount
+      - timestamp
+      - block_number
+      type: object
+    TokenUnlockAllocationItem:
+      additionalProperties: false
+      properties:
+        amount:
+          description: Decimal-adjusted allocation amount
+          format: double
+          type: number
+        name:
+          description: Allocation name
+          type: string
+      required:
+      - name
+      - amount
+      type: object
+  securitySchemes:
+    AccessToken:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+    AdminToken:
+      in: header
+      name: X-Admin-Token
+      type: apiKey
+    InternalKey:
+      in: header
+      name: X-Internal-Key
+      type: apiKey
