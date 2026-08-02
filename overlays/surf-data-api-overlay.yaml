@@ -1,0 +1,22 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Surf Data API
+  version: 1.0.0
+extends: openapi/surf-openapi-original.json
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: surf
+    x-apievangelist-backed-by: pantera-capital
+    x-apievangelist-domains: 14
+    x-apievangelist-auth: bearer-api-key
+    x-apievangelist-billing: credit-based
+- target: $.servers
+  update:
+  - url: https://api.asksurf.ai/gateway/v1
+    description: Surf Data API gateway (production) — added by API Evangelist; upstream spec ships servers:[{url:"/"}].
+- target: $.info
+  update:
+    x-apievangelist-conventions: conventions/surf-conventions.yml
+    x-apievangelist-errors: errors/surf-error-codes.yml
+    x-apievangelist-data-model: data-model/surf-data-model.yml

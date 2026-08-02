@@ -1,0 +1,19 @@
+generated: '2026-07-21'
+method: searched
+provider_published:
+  repo: https://github.com/asksurf-ai/surf-skills
+  install: "npx skills add asksurf-ai/surf-skills --skill surf"
+  description: "Official Surf Agent Skill — 83+ crypto data endpoints, natural language in, structured data out."
+skills:
+- file: surf-wallet-intelligence.md
+  name: Analyze a crypto wallet
+  api: openapi/surf-openapi-original.json
+  operations: [wallet-detail, wallet-net-worth, wallet-transfers, wallet-protocols]
+- file: surf-market-snapshot.md
+  name: Build a market snapshot for an asset
+  api: openapi/surf-openapi-original.json
+  operations: [exchange-price, exchange-candles, market-fear-greed, token-holders]
+- file: surf-onchain-sql.md
+  name: Query on-chain data with SQL
+  api: openapi/surf-openapi-original.json
+  operations: [onchain-schema, onchain-sql, onchain-structured-query]

@@ -1,0 +1,42 @@
+{
+  "provider": "surf",
+  "sources": [
+    "surf-dex-api-openapi.yml",
+    "surf-exchange-api-openapi.yml",
+    "surf-fund-api-openapi.yml",
+    "surf-hyperliquid-api-openapi.yml",
+    "surf-market-api-openapi.yml",
+    "surf-news-api-openapi.yml",
+    "surf-onchain-api-openapi.yml",
+    "surf-prediction-market-api-openapi.yml",
+    "surf-project-api-openapi.yml",
+    "surf-search-api-openapi.yml",
+    "surf-signal-api-openapi.yml",
+    "surf-social-api-openapi.yml",
+    "surf-token-api-openapi.yml",
+    "surf-wallet-api-openapi.yml",
+    "surf-web-api-openapi.yml"
+  ],
+  "outputs": [
+    "surf-dex-api-openapi.yml",
+    "surf-exchange-api-openapi.yml",
+    "surf-fund-api-openapi.yml",
+    "surf-hyperliquid-api-openapi.yml",
+    "surf-market-api-openapi.yml",
+    "surf-news-api-openapi.yml",
+    "surf-onchain-api-openapi.yml",
+    "surf-prediction-market-api-openapi.yml",
+    "surf-project-api-openapi.yml",
+    "surf-search-api-openapi.yml",
+    "surf-signal-api-openapi.yml",
+    "surf-social-api-openapi.yml",
+    "surf-token-api-openapi.yml",
+    "surf-wallet-api-openapi.yml",
+    "surf-web-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

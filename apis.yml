@@ -1,8 +1,19 @@
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 19
+  pass: local-v1
 aid: surf
 name: Surf
-description: 'Surf is a company surfaced as a portfolio company of pantera-capital and added to the API
-  Evangelist network as a stub for enrichment. Sector: crypto. This profile is a lead awaiting the enrichment
-  pipeline.'
+description: 'Surf (asksurf.ai) is a crypto-focused AI research and execution platform that
+  exposes its intelligence as a developer API. The Surf Data API ("Hermod" gateway) provides
+  119 typed REST endpoints across 14 domains — exchange and market data, tokens, DeFi projects,
+  wallets, on-chain SQL, social signals, news, funds, prediction markets (Polymarket/Kalshi),
+  Hyperliquid perps, search, and web fetch — covering 40+ blockchains and 200+ data sources.
+  A separate OpenAI-style Chat API (surf-2.0 / surf-2.0-instant models) answers natural-language
+  crypto research questions with citations. Access is via a single Bearer API key with
+  credit-based billing (30 free credits/day, no signup), and the platform ships a Go CLI, an
+  MCP server, an Agent Skill, and a TypeScript SDK. Surf is backed by Pantera Capital.'
 url: https://raw.githubusercontent.com/api-evangelist/surf/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -10,13 +21,260 @@ x-backed-by:
 - pantera-capital
 x-tier: stub
 x-tier-reason: portfolio-lead
+accessModel:
+  pricing: unknown
+  onboarding: open
+  trial: false
+  try_now: false
+  public: true
+  label: Open access
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
 - Crypto
-apis: []
+- Blockchain
+- Market Data
+- On-Chain Analytics
+- Wallet Intelligence
+- AI
+- DeFi
+- Prediction Markets
+- Developer API
+image: https://asksurf.ai/favicon.ico
+apis:
+- name: Surf Chat API
+  description: >-
+    OpenAI-style Chat/Research API. POST /responses with a surf-2.0 or surf-2.0-instant model and a natural-language
+    crypto question; returns synthesized answers with inline citations drawn from live market, on-chain,
+    and social data. Streaming supported.
+  humanURL: https://agents.asksurf.ai/docs/chat/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Crypto
+  - AI
+  - LLM
+- aid: surf:surf-dex-api
+  name: Surf DEX API
+  description: The DEX API from Surf — 1 operation(s) for dex.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - DEX
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-dex-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-exchange-api
+  name: Surf Exchange API
+  description: >-
+    Access real-time trading data from major exchanges including Binance, OKX, Bybit, and more. Query
+    live ticker prices, order book depth, OHLCV candlestick charts, and perpetual contract data such as
+    funding rates, open interest, and long/short ratios.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Exchange
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-exchange-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-fund-api
+  name: Surf Fund API
+  description: >-
+    Explore crypto venture capital. Look up fund profiles with team info and social links, browse their
+    full investment portfolio with round details, and rank funds by tier or portfolio size.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Fund
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-fund-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-hyperliquid-api
+  name: Surf Hyperliquid API
+  description: The Hyperliquid API from Surf — 9 operation(s) for hyperliquid.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Hyperliquid
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-hyperliquid-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-market-api
+  name: Surf Market API
+  description: >-
+    Get a high-level view of the crypto market. Browse token rankings by market cap or volume, track derivatives
+    across all exchanges, monitor spot ETF fund flows, view liquidation events, compute technical indicators
+    (RSI, MACD, Bollinger Bands, and more), explore on-chain valuation metrics (NUPL, MVRV, SOPR), and
+    check the Fear & Greed Index.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Market
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-market-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-news-api
+  name: Surf News API
+  description: >-
+    Stay up to date with crypto news. Browse the latest articles from major crypto media outlets, read
+    full article content, and search across all sources by keyword.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - News
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-news-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-onchain-api
+  name: Surf Onchain API
+  description: >-
+    Query blockchain data directly. Look up transaction details by hash, check gas prices, and run structured
+    or raw SQL queries against indexed blockchain datasets spanning Ethereum, Base, Solana, and more.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Onchain
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-onchain-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-prediction-market-api
+  name: Surf Prediction Market API
+  description: >-
+    Track prediction markets on Polymarket and Kalshi. Browse events and markets, view live prices and
+    odds, analyze trading volume and open interest history, inspect individual trades, and discover top-ranked
+    markets by activity.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Prediction Market
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-prediction-market-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-project-api
+  name: Surf Project API
+  description: >-
+    Research crypto projects in depth. Retrieve aggregated project profiles covering overview, team, funding
+    rounds, tokenomics, social links, and TGE status. Track DeFi protocol metrics like TVL, fees, revenue,
+    trading volume, and active users over time.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Project
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-project-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-search-api
+  name: Surf Search API
+  description: >-
+    Find anything across Surf's data universe. Search for crypto projects, X (Twitter) accounts and posts,
+    news articles, wallet addresses, web pages, investment funds, airdrop opportunities, and prediction
+    market events — all from a single unified search interface.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Search
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-search-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-signal-api
+  name: Surf Signal API
+  description: >-
+    Explore ranked project signal score snapshots, token-of-day/week highlights, and project-level signal
+    cards with latest price, price-change, dimension scores, compact signals, and AI summaries.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Signal
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-signal-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-social-api
+  name: Surf Social API
+  description: >-
+    Monitor crypto social activity on X (Twitter). Look up user profiles and their posts, track project
+    sentiment scores and follower geography, discover smart followers, and analyze mindshare trends over
+    time to gauge social momentum.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Social
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-social-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-token-api
+  name: Surf Token API
+  description: >-
+    Analyze individual tokens on-chain. Look up top holders and their share of supply, track ERC-20/SPL
+    token transfers, browse DEX swap history, and view upcoming token unlock schedules with allocation
+    breakdowns.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Token
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-token-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-wallet-api
+  name: Surf Wallet API
+  description: >-
+    Inspect any wallet on Ethereum, Base, Solana, and other chains. View token balances, NFT holdings,
+    entity labels, transfer history, full transaction logs, DeFi protocol positions (lending, staking,
+    LP), and net worth trends over time.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Wallet
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-wallet-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-web-api
+  name: Surf Web API
+  description: >-
+    Fetch and search web content. Retrieve any URL and convert it to clean, LLM-friendly markdown, or
+    search the internet for crypto-related articles, reports, and resources.
+  humanURL: https://agents.asksurf.ai/docs/data-api/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - Web
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-web-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -25,3 +283,43 @@ maintainers:
 common:
 - type: Website
   url: https://asksurf.ai/
+- type: DeveloperPortal
+  url: https://agents.asksurf.ai/
+- type: Documentation
+  url: https://agents.asksurf.ai/docs
+- type: APIReference
+  url: https://agents.asksurf.ai/docs/data-api/overview
+- type: GettingStarted
+  url: https://agents.asksurf.ai/docs/overview
+- type: Pricing
+  url: https://agents.asksurf.ai/docs/pricing
+- type: SignUp
+  url: https://agents.asksurf.ai/
+- type: GitHubOrganization
+  url: https://github.com/asksurf-ai
+- type: LLMsTxt
+  url: llms/surf-llms.txt
+- type: Authentication
+  url: authentication/surf-authentication.yml
+- type: Conventions
+  url: conventions/surf-conventions.yml
+- type: ErrorCatalog
+  url: errors/surf-error-codes.yml
+- type: DataModel
+  url: data-model/surf-data-model.yml
+- type: Conformance
+  url: conformance/surf-conformance.yml
+- type: Lifecycle
+  url: lifecycle/surf-lifecycle.yml
+- type: MCPServer
+  url: mcp/surf-mcp.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: CLI
+  url: cli/surf-cli.yml
+- type: Packages
+  url: packages/surf-packages.yml
+- type: SDKs
+  url: packages/surf-packages.yml
+- type: DomainSecurity
+  url: security/surf-domain-security.yml

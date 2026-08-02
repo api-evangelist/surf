@@ -1,0 +1,23 @@
+generated: '2026-07-21'
+method: searched
+source: https://agents.asksurf.ai/docs/pricing
+free_tier:
+  credits_per_day: 30
+  scope: per IP address
+  reset: 00:00 UTC
+  auth_required: false
+  note: >-
+    The Data API and CLI can be exercised with no signup and no API key — every IP gets 30
+    free credits/day. This is the provider's "try it" sandbox path rather than a separate
+    sandbox host or fake test data.
+keys:
+  live_prefix: "sk-"
+  separate_test_keys: false
+  note: There is no documented test-vs-live key separation; a single Bearer key spans all access.
+test_data:
+  test_cards: none
+  magic_identifiers: none
+  note: >-
+    Surf is a read-only crypto market/on-chain data API, not a payments or transaction API,
+    so there are no test cards, fixtures, or simulation identifiers. Data returned is live.
+dashboard: https://agents.asksurf.ai/

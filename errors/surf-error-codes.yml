@@ -1,0 +1,35 @@
+generated: '2026-07-21'
+method: searched
+source: https://agents.asksurf.ai/docs/data-api/overview
+derived_from: openapi/surf-openapi-original.json
+format: custom-json
+envelope:
+  shape: '{ "error": { "code": "STRING", "message": "STRING" } }'
+  schema: DataAPIError -> DataAPIErrorDetail
+  note: >-
+    Every Data API operation declares a `default` error response bound to the DataAPIError
+    schema (a single `error` object with `code` and `message`). Not RFC 9457 problem+json.
+# Only the string codes explicitly documented by Surf are listed as confirmed.
+error_codes:
+- code: PAID_BALANCE_ZERO
+  meaning: Account credit balance is zero; top up to continue.
+  confirmed: true
+- code: RATE_LIMITED
+  meaning: Per-API-key RPM limit (sliding 60s window) exceeded.
+  confirmed: true
+- code: NOT_FOUND
+  meaning: Requested entity or resource does not exist.
+  confirmed: true
+http_status_range:
+  documented: "400 (bad request) through 504 (timeout)"
+  observed: [400, 401, 402, 404, 429, 500, 504]
+  note: Full string-code registry is not published in the public docs; status range per docs.
+partial_errors:
+- schema: WalletDetailError
+  meaning: Per-field failure inside a wallet-detail response (e.g. evm_balance, sol_tokens, nft) that could not be loaded.
+- schema: HyperliquidSectionError
+  meaning: Per-section failure (perp, spot, vaults, staking, pricing) inside a Hyperliquid response.
+notes: >-
+  HTTP status codes range from 400 to 504. Specific string codes (RATE_LIMITED,
+  PAID_BALANCE_ZERO, NOT_FOUND) are surfaced in error.code. Some aggregate endpoints return
+  200 with embedded per-field/per-section error objects rather than failing the whole request.

@@ -1,0 +1,62 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/surf-openapi-original.json
+note: >-
+  Entity graph derived from the 301 OpenAPI schemas and the id-reference fields shared across
+  them (symbol x30, exchange x15, address x16, chain x11, condition_id x7, project x4). Surf is a
+  read-only data API, so relationships are query joins over shared identifiers rather than
+  CRUD ownership.
+identifiers:
+  symbol: Asset ticker (e.g. BTC, ETH) — primary key for market/exchange/token data.
+  address: 0x/base58 wallet or contract address (EVM + Solana).
+  chain: Blockchain network selector (40+ chains).
+  exchange: CEX venue identifier.
+  condition_id: Prediction-market (Polymarket) market identifier.
+  project: DeFi protocol / project slug.
+entities:
+- name: Token
+  domain: Token
+  key: symbol / contract_address
+  relationships:
+  - {type: has_many, target: Holder, via: token-holders}
+  - {type: has_many, target: DexTrade, via: token-dex-trades}
+  - {type: belongs_to, target: Chain, via: chain}
+- name: Wallet
+  domain: Wallet
+  key: address
+  relationships:
+  - {type: has_many, target: Transfer, via: wallet-transfers}
+  - {type: has_many, target: Protocol, via: wallet-protocols}
+  - {type: has_one, target: NetWorth, via: wallet-net-worth}
+- name: Exchange
+  domain: Exchange
+  key: exchange
+  relationships:
+  - {type: has_many, target: Market, via: exchange-markets}
+  - {type: has_many, target: Candle, via: exchange-candles}
+- name: Market
+  domain: Market
+  key: symbol
+  relationships:
+  - {type: has_one, target: FearGreed, via: market-fear-greed}
+  - {type: has_many, target: EtfFlow, via: market-etf}
+- name: Project
+  domain: Project
+  key: project
+  relationships:
+  - {type: has_one, target: Signal, via: signal-detail}
+- name: Fund
+  domain: Fund
+  key: id
+  relationships:
+  - {type: has_one, target: Portfolio, via: fund-portfolio}
+- name: PredictionMarket
+  domain: Prediction Market
+  key: condition_id
+  relationships:
+  - {type: has_many, target: Orderbook, via: kalshi-orderbooks}
+- name: Chain
+  domain: Onchain
+  key: chain
+  relationships:
+  - {type: has_many, target: GasPrice, via: onchain-gas-price}

@@ -1,0 +1,29 @@
+generated: '2026-07-21'
+method: searched
+source: https://github.com/asksurf-ai
+packages:
+- language: javascript
+  registry: npm
+  name: "@surf-ai/sdk"
+  version: 1.0.5
+  url: https://www.npmjs.com/package/@surf-ai/sdk
+  install: npm install @surf-ai/sdk
+  description: "Surf platform SDK — data API client, server runtime, and database helpers"
+  official: true
+- language: javascript
+  registry: npm
+  name: "@surf-ai/surf-mcp"
+  version: 0.1.1
+  url: https://www.npmjs.com/package/@surf-ai/surf-mcp
+  install: npx @surf-ai/surf-mcp
+  description: "MCP server for the Surf crypto data API (dynamically generated from the OpenAPI spec)"
+  official: true
+- language: go
+  registry: pkg.go.dev
+  name: github.com/asksurf-ai/surf-cli
+  version: v1.0.9
+  url: https://pkg.go.dev/github.com/asksurf-ai/surf-cli
+  install: "curl -fsSL https://downloads.asksurf.ai/cli/releases/install.sh | sh"
+  description: "Surf CLI — command-line interface for the Surf data platform (Go)"
+  official: true
+  binary: surf

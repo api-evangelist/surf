@@ -1,0 +1,40 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/surf-openapi-original.json
+docs: https://agents.asksurf.ai/docs/cli/introduction
+summary:
+  types:
+  - http
+  - apiKey
+  api_key_in:
+  - header
+  public_scheme: bearer
+notes: >-
+  Public access uses a single Bearer API key (keys are prefixed `sk-`), passed in the
+  `Authorization: Bearer $SURF_API_KEY` header, generated from the dashboard at
+  agents.asksurf.ai. The OpenAPI also declares AdminToken (X-Admin-Token) and InternalKey
+  (X-Internal-Key) apiKey schemes that are internal/admin-only and not for public consumers.
+  The gateway also serves 30 free credits per day per IP with no key at all.
+schemes:
+- name: AccessToken
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  audience: public
+  header: 'Authorization: Bearer sk-...'
+  sources:
+  - openapi/surf-openapi-original.json
+- name: AdminToken
+  type: apiKey
+  in: header
+  parameter: X-Admin-Token
+  audience: internal
+  sources:
+  - openapi/surf-openapi-original.json
+- name: InternalKey
+  type: apiKey
+  in: header
+  parameter: X-Internal-Key
+  audience: internal
+  sources:
+  - openapi/surf-openapi-original.json

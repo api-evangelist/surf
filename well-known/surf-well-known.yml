@@ -1,0 +1,21 @@
+generated: '2026-07-21'
+method: searched
+note: >-
+  Probed the standard /.well-known/ discovery surface on both the API host and the website.
+  None returned 200 — the website returns its SPA fallback (HTTP 404) for every path. No
+  well-known catalog is published; recorded here as honest negative data (no WellKnown pointer).
+hosts:
+- host: https://api.asksurf.ai
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+- host: https://asksurf.ai
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}

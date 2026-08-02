@@ -1,0 +1,45 @@
+generated: '2026-07-21'
+method: searched
+status: published
+source: https://github.com/asksurf-ai/surf-mcp
+server:
+  name: surf
+  repo: https://github.com/asksurf-ai/surf-mcp
+  package: "@surf-ai/surf-mcp"
+  transport: stdio
+  run: npx @surf-ai/surf-mcp
+  requires:
+    runtime: Node.js 20+ or Bun
+    env:
+      SURF_API_KEY: Bearer API key from agents.asksurf.ai
+  spec_source: https://api.asksurf.ai/gateway/openapi.json
+  generation: Tools are dynamically generated from the Surf Data API OpenAPI spec (24h cache).
+notes: >-
+  Official MCP server. Exposes 12 domain-scoped tools, each taking a `command` (an OpenAPI
+  operationId) plus an optional `params` object, covering 86+ Data API endpoints. Compatible
+  with Claude Code, Cursor, and other MCP clients via .mcp.json.
+tools:
+- name: surf_market
+  description: Pricing, rankings, indicators, ETF flows (Market domain)
+- name: surf_exchange
+  description: Live CEX exchange data — price, klines, depth, funding (Exchange domain)
+- name: surf_wallet
+  description: Wallet balances, transfers, DeFi positions, net worth (Wallet domain)
+- name: surf_token
+  description: Token holder analysis, DEX trades, tokenomics (Token domain)
+- name: surf_social
+  description: Twitter/X social signals and sentiment (Social domain)
+- name: surf_project
+  description: DeFi protocol metrics — TVL, fees, revenue, yields (Project domain)
+- name: surf_onchain
+  description: Raw on-chain data and SQL queries (Onchain domain)
+- name: surf_search
+  description: Full-text entity search across crypto data (Search domain)
+- name: surf_prediction_market
+  description: Polymarket and Kalshi data (Prediction Market domain)
+- name: surf_fund
+  description: Venture fund profiles, holdings, rankings (Fund domain)
+- name: surf_news
+  description: Aggregated crypto news feed and article detail (News domain)
+- name: surf_web
+  description: Web page fetching and parsing (Web domain)

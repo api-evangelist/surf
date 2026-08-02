@@ -1,0 +1,32 @@
+generated: '2026-07-21'
+method: searched
+source: https://agents.asksurf.ai/docs/cli/introduction
+repo: https://github.com/asksurf-ai/surf-cli
+language: go
+binary: surf
+version: v1.0.9
+install:
+- method: shell
+  command: "curl -fsSL https://downloads.asksurf.ai/cli/releases/install.sh | sh"
+- method: skills
+  command: "npx skills add asksurf-ai/surf-skills --skill surf"
+- method: go
+  command: "go install github.com/asksurf-ai/surf-cli@latest"
+auth:
+  command: "surf auth --api-key sk-your-key-here"
+  storage: OS keychain when available
+  free_tier: 30 free credits per day, no API key required
+commands:
+- name: auth
+  description: Authenticate with a Surf API key (stored in the OS keychain)
+- name: sync
+  description: Refresh the cached API spec / operation catalog
+- name: list-operations
+  description: Discover all available Data API endpoints/commands
+- name: market-price
+  description: "Fetch live market price, e.g. `surf market-price --symbol BTC`"
+- name: onchain-sql
+  description: Run SQL queries against 58 on-chain tables
+notes: >-
+  Open-source Go CLI mapping the Data API operationIds to `surf <resource>-<action>` commands
+  (e.g. market-price, wallet-detail). Doubles as the runtime that backs the Surf Agent Skill.

@@ -1,0 +1,24 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/surf-openapi-original.json
+standards:
+- id: openapi-3.1
+  conforms: true
+  evidence: Provider publishes an OpenAPI 3.1.0 document (Hermod) at api.asksurf.ai/gateway/openapi.json.
+- id: oauth2
+  conforms: false
+  evidence: No oauth2 security scheme; auth is a Bearer API key (http bearer) plus internal apiKey headers.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: "Errors use a custom { error: { code, message } } envelope, not application/problem+json."
+- id: json-api
+  conforms: false
+- id: pagination-limit-offset
+  conforms: true
+  evidence: List endpoints use limit (max 100) / offset params; some also accept cursor.
+- id: rest
+  conforms: true
+  evidence: 117 GET + 2 POST resource-oriented endpoints over HTTPS with JSON responses.
+- id: openai-chat-compatible
+  conforms: false
+  evidence: Chat API is documented as NOT OpenAI-compatible (POST /responses with surf-2.0 models).

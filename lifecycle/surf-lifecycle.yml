@@ -1,0 +1,24 @@
+generated: '2026-07-21'
+method: searched
+source: https://agents.asksurf.ai/docs
+versioning:
+  scheme: uri-path
+  current: v1
+  base: /gateway/v1
+  docs: https://agents.asksurf.ai/docs/data-api/overview
+chat_api_versioning:
+  current: Research 2.0 (surf-2.0 / surf-2.0-instant), POST /gateway/v1/responses
+  retired: Research 1.5 endpoint has been retired; new implementations must use Research 2.0.
+deprecation:
+  policy_url: null
+  sunset_header: unknown
+  observed: The legacy Research 1.5 Chat endpoint was retired in favor of Research 2.0.
+sla:
+  url: null
+  uptime_target: null
+status_page: null
+deprecated_operations: []
+notes: >-
+  No published formal deprecation policy, SLA, or status page was found. Versioning is a
+  URI-path scheme (v1). A real deprecation event was observed on the Chat API (Research 1.5
+  retired for Research 2.0) but without a documented policy page.

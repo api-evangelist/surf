@@ -1,0 +1,47 @@
+generated: '2026-07-21'
+method: searched
+source: https://agents.asksurf.ai/docs/data-api/overview
+derived_from: openapi/surf-openapi-original.json
+authentication:
+  style: bearer-api-key
+  header: 'Authorization: Bearer sk-...'
+  ref: authentication/surf-authentication.yml
+base_url: https://api.asksurf.ai/gateway/v1
+pagination:
+  style: limit-offset
+  params:
+    limit: default 20, max 100
+    offset: zero-based row offset
+  cursor: some list endpoints also accept an opaque `cursor` param
+  ref: openapi/surf-openapi-original.json
+idempotency:
+  idempotency_key_header: false
+  note: >-
+    117 of 119 Data API operations are HTTP GET (safe + idempotent by method); the two POST
+    operations are query submissions. No explicit Idempotency-Key mechanism is documented.
+caching:
+  behavior: Calling the same endpoint again within 3 minutes is served from cache and costs 0 credits.
+billing:
+  model: credit-based, per-request
+  tiers: {light: 1 credit, standard: 2 credits, heavy: 4 credits}
+  ref: https://agents.asksurf.ai/docs/pricing
+rate_limiting:
+  window: sliding 60-second window per API key
+  default: 100 requests/minute (pay-as-you-go)
+  signal: independent of credit cost
+error_envelope:
+  shape: '{ "error": { "code": "STRING", "message": "STRING" } }'
+  schema: DataAPIError / DataAPIErrorDetail
+  format: custom-json
+  ref: errors/surf-error-codes.yml
+versioning:
+  scheme: uri-path
+  current: v1
+  base: /gateway/v1
+metadata:
+  language_support: News/content available in en, zh, ja, kr
+cross_links:
+  errors: errors/surf-error-codes.yml
+  authentication: authentication/surf-authentication.yml
+  lifecycle: lifecycle/surf-lifecycle.yml
+  data_model: data-model/surf-data-model.yml

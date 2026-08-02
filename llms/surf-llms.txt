@@ -1,0 +1,48 @@
+# Surf AI
+
+> Surf AI (asksurf.ai) is a crypto-focused AI research and execution platform offering professional chat with Instant and Thinking modes, large-scale crypto news aggregation, Cryptopedia project intelligence with pre-TGE reports, on-chain analytics across 40+ blockchains, and AI-powered research report generation.
+
+Surf provides crypto intelligence through AI chat, crypto news aggregation (News/Feed), and Cryptopedia covering 1000+ crypto projects with real-time price data, social sentiment from 100k+ KOLs, 200+ technical indicators, and deep research capabilities scanning 200+ websites.
+
+## Chat
+
+- [Chat](https://asksurf.ai/chat): AI-powered crypto research chat with Instant (fast answers) and Thinking (deep multi-step analysis) modes
+- [FAQ](https://asksurf.ai/faq): Frequently asked questions about Surf capabilities and plans
+
+## Crypto News
+
+- [News](https://asksurf.ai/pulse): Real-time crypto news feed with AI-curated articles in 4 languages (en, zh, ja, kr)
+- [Feed](https://asksurf.ai/feed): Detailed crypto news articles and analysis
+- [News Sitemap (EN)](https://asksurf.ai/sitemap-en-news.xml): English news index
+- [News Sitemap (ZH)](https://asksurf.ai/sitemap-zh-news.xml): Chinese news index
+- [News Sitemap (JA)](https://asksurf.ai/sitemap-ja-news.xml): Japanese news index
+- [News Sitemap (KR)](https://asksurf.ai/sitemap-kr-news.xml): Korean news index
+
+## Cryptopedia Project Intelligence
+
+- [Cryptopedia](https://asksurf.ai/hub): Crypto project intelligence dashboard covering 1000+ projects
+- [Cryptopedia Sitemap](https://asksurf.ai/sitemap-hub.xml): Full index of project pages
+- [Blog](https://asksurf.ai/blog): In-depth crypto research articles and analysis
+
+## Product & Support
+
+- [Home](https://asksurf.ai/): Platform landing page
+- [Pricing](https://asksurf.ai/pricing): Subscription plans (Free, Pro, Max)
+- [Release Notes](https://asksurf.ai/release-notes): Product updates and changelog
+
+## Legal
+
+- [Terms of Service](https://asksurf.ai/terms-of-service): Terms of use
+- [Privacy Policy](https://asksurf.ai/privacy-policy): Data handling practices
+
+## Discovery
+
+- [Full LLM Reference](https://asksurf.ai/llms-full.txt): Detailed reference with citation rules, data capabilities, and AI access policy
+- [Robots](https://asksurf.ai/robots.txt): Crawler directives
+- [Sitemap](https://asksurf.ai/sitemap.xml): Complete sitemap index
+
+## Optional
+
+- [Blog Sitemap](https://asksurf.ai/sitemap-blog.xml): Blog article index
+- [Post Sitemap](https://asksurf.ai/sitemap-post.xml): Post index
+- [Feed Sitemap](https://asksurf.ai/sitemap-feed.xml): Feed article index
