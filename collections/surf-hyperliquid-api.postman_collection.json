@@ -1,0 +1,1923 @@
+{
+  "item": [
+    {
+      "id": "592cdc5d-d576-47e7-ba4a-255774ab5098",
+      "name": "Hyperliquid",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "3f9e1863-8430-4756-b858-228950d2cdd8",
+          "name": "Account Portfolio",
+          "request": {
+            "name": "Account Portfolio",
+            "description": {
+              "content": "Returns a wallet's full portfolio across perps, spot, vaults, and staking in one call, with a perp+vault equity roll-up (`total_value_usd` is the total-equity figure a dashboard header should show, vs the perp-only equity on `/performance` and `/positions`). This is the source for spot balances.\n\nThis is a point-in-time snapshot, not a time series; its perp block duplicates the margin summary from `/hyperliquid/positions` (this endpoint adds spot/vault/staking so it stands alone as a full-portfolio call). Sections are fetched independently: if one fails, that section is omitted (not null) and the failure is named in `errors[]`. The call returns 200 when at least one section succeeds, and 502 only if all four fail. Spot balances are token-denominated and staking is in HYPE.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "hyperliquid",
+                "account"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "40f94ac2-bcb6-47ee-94d5-0426ad10bae0",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "account"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"as_of\": 6282,\n    \"unpriced_token_count\": 4697,\n    \"address\": \"string\",\n    \"errors\": [\n      {\n        \"section\": \"string\",\n        \"reason\": \"string\"\n      },\n      {\n        \"section\": \"string\",\n        \"reason\": \"string\"\n      }\n    ],\n    \"perp\": {\n      \"account_value\": 7052.908706208427,\n      \"withdrawable\": 4975.894878012903,\n      \"total_margin_used\": 5082.147480972392,\n      \"open_position_count\": 5206\n    },\n    \"spot\": {\n      \"balances\": [\n        {\n          \"symbol\": \"string\",\n          \"token_id\": 7853,\n          \"total\": 5748.958340815263,\n          \"hold\": 9299.352061222675,\n          \"available\": 2392.3366972785807,\n          \"entry_notional\": 740.318418182977,\n          \"withdrawable\": 3743.664506824228\n        },\n        {\n          \"symbol\": \"string\",\n          \"token_id\": 475,\n          \"total\": 4806.117130964472,\n          \"hold\": 2789.3347669348113,\n          \"available\": 3406.212253508211,\n          \"entry_notional\": 9389.946788841778,\n          \"withdrawable\": 8753.839557529795\n        }\n      ]\n    },\n    \"staking\": {\n      \"delegated_hype\": 4984.5172768838,\n      \"undelegated_hype\": 2367.785681194078,\n      \"total_pending_withdrawal_hype\": 2433.010822736328,\n      \"pending_withdrawal_count\": 7983\n    },\n    \"total_value_usd\": 7352.073573418666,\n    \"vaults\": {\n      \"total_equity\": 3412.379836094862,\n      \"positions\": [\n        {\n          \"vault_address\": \"string\",\n          \"equity\": 4094.0927474150467,\n          \"locked_until\": 2967\n        },\n        {\n          \"vault_address\": \"string\",\n          \"equity\": 945.5119807420265,\n          \"locked_until\": 1821\n        }\n      ]\n    }\n  },\n  \"meta\": {\n    \"credits_used\": 9852,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseHyperliquidAccount.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "acd9f809-9e91-4172-be83-5ce706749408",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "account"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "afb0955f-9b30-4745-98c6-3797214815b6",
+          "name": "Fills",
+          "request": {
+            "name": "Fills",
+            "description": {
+              "content": "Returns a wallet's individual fills (fill-level executions), newest first by default, with realized PnL, fees, and direction (`crossed`=true marks a taker fill that took liquidity). For closed round-trip trades (one row per open→close position, with per-trade P&L incl. funding), use `/hyperliquid/trades` instead — funding is NOT attributable at fill level.\n\nDefault `order=desc` is a recent-capped window (no `offset`): up to `limit` of the most-recent fills; page back by setting `to` to the oldest `time` you received (or `to_ms`+`to_fill_id` for millisecond-exact paging). For COMPLETE history with no cap, use `order=asc` with `from` and follow `meta.next_cursor`. `symbol` filters to one market (applied client-side, so with `order=desc` it only filters the recent window — pair with `from`/`to` to reach older history).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "hyperliquid",
+                "fills"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Window start (Unix seconds or a date). With the default order=desc, results cover the window forward from this point and are capped at ~2000 of the earliest fills in range (narrow the range to see the most-recent fills). With order=asc this is the start of a complete-history walk: follow meta.next_cursor to page through every fill in the window with no cap."
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "Window end (Unix seconds or a date), inclusive. Defaults to now. With order=desc, page back within the most-recent results by setting this to the oldest time you received (prefer to_ms for millisecond precision); with order=asc it bounds the walk."
+                },
+                {
+                  "disabled": false,
+                  "key": "to_ms",
+                  "value": "<long>",
+                  "description": "Window end in Unix milliseconds, for millisecond-precise desc paging: pass the time_ms of the oldest fill you received to fetch the next page. On its own the boundary is exclusive (fills AT to_ms are dropped), so when more than limit fills share one millisecond the remainder is skipped — pair it with to_fill_id to page losslessly through a boundary millisecond. Takes precedence over to (which is ignored when to_ms is set). Like to, it pages within the recent (~2000-fill) window. desc-only: rejected with order=asc (use cursor instead)."
+                },
+                {
+                  "disabled": false,
+                  "key": "to_fill_id",
+                  "value": "<string>",
+                  "description": "Cursor tiebreak for to_ms: pass the fill_id of the oldest fill you received alongside its time_ms as to_ms. The next page then resumes strictly after that (time_ms, fill_id) pair — fills at the boundary millisecond with a lower fill_id are included instead of skipped, so paging never loses fills that share a millisecond. Requires to_ms; desc-only. Equivalent to following meta.next_cursor, which encodes the same position. An empty page can mean the window is exhausted (set from to reach older history), not that no older fills exist."
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "desc",
+                  "description": "desc (default): newest first — the recent feed, or the earliest-anchored ~2000-fill slice when from is set. asc: oldest first, a complete-history walk from from (required) up to to — each page links the next via meta.next_cursor with no result cap, the reliable mode for full trade-history or PnL reconstruction."
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Opaque continuation token from a previous response's meta.next_cursor. It encodes the paging direction, position, and window, so pass it with only symbol and limit — combining it with from, to, to_ms, or to_fill_id is rejected with 400."
+                },
+                {
+                  "disabled": false,
+                  "key": "symbol",
+                  "value": "<string>",
+                  "description": "Filter to one market (exact match, e.g. xyz:GOLD). Applied client-side: with order=desc it filters after the recent cap (pair it with from/to so older fills are not missed); with order=asc the cursor walk scans past non-matching fills, so a page may return fewer than limit items (or none) while meta.next_cursor still advances."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Page size (1-100)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "a21399be-777e-44e7-8c8f-20f36e4ded26",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "fills"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "to_ms",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "to_fill_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "symbol",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"symbol\": \"string\",\n      \"side\": \"string\",\n      \"direction\": \"string\",\n      \"price\": 9015.96928428459,\n      \"size\": 4010.428795180795,\n      \"start_position\": 174.313057470471,\n      \"closed_pnl\": 2480.7037447768553,\n      \"fee\": 2937.253657887834,\n      \"fee_token\": \"string\",\n      \"crossed\": false,\n      \"is_internal\": false,\n      \"time\": 9578,\n      \"time_ms\": 7505,\n      \"fill_id\": \"string\",\n      \"tx_index\": 3633,\n      \"hash\": \"string\"\n    },\n    {\n      \"symbol\": \"string\",\n      \"side\": \"string\",\n      \"direction\": \"string\",\n      \"price\": 1865.2873143810955,\n      \"size\": 4606.864584802547,\n      \"start_position\": 5493.0899250583125,\n      \"closed_pnl\": 1546.1290981819486,\n      \"fee\": 498.8059082797913,\n      \"fee_token\": \"string\",\n      \"crossed\": false,\n      \"is_internal\": false,\n      \"time\": 312,\n      \"time_ms\": 9864,\n      \"fill_id\": \"string\",\n      \"tx_index\": 6622,\n      \"hash\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"has_more\": false,\n    \"limit\": 2196,\n    \"credits_used\": 7061,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"next_cursor\": \"string\",\n    \"watermark\": 8959\n  },\n  \"$schema\": \"https://example.com/schemas/CursorDataResponseHyperliquidFill.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7ff1533a-25a4-4a1d-aef2-ea3e8abe0444",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "fills"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "to_ms",
+                      "value": "<long>"
+                    },
+                    {
+                      "key": "to_fill_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "symbol",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b6478d5e-7ffd-4fb4-ad9f-e59368951ba3",
+          "name": "Trader Leaderboard",
+          "request": {
+            "name": "Trader Leaderboard",
+            "description": {
+              "content": "Returns traders ranked by a chosen performance metric (PnL by default), with quality filters to exclude bots and brand-new accounts. Each row carries `rank` (1-based, offset-adjusted position in this response's ordering).\n\n**Metric basis — does NOT reconcile with `/performance`:** the leaderboard is built on the upstream Hydromancer trade model, whose `total_pnl` is funding-INCLUSIVE over an all-markets trade universe, while `/hyperliquid/performance`/`/trades`/`/trades/aggregate` are funding-EXCLUDED over our episode warehouse. A leaderboard PnL and the same trader's `/performance` net can differ severalfold — do not display them side-by-side as the same number.\n\n**Ranking:** `sort_by` (`total_pnl`, `win_rate`, `volume_traded`) over a `time_range` window (`1d`, `7d`, `30d`, `90d`, `all`). Always sorted descending.\n\n**Filters:** `min_trades` (defaults to 5; pass `0` for the full population), `min_days_active`, `min_account_age_days`, `min_human_score`, and `dex` (`main_dex` or omit for the NATIVE market only — note `/trades/aggregate` omits to ALL markets — or a builder market: `xyz`, `flx`, `vntl`, `hyna`, `km`, `abcd`, `cash`, `para`, `mkts`).\n\nPaginated with `limit`/`offset`; `meta.total` is the exact count matching your filters.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "hyperliquid",
+                "leaderboard"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "time_range",
+                  "value": "all",
+                  "description": "Window to rank over. Default all (data starts 2025-08-01)."
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "total_pnl",
+                  "description": "Rank by this metric. Always sorted descending."
+                },
+                {
+                  "disabled": false,
+                  "key": "min_trades",
+                  "value": "5",
+                  "description": "Only traders with at least this many trades. Defaults to 5; pass 0 for the full population."
+                },
+                {
+                  "disabled": false,
+                  "key": "min_days_active",
+                  "value": "0",
+                  "description": "Only traders active at least this many days (0 = no filter)."
+                },
+                {
+                  "disabled": false,
+                  "key": "min_account_age_days",
+                  "value": "0",
+                  "description": "Only accounts at least this old, in days (0 = no filter)."
+                },
+                {
+                  "disabled": false,
+                  "key": "min_human_score",
+                  "value": "0",
+                  "description": "Only traders scoring at least this, 0-100 (0 = no filter)."
+                },
+                {
+                  "disabled": false,
+                  "key": "dex",
+                  "value": "<string>",
+                  "description": "Market to rank within: main_dex (or omit) for the native market ONLY, or a builder market — one of: xyz, flx, vntl, hyna, km, abcd, cash, para, mkts. NOTE: the omit default differs from /trades/aggregate, where omitting dex aggregates across ALL markets."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page (1-100)."
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Results to skip."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "071094f6-d38f-4c4a-b67d-e6684ef26cac",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "leaderboard"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "time_range",
+                      "value": "all"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "total_pnl"
+                    },
+                    {
+                      "key": "min_trades",
+                      "value": "5"
+                    },
+                    {
+                      "key": "min_days_active",
+                      "value": "0"
+                    },
+                    {
+                      "key": "min_account_age_days",
+                      "value": "0"
+                    },
+                    {
+                      "key": "min_human_score",
+                      "value": "0"
+                    },
+                    {
+                      "key": "dex",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"rank\": 1541,\n      \"address\": \"string\",\n      \"total_pnl\": 7271.971528643765,\n      \"win_rate\": 3985.2228140553957,\n      \"total_trades\": 602,\n      \"volume_traded\": 8532.292053132784,\n      \"total_fees\": 9437.043844038975,\n      \"total_funding\": 7066.196207176261,\n      \"days_active\": 8190,\n      \"traded_pairs\": [\n        \"string\",\n        \"string\"\n      ],\n      \"human_score\": 388,\n      \"account_age_days\": 5984\n    },\n    {\n      \"rank\": 8785,\n      \"address\": \"string\",\n      \"total_pnl\": 2748.991974707393,\n      \"win_rate\": 4872.082302238166,\n      \"total_trades\": 8779,\n      \"volume_traded\": 6552.044489981447,\n      \"total_fees\": 4854.665522904122,\n      \"total_funding\": 8891.982193670769,\n      \"days_active\": 1109,\n      \"traded_pairs\": [\n        \"string\",\n        \"string\"\n      ],\n      \"human_score\": 4159,\n      \"account_age_days\": 2929\n    }\n  ],\n  \"meta\": {\n    \"limit\": 6955,\n    \"offset\": 8399,\n    \"credits_used\": 9880,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 4925,\n    \"watermark\": 1615\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseHyperliquidTrader.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "78a642ec-8f63-457d-b27b-070a74f09170",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "leaderboard"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "time_range",
+                      "value": "all"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "total_pnl"
+                    },
+                    {
+                      "key": "min_trades",
+                      "value": "5"
+                    },
+                    {
+                      "key": "min_days_active",
+                      "value": "0"
+                    },
+                    {
+                      "key": "min_account_age_days",
+                      "value": "0"
+                    },
+                    {
+                      "key": "min_human_score",
+                      "value": "0"
+                    },
+                    {
+                      "key": "dex",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "30ef021f-cfad-49e2-b6a6-04d957f2d1c7",
+          "name": "Open & Recent Orders",
+          "request": {
+            "name": "Open & Recent Orders",
+            "description": {
+              "content": "Returns a wallet's live resting orders (`open` — stops, take-profits, limits, with trigger type) plus its recent terminal orders (`historical` — filled / canceled / rejected). Use `open` for \"is a stop set right now?\" and `historical` for the set-then-cancelled timeline. Order `side` is in trade terms (`buy`/`sell`), not position terms — a sell stop protects a long; join to `/hyperliquid/positions` by `symbol`.\n\nSections are truncated to `open_limit` (default 500) / `historical_limit` (default 200) — `open_total`/`historical_total` carry the pre-truncation counts. Both sections mix PERP and SPOT orders — check `market_type`: spot orders carry raw spot-pair-index symbols (`@107`) that never join to `/positions`, `/trades`, or `/fills` (perp-only surfaces); filter `market_type=perp` for a perp working-orders panel.\n\n`historical` is **one row per order at its final status**, newest first: the upstream feed is a status-transition stream (an order appears as `open`, then `filled`/`canceled`), so we collapse it to the latest status per order id and drop still-`open` orders (those are in the `open` section) — a passthrough would double-count ids and mislabel status. Status values pass through Hyperliquid's raw camelCase vocabulary: `filled`, `canceled`, plus reject variants like `iocCancelRejected`, `badAloPxRejected`, `selfTradeCanceled`, `insufficientSpotBalanceRejected` — treat any status other than `filled`/`canceled` as a rejection bucket. Derived from the most-recent ~2000 status updates.\n\nThe two sections fetch independently: a failed section is named in `errors[]` and the call still returns 200 (502 only if both fail).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "hyperliquid",
+                "orders"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+                },
+                {
+                  "disabled": false,
+                  "key": "open_limit",
+                  "value": "500",
+                  "description": "Max open orders returned (market makers can hold 1500+; open_total reports the pre-truncation count)."
+                },
+                {
+                  "disabled": false,
+                  "key": "historical_limit",
+                  "value": "200",
+                  "description": "Max terminal orders returned, newest first (the upstream feed holds ~1000 post-collapse; historical_total reports the pre-truncation count)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "ea18aca8-7105-44c6-accc-adbe672247ed",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "orders"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "open_limit",
+                      "value": "500"
+                    },
+                    {
+                      "key": "historical_limit",
+                      "value": "200"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"address\": \"string\",\n    \"as_of\": 5320,\n    \"open\": [\n      {\n        \"symbol\": \"string\",\n        \"market_type\": \"string\",\n        \"order_id\": 3909,\n        \"side\": \"string\",\n        \"limit_price\": 3831.5150581033454,\n        \"size\": 5897.52356074515,\n        \"original_size\": 4812.170123707497,\n        \"order_type\": \"string\",\n        \"timestamp\": 6580,\n        \"trigger_condition\": \"string\",\n        \"trigger_price\": 7717.582551301708,\n        \"is_trigger\": false,\n        \"is_position_tpsl\": true,\n        \"reduce_only\": true\n      },\n      {\n        \"symbol\": \"string\",\n        \"market_type\": \"string\",\n        \"order_id\": 3636,\n        \"side\": \"string\",\n        \"limit_price\": 6235.703407556644,\n        \"size\": 3274.0700032106497,\n        \"original_size\": 9878.736125892805,\n        \"order_type\": \"string\",\n        \"timestamp\": 1409,\n        \"trigger_condition\": \"string\",\n        \"trigger_price\": 9766.834664423875,\n        \"is_trigger\": false,\n        \"is_position_tpsl\": false,\n        \"reduce_only\": false\n      }\n    ],\n    \"open_total\": 1145,\n    \"historical\": [\n      {\n        \"symbol\": \"string\",\n        \"market_type\": \"string\",\n        \"order_id\": 607,\n        \"side\": \"string\",\n        \"limit_price\": 2572.565336485714,\n        \"size\": 6108.151819242474,\n        \"original_size\": 1791.4078333331229,\n        \"order_type\": \"string\",\n        \"status\": \"string\",\n        \"status_time\": 5682,\n        \"placed_time\": 3778,\n        \"trigger_condition\": \"string\",\n        \"trigger_price\": 6691.137712871188,\n        \"is_trigger\": true,\n        \"is_position_tpsl\": true,\n        \"reduce_only\": true\n      },\n      {\n        \"symbol\": \"string\",\n        \"market_type\": \"string\",\n        \"order_id\": 4617,\n        \"side\": \"string\",\n        \"limit_price\": 7329.9875519819625,\n        \"size\": 3355.1436614070685,\n        \"original_size\": 5414.300066103366,\n        \"order_type\": \"string\",\n        \"status\": \"string\",\n        \"status_time\": 8685,\n        \"placed_time\": 48,\n        \"trigger_condition\": \"string\",\n        \"trigger_price\": 1233.114749524794,\n        \"is_trigger\": false,\n        \"is_position_tpsl\": true,\n        \"reduce_only\": false\n      }\n    ],\n    \"historical_total\": 1954,\n    \"errors\": [\n      {\n        \"section\": \"string\",\n        \"reason\": \"string\"\n      },\n      {\n        \"section\": \"string\",\n        \"reason\": \"string\"\n      }\n    ]\n  },\n  \"meta\": {\n    \"credits_used\": 1202,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseHyperliquidOrders.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "31bd3081-78b9-43ce-a81b-48c69671f815",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "orders"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "open_limit",
+                      "value": "500"
+                    },
+                    {
+                      "key": "historical_limit",
+                      "value": "200"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2c9486ec-cee0-4d7c-82d4-464d2863a456",
+          "name": "Trading Performance",
+          "request": {
+            "name": "Trading Performance",
+            "description": {
+              "content": "Returns the connected user's lifetime trading-performance summary — the dashboard header: re-rolled realized performance (win rate, profit factor, gross/net PnL — **funding-excluded**, net = gross − fees), the live position snapshot, and account value.\n\nThis is a lifetime, point-in-time summary: it takes NO `from`/`to` window (use `/hyperliquid/trades` for windowed, paginated closed trades) and carries NO trade list. `account_value` is the live **perp clearinghouse** equity only — NOT total portfolio; for total equity incl. spot/vault use `/hyperliquid/account` (`total_value_usd`). Sections degrade independently: a failed section is named in `errors[]` and the call still returns 200. A genuinely flat perp account returns `account_value` 0 with no `errors[]`; the field is omitted only when the snapshot section degraded (which also adds an `errors[]` entry) — so detect degradation via `errors[]`, not a 0 value.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "hyperliquid",
+                "performance"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+                },
+                {
+                  "disabled": false,
+                  "key": "dex",
+                  "value": "<string>",
+                  "description": "NOT SUPPORTED on /performance — returns 400 if set. The lifetime summary always spans ALL markets; market scoping lives on /trades/aggregate (dex=...)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "1fdaf9f1-4252-482b-b1c3-c9d5718b2fb4",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "performance"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "dex",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"address\": \"string\",\n    \"open_positions\": [\n      {\n        \"symbol\": \"string\",\n        \"size\": 8999.627318166831,\n        \"side\": \"string\",\n        \"leverage_type\": \"string\",\n        \"leverage_value\": 8966,\n        \"max_leverage\": 7704,\n        \"entry_price\": 2700.590337245152,\n        \"mark_price\": 6857.064253640485,\n        \"position_value\": 4517.488126604183,\n        \"unrealized_pnl\": 5664.891492704407,\n        \"return_on_equity\": 687.8105428468261,\n        \"margin_used\": 8805.11932249962,\n        \"cum_funding\": {\n          \"all_time\": 5074.8596819574295,\n          \"since_open\": 5994.34388715202,\n          \"since_change\": 6004.1425034090225\n        },\n        \"distance_to_liquidation\": 146.67600857574902,\n        \"liquidation_price\": 4524.674204441742\n      },\n      {\n        \"symbol\": \"string\",\n        \"size\": 3321.492137423129,\n        \"side\": \"string\",\n        \"leverage_type\": \"string\",\n        \"leverage_value\": 2693,\n        \"max_leverage\": 2886,\n        \"entry_price\": 2566.3946740205056,\n        \"mark_price\": 5407.604834623067,\n        \"position_value\": 7373.84690913654,\n        \"unrealized_pnl\": 3816.573540534378,\n        \"return_on_equity\": 8032.367230041958,\n        \"margin_used\": 8535.77642643837,\n        \"cum_funding\": {\n          \"all_time\": 5317.499144720805,\n          \"since_open\": 7493.307216915705,\n          \"since_change\": 1964.3733348266312\n        },\n        \"distance_to_liquidation\": 5240.5672093623225,\n        \"liquidation_price\": 3689.057790613144\n      }\n    ],\n    \"traded_pairs\": 9197,\n    \"watermark\": 9204,\n    \"partial\": false,\n    \"account_value\": 6910.159829260691,\n    \"errors\": [\n      {\n        \"section\": \"string\",\n        \"reason\": \"string\"\n      },\n      {\n        \"section\": \"string\",\n        \"reason\": \"string\"\n      }\n    ],\n    \"performance\": {\n      \"trades\": 284,\n      \"wins\": 2033,\n      \"losses\": 5844,\n      \"scratches\": 3361,\n      \"win_rate\": 7820.339655625664,\n      \"gross_pnl\": 7332.734656181814,\n      \"fees\": 5029.640920134017,\n      \"net_pnl\": 2170.7616207217475,\n      \"volume_usd\": 815.3987829436815,\n      \"first_trade\": 5678,\n      \"last_trade\": 4009,\n      \"avg_loss\": 6440.615719465645,\n      \"avg_win\": 7326.665976859629,\n      \"profit_factor\": 5082.726939829715\n    },\n    \"total_unrealized_pnl\": 4626.353898000907\n  },\n  \"meta\": {\n    \"credits_used\": 8978,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseHyperliquidPerformanceView.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "60b1d277-3a0a-44d1-8bc1-4aa2be8ba612",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "performance"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "dex",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "15ab57d2-7b72-4e15-aac7-7998bd0d4178",
+          "name": "Open Positions",
+          "request": {
+            "name": "Open Positions",
+            "description": {
+              "content": "Returns a wallet's open perpetual positions with its cross-margin summary and derived risk (leverage, unrealized PnL, ROE, liquidation price, margin ratio, distance-to-liquidation).\n\n`liquidation_price` (and `distance_to_liquidation`) can be null even on a leveraged position — Hyperliquid returns none for cross positions whose spot collateral backstops them; in that case use the account-level `margin_ratio` (the account liquidates as it approaches 1.0) for proximity. `account_value` here is perp clearinghouse equity, not total portfolio (see `/hyperliquid/account`). Positions are sorted by position value (largest first). `dex` scopes to a builder market; omit (or `main_dex`) for the native market.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "hyperliquid",
+                "positions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+                },
+                {
+                  "disabled": false,
+                  "key": "dex",
+                  "value": "<string>",
+                  "description": "Market scope: omit (or main_dex) for the native market, or a builder market — one of: xyz, flx, vntl, hyna, km, abcd, cash, para, mkts."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "e26df098-18ff-458a-b292-282b76a26637",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "positions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "dex",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"address\": \"string\",\n    \"account_value\": 4614.05983583966,\n    \"total_notional_pos\": 6024.5688714996095,\n    \"total_raw_usd\": 2655.1305470107322,\n    \"total_margin_used\": 8080.441743177168,\n    \"cross_maintenance_margin_used\": 3890.1811786001385,\n    \"margin_ratio\": 153.15329420212075,\n    \"withdrawable\": 602.1275305215679,\n    \"timestamp\": 2339,\n    \"positions\": [\n      {\n        \"symbol\": \"string\",\n        \"size\": 5524.202551490261,\n        \"side\": \"string\",\n        \"leverage_type\": \"string\",\n        \"leverage_value\": 3860,\n        \"max_leverage\": 8016,\n        \"entry_price\": 5051.412300788135,\n        \"mark_price\": 4489.909274180829,\n        \"position_value\": 7548.002622669874,\n        \"unrealized_pnl\": 5027.618514534513,\n        \"return_on_equity\": 3303.9021613539244,\n        \"margin_used\": 9074.630657883146,\n        \"cum_funding\": {\n          \"all_time\": 5373.304200405809,\n          \"since_open\": 3841.727845053752,\n          \"since_change\": 4465.764382789197\n        },\n        \"distance_to_liquidation\": 129.4126602442014,\n        \"liquidation_price\": 452.519056091385\n      },\n      {\n        \"symbol\": \"string\",\n        \"size\": 7708.431163926922,\n        \"side\": \"string\",\n        \"leverage_type\": \"string\",\n        \"leverage_value\": 4916,\n        \"max_leverage\": 9896,\n        \"entry_price\": 5763.641671362897,\n        \"mark_price\": 3457.846404910663,\n        \"position_value\": 7879.590641115073,\n        \"unrealized_pnl\": 4444.505761983455,\n        \"return_on_equity\": 446.8368178482507,\n        \"margin_used\": 4235.138307329096,\n        \"cum_funding\": {\n          \"all_time\": 3296.4333361324284,\n          \"since_open\": 4508.382405711477,\n          \"since_change\": 6934.258549675124\n        },\n        \"distance_to_liquidation\": 1551.2449261023908,\n        \"liquidation_price\": 440.79971448782726\n      }\n    ]\n  },\n  \"meta\": {\n    \"credits_used\": 6380,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseHyperliquidPositions.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b77bcebe-effa-4335-bd4d-20b4def90bdb",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "positions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "dex",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "4150db49-2827-47c0-95cc-3a605286e634",
+          "name": "Trader Stats (deprecated → /hyperliquid/performance)",
+          "request": {
+            "name": "Trader Stats (deprecated → /hyperliquid/performance)",
+            "description": {
+              "content": "**Deprecated — use `/hyperliquid/performance`.** This proxies Hydromancer's own trade-summary, which measures a DIFFERENT trade universe than our warehouse: its `total_pnl` is realized **plus funding** (after fees + funding) over Hydromancer's all-markets trade model, while `/hyperliquid/performance` is **funding-excluded** realized P&L over our `episodes` (closed round-trips). Because the trade definition, market scope, and funding treatment all differ, the two diverge on trade count, volume, fees, AND PnL — they do NOT reconcile and must never be shown together (the gap is structural, not merely the wallet's net funding). Retained only for backward compatibility.\n\nReturns one wallet's aggregate trading performance: PnL, win/loss rate, volume, fees, funding, active days, and a human-likeness score. The `from`/`to` window is **unreliable** on this endpoint — the upstream summary does not consistently scope volume / trades / fees / traded_pairs to the window (a narrow window can report lifetime-scale volume and pair counts alongside zero trades); for windowed figures use `/hyperliquid/trades` or `/hyperliquid/fills`. `dex` limits to one market.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "hyperliquid",
+                "trader",
+                "stats"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Window start (Unix seconds or a date). Omit for lifetime."
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "Window end (Unix seconds or a date). Defaults to now."
+                },
+                {
+                  "disabled": false,
+                  "key": "dex",
+                  "value": "<string>",
+                  "description": "Market scope: main_dex for the native market only, or omit to aggregate across all markets; or a builder market — one of: xyz, flx, vntl, hyna, km, abcd, cash, para, mkts."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "1014eaaf-2a1d-4af1-9f00-a7ba5c762c06",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "trader",
+                    "stats"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "dex",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"address\": \"string\",\n    \"total_pnl\": 5423.532074268083,\n    \"win_rate\": 4656.1827062837,\n    \"loss_rate\": 1837.360743363886,\n    \"total_trades\": 8070,\n    \"volume_traded\": 3275.112869264092,\n    \"total_fees\": 2094.629737318371,\n    \"total_funding\": 6030.540088021443,\n    \"days_active\": 3379,\n    \"traded_pairs\": [\n      \"string\",\n      \"string\"\n    ],\n    \"human_score\": 4240,\n    \"account_age_days\": 6930\n  },\n  \"meta\": {\n    \"credits_used\": 7172,\n    \"cached\": false,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseHyperliquidTraderStats.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "04956ea1-c302-4118-9000-217b1315273a",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "trader",
+                    "stats"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "dex",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "385815e0-902f-4214-9ff0-2dc92edcedb8",
+          "name": "Closed Trades",
+          "request": {
+            "name": "Closed Trades",
+            "description": {
+              "content": "Returns a wallet's closed round-trip trades — one row per open→close position lifecycle, with realized per-trade P&L (gross, net = gross − fees, fees, and `funding_pnl` as a **separate** field that net EXCLUDES), entry/exit price, size, and hold time. Newest close first. This is the journal / calendar / attribution source; for fill-level executions use `/hyperliquid/fills` instead.\n\nReturns EVERY closed trade in the window — it does NOT filter by symbol or direction (a `symbol`/`direction` query param is ignored, not applied); for per-symbol / per-direction rollups use `/hyperliquid/trades/aggregate`, or `/hyperliquid/fills` for symbol-scoped fills. `funding_pnl` is 0 for warehouse rows and populated only on the live tail, so a funding-inclusive total is incomplete before the watermark.\n\nCursor-paged over the full history (warehouse + a live gap-fill for the most recent days): follow `meta.next_cursor` to page back. The cursor is a complete continuation token (it encodes the window + position), so pass it with only `address` and `limit` — combining it with `from`/`to` is rejected. `from`/`to` (Unix seconds or a date) bound the window on the first page. A wallet with an extremely large live (post-warehouse) trade history may require a `from`/`to` window.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "hyperliquid",
+                "trades"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+                },
+                {
+                  "disabled": false,
+                  "key": "symbol",
+                  "value": "<string>",
+                  "description": "NOT SUPPORTED on /trades — returns 400 if set. Per-symbol slicing lives on /trades/aggregate (group_by=symbol) or client-side."
+                },
+                {
+                  "disabled": false,
+                  "key": "direction",
+                  "value": "<string>",
+                  "description": "NOT SUPPORTED on /trades — returns 400 if set. Per-direction slicing lives on /trades/aggregate (group_by=direction) or client-side."
+                },
+                {
+                  "disabled": false,
+                  "key": "dex",
+                  "value": "<string>",
+                  "description": "NOT SUPPORTED on /trades — returns 400 if set. Market scoping lives on /trades/aggregate (dex=...)."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Window start: Unix seconds, an ISO datetime (2026-03-01T12:00:00Z), or a bare date (= midnight UTC). Omit for the full history."
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "Window end, inclusive: Unix seconds, an ISO datetime, or a bare date — a bare date means the END of that UTC day, so from=X&to=X covers the whole day X. Defaults to now."
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Opaque continuation token from a previous response's meta.next_cursor. It encodes the window, position, and address, so pass it with only address + limit — and only with the address it was issued for. Tokens are single-use opaque values: identical requests mint different tokens that decode to the same position."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Page size (1-100)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "1b406645-c1c5-4abf-8ea5-f0225f371697",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "trades"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "symbol",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "direction",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "dex",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"symbol\": \"string\",\n      \"direction\": \"string\",\n      \"open_time\": 4699,\n      \"close_time\": 5139,\n      \"opened_sz\": 5401.469885407078,\n      \"entry_px\": 6900.616032919395,\n      \"exit_px\": 8361.580205127617,\n      \"gross_pnl\": 6948.292050869715,\n      \"net_pnl\": 5352.494626722062,\n      \"fees\": 1072.3294937875116,\n      \"funding_pnl\": 2115.3974099433426,\n      \"is_win\": true,\n      \"hold_seconds\": 7908,\n      \"source\": \"string\",\n      \"notional_usd\": 2302.0278716022467,\n      \"episode_id\": \"string\"\n    },\n    {\n      \"symbol\": \"string\",\n      \"direction\": \"string\",\n      \"open_time\": 4382,\n      \"close_time\": 404,\n      \"opened_sz\": 2259.9173396428364,\n      \"entry_px\": 9009.35195893455,\n      \"exit_px\": 7334.207447711025,\n      \"gross_pnl\": 5410.348248910519,\n      \"net_pnl\": 9252.778322406706,\n      \"fees\": 3852.899078911282,\n      \"funding_pnl\": 718.8279322212799,\n      \"is_win\": true,\n      \"hold_seconds\": 6627,\n      \"source\": \"string\",\n      \"notional_usd\": 9695.59234759617,\n      \"episode_id\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"has_more\": false,\n    \"limit\": 5757,\n    \"credits_used\": 1828,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"next_cursor\": \"string\",\n    \"watermark\": 7122\n  },\n  \"$schema\": \"https://example.com/schemas/CursorDataResponseHyperliquidEpisode.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a4bc36c3-dc59-436a-8e62-c58dbf70dbc5",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "trades"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "symbol",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "direction",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "dex",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "402b9614-7402-4877-8990-7740afc81f01",
+          "name": "Closed Trades Aggregate",
+          "request": {
+            "name": "Closed Trades Aggregate",
+            "description": {
+              "content": "Returns a wallet's closed trades rolled up server-side into one row per group — so the P&L calendar, per-symbol / direction / size attribution, and the realized equity curve are one call each instead of paging the whole trade history.\n\n**`group_by`:** `day` (UTC calendar day — the calendar and equity-curve source), `symbol` (per market), `direction` (long vs short), `size_bucket` (notional-USD tiers: `<1k`, `1k-10k`, `10k-100k`, `100k-1m`, `1m+`), or `hold_bucket` (holding-time tiers: `<5m`, `5m-1h`, `1h-1d`, `1d-1w`, `1w+`). Tiers with no trades are omitted — render the full ladder client-side and zero-fill. One dimension per call.\n\n**Per group:** trade_count, gross_pnl, net_pnl (funding-excluded — gross − fees, matching `/trades` and `/performance`), fees, funding_pnl (live tail only), win_rate, volume_usd (notional), avg_win, avg_loss.\n\n`from`/`to` (Unix seconds or a date) bound close_time; omit for full history. Totals reconcile to `/trades` and `/performance` — all three read the same `episodes` universe (warehouse ≤ watermark plus the live gap-fill past it) through one shared watermark; only the live gap-fill contributes trades past the watermark, and `funding_pnl` is populated on that tail alone. `dex` scopes to one market (omit to aggregate across markets). For `group_by=day`, `fill_gaps=true` emits zero rows for no-trade days (a dense calendar; requires `from`). Not paginated — every group in the window is returned in one response.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "hyperliquid",
+                "trades",
+                "aggregate"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+                },
+                {
+                  "disabled": false,
+                  "key": "group_by",
+                  "value": "day",
+                  "description": "Dimension to roll up by. day = UTC calendar day (the P&L calendar / equity-curve source); symbol = per market; direction = long vs short; size_bucket = notional-USD tiers; hold_bucket = holding-time tiers."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Window start, bounds close_time: Unix seconds, an ISO datetime (2026-03-01T12:00:00Z), or a bare date (= midnight UTC). Omit for full history."
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "Window end, inclusive, bounds close_time: Unix seconds, an ISO datetime, or a bare date — a bare date means the END of that UTC day, so from=X&to=X covers the whole day X. Defaults to now."
+                },
+                {
+                  "disabled": false,
+                  "key": "dex",
+                  "value": "<string>",
+                  "description": "Market scope: main_dex for the native market only, omit to aggregate across ALL markets, or a builder market — one of: xyz, flx, vntl, hyna, km, abcd, cash, para, mkts. NOTE: the omit default differs from /leaderboard, where omitting dex means the native market only."
+                },
+                {
+                  "disabled": false,
+                  "key": "fill_gaps",
+                  "value": "false",
+                  "description": "group_by=day only: emit a zero row for every no-trade UTC day in the window so the calendar is dense. Requires from (a bounded window); ignored for other group_by values."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "699f489d-93f7-4776-a7a4-23d2e0070589",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "trades",
+                    "aggregate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "group_by",
+                      "value": "day"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-31"
+                    },
+                    {
+                      "key": "dex",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "fill_gaps",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"key\": \"string\",\n      \"trade_count\": 3224,\n      \"gross_pnl\": 5054.418783285817,\n      \"net_pnl\": 6672.996746625468,\n      \"fees\": 6714.91775665877,\n      \"funding_pnl\": 8093.9148655657245,\n      \"win_rate\": 3317.6412793879617,\n      \"volume_usd\": 5465.659483354677,\n      \"avg_loss\": 9919.326382509078,\n      \"avg_win\": 5214.957720465519\n    },\n    {\n      \"key\": \"string\",\n      \"trade_count\": 753,\n      \"gross_pnl\": 7182.406137462965,\n      \"net_pnl\": 3293.638998065043,\n      \"fees\": 8004.201252640639,\n      \"funding_pnl\": 6378.399951488815,\n      \"win_rate\": 2307.4974823142115,\n      \"volume_usd\": 1702.7546993721676,\n      \"avg_loss\": 5235.352381303053,\n      \"avg_win\": 1502.2590188040342\n    }\n  ],\n  \"meta\": {\n    \"limit\": 5434,\n    \"offset\": 45,\n    \"credits_used\": 5255,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 8169,\n    \"watermark\": 7197\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseHyperliquidTradeGroup.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "37c48bb1-2abd-462c-ae1f-ee4f8d92ede0",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "hyperliquid",
+                    "trades",
+                    "aggregate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "group_by",
+                      "value": "day"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-31"
+                    },
+                    {
+                      "key": "dex",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "fill_gaps",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "ad5f1e55-916f-4be7-932c-aeedfd8bf5ea",
+    "name": "Hermod DEX Hyperliquid API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n\n\nContact Support:\n Name: Cyber team\n Email: backend@cybertinolab.com",
+      "type": "text/plain"
+    }
+  }
+}

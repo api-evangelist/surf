@@ -1,0 +1,435 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Hermod DEX Hyperliquid API",
+    "version": "sha-80d3407"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Hyperliquid",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Account Portfolio",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/hyperliquid/account",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a wallet's full portfolio across perps, spot, vaults, and staking in one call, with a perp+vault equity roll-up (`total_value_usd` is the total-equity figure a dashboard header should show, vs the perp-only equity on `/performance` and `/positions`). This is the source for spot balances.\n\nThis is a point-in-time snapshot, not a time series; its perp block duplicates the margin summary from `/hyperliquid/positions` (this endpoint adds spot/vault/staking so it stands alone as a full-portfo"
+        },
+        {
+          "info": {
+            "name": "Fills",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/hyperliquid/fills",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Window start (Unix seconds or a date). With the default order=desc, results cover the window forward from this point and are capped at ~2000 of the earliest fills in range (narrow the range to see the most-recent fills). With order=asc this is the start of a complete-history walk: follow meta.next_cursor to page through every fill in the window with no cap."
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "Window end (Unix seconds or a date), inclusive. Defaults to now. With order=desc, page back within the most-recent results by setting this to the oldest time you received (prefer to_ms for millisecond precision); with order=asc it bounds the walk."
+              },
+              {
+                "name": "to_ms",
+                "value": "",
+                "type": "query",
+                "description": "Window end in Unix milliseconds, for millisecond-precise desc paging: pass the time_ms of the oldest fill you received to fetch the next page. On its own the boundary is exclusive (fills AT to_ms are dropped), so when more than limit fills share one millisecond the remainder is skipped — pair it with to_fill_id to page losslessly through a boundary millisecond. Takes precedence over to (which is ignored when to_ms is set). Like to, it pages within the recent (~2000-fill) window. desc-only: rejected with order=asc (use cursor instead)."
+              },
+              {
+                "name": "to_fill_id",
+                "value": "",
+                "type": "query",
+                "description": "Cursor tiebreak for to_ms: pass the fill_id of the oldest fill you received alongside its time_ms as to_ms. The next page then resumes strictly after that (time_ms, fill_id) pair — fills at the boundary millisecond with a lower fill_id are included instead of skipped, so paging never loses fills that share a millisecond. Requires to_ms; desc-only. Equivalent to following meta.next_cursor, which encodes the same position. An empty page can mean the window is exhausted (set from to reach older history), not that no older fills exist."
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "desc (default): newest first — the recent feed, or the earliest-anchored ~2000-fill slice when from is set. asc: oldest first, a complete-history walk from from (required) up to to — each page links the next via meta.next_cursor with no result cap, the reliable mode for full trade-history or PnL reconstruction."
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque continuation token from a previous response's meta.next_cursor. It encodes the paging direction, position, and window, so pass it with only symbol and limit — combining it with from, to, to_ms, or to_fill_id is rejected with 400."
+              },
+              {
+                "name": "symbol",
+                "value": "",
+                "type": "query",
+                "description": "Filter to one market (exact match, e.g. xyz:GOLD). Applied client-side: with order=desc it filters after the recent cap (pair it with from/to so older fills are not missed); with order=asc the cursor walk scans past non-matching fills, so a page may return fewer than limit items (or none) while meta.next_cursor still advances."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Page size (1-100)."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a wallet's individual fills (fill-level executions), newest first by default, with realized PnL, fees, and direction (`crossed`=true marks a taker fill that took liquidity). For closed round-trip trades (one row per open→close position, with per-trade P&L incl. funding), use `/hyperliquid/trades` instead — funding is NOT attributable at fill level.\n\nDefault `order=desc` is a recent-capped window (no `offset`): up to `limit` of the most-recent fills; page back by setting `to` to the oldes"
+        },
+        {
+          "info": {
+            "name": "Trader Leaderboard",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/hyperliquid/leaderboard",
+            "params": [
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window to rank over. Default all (data starts 2025-08-01)."
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Rank by this metric. Always sorted descending."
+              },
+              {
+                "name": "min_trades",
+                "value": "",
+                "type": "query",
+                "description": "Only traders with at least this many trades. Defaults to 5; pass 0 for the full population."
+              },
+              {
+                "name": "min_days_active",
+                "value": "",
+                "type": "query",
+                "description": "Only traders active at least this many days (0 = no filter)."
+              },
+              {
+                "name": "min_account_age_days",
+                "value": "",
+                "type": "query",
+                "description": "Only accounts at least this old, in days (0 = no filter)."
+              },
+              {
+                "name": "min_human_score",
+                "value": "",
+                "type": "query",
+                "description": "Only traders scoring at least this, 0-100 (0 = no filter)."
+              },
+              {
+                "name": "dex",
+                "value": "",
+                "type": "query",
+                "description": "Market to rank within: main_dex (or omit) for the native market ONLY, or a builder market — one of: xyz, flx, vntl, hyna, km, abcd, cash, para, mkts. NOTE: the omit default differs from /trades/aggregate, where omitting dex aggregates across ALL markets."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page (1-100)."
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Results to skip."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns traders ranked by a chosen performance metric (PnL by default), with quality filters to exclude bots and brand-new accounts. Each row carries `rank` (1-based, offset-adjusted position in this response's ordering).\n\n**Metric basis — does NOT reconcile with `/performance`:** the leaderboard is built on the upstream Hydromancer trade model, whose `total_pnl` is funding-INCLUSIVE over an all-markets trade universe, while `/hyperliquid/performance`/`/trades`/`/trades/aggregate` are funding-EX"
+        },
+        {
+          "info": {
+            "name": "Open & Recent Orders",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/hyperliquid/orders",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+              },
+              {
+                "name": "open_limit",
+                "value": "",
+                "type": "query",
+                "description": "Max open orders returned (market makers can hold 1500+; open_total reports the pre-truncation count)."
+              },
+              {
+                "name": "historical_limit",
+                "value": "",
+                "type": "query",
+                "description": "Max terminal orders returned, newest first (the upstream feed holds ~1000 post-collapse; historical_total reports the pre-truncation count)."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a wallet's live resting orders (`open` — stops, take-profits, limits, with trigger type) plus its recent terminal orders (`historical` — filled / canceled / rejected). Use `open` for \"is a stop set right now?\" and `historical` for the set-then-cancelled timeline. Order `side` is in trade terms (`buy`/`sell`), not position terms — a sell stop protects a long; join to `/hyperliquid/positions` by `symbol`.\n\nSections are truncated to `open_limit` (default 500) / `historical_limit` (default 2"
+        },
+        {
+          "info": {
+            "name": "Trading Performance",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/hyperliquid/performance",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+              },
+              {
+                "name": "dex",
+                "value": "",
+                "type": "query",
+                "description": "NOT SUPPORTED on /performance — returns 400 if set. The lifetime summary always spans ALL markets; market scoping lives on /trades/aggregate (dex=...)."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns the connected user's lifetime trading-performance summary — the dashboard header: re-rolled realized performance (win rate, profit factor, gross/net PnL — **funding-excluded**, net = gross − fees), the live position snapshot, and account value.\n\nThis is a lifetime, point-in-time summary: it takes NO `from`/`to` window (use `/hyperliquid/trades` for windowed, paginated closed trades) and carries NO trade list. `account_value` is the live **perp clearinghouse** equity only — NOT total port"
+        },
+        {
+          "info": {
+            "name": "Open Positions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/hyperliquid/positions",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+              },
+              {
+                "name": "dex",
+                "value": "",
+                "type": "query",
+                "description": "Market scope: omit (or main_dex) for the native market, or a builder market — one of: xyz, flx, vntl, hyna, km, abcd, cash, para, mkts."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a wallet's open perpetual positions with its cross-margin summary and derived risk (leverage, unrealized PnL, ROE, liquidation price, margin ratio, distance-to-liquidation).\n\n`liquidation_price` (and `distance_to_liquidation`) can be null even on a leveraged position — Hyperliquid returns none for cross positions whose spot collateral backstops them; in that case use the account-level `margin_ratio` (the account liquidates as it approaches 1.0) for proximity. `account_value` here is perp"
+        },
+        {
+          "info": {
+            "name": "Trader Stats (deprecated → /hyperliquid/performance)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/hyperliquid/trader/stats",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Window start (Unix seconds or a date). Omit for lifetime."
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "Window end (Unix seconds or a date). Defaults to now."
+              },
+              {
+                "name": "dex",
+                "value": "",
+                "type": "query",
+                "description": "Market scope: main_dex for the native market only, or omit to aggregate across all markets; or a builder market — one of: xyz, flx, vntl, hyna, km, abcd, cash, para, mkts."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "**Deprecated — use `/hyperliquid/performance`.** This proxies Hydromancer's own trade-summary, which measures a DIFFERENT trade universe than our warehouse: its `total_pnl` is realized **plus funding** (after fees + funding) over Hydromancer's all-markets trade model, while `/hyperliquid/performance` is **funding-excluded** realized P&L over our `episodes` (closed round-trips). Because the trade definition, market scope, and funding treatment all differ, the two diverge on trade count, volume, f"
+        },
+        {
+          "info": {
+            "name": "Closed Trades",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/hyperliquid/trades",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+              },
+              {
+                "name": "symbol",
+                "value": "",
+                "type": "query",
+                "description": "NOT SUPPORTED on /trades — returns 400 if set. Per-symbol slicing lives on /trades/aggregate (group_by=symbol) or client-side."
+              },
+              {
+                "name": "direction",
+                "value": "",
+                "type": "query",
+                "description": "NOT SUPPORTED on /trades — returns 400 if set. Per-direction slicing lives on /trades/aggregate (group_by=direction) or client-side."
+              },
+              {
+                "name": "dex",
+                "value": "",
+                "type": "query",
+                "description": "NOT SUPPORTED on /trades — returns 400 if set. Market scoping lives on /trades/aggregate (dex=...)."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Window start: Unix seconds, an ISO datetime (2026-03-01T12:00:00Z), or a bare date (= midnight UTC). Omit for the full history."
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "Window end, inclusive: Unix seconds, an ISO datetime, or a bare date — a bare date means the END of that UTC day, so from=X&to=X covers the whole day X. Defaults to now."
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque continuation token from a previous response's meta.next_cursor. It encodes the window, position, and address, so pass it with only address + limit — and only with the address it was issued for. Tokens are single-use opaque values: identical requests mint different tokens that decode to the same position."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Page size (1-100)."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a wallet's closed round-trip trades — one row per open→close position lifecycle, with realized per-trade P&L (gross, net = gross − fees, fees, and `funding_pnl` as a **separate** field that net EXCLUDES), entry/exit price, size, and hold time. Newest close first. This is the journal / calendar / attribution source; for fill-level executions use `/hyperliquid/fills` instead.\n\nReturns EVERY closed trade in the window — it does NOT filter by symbol or direction (a `symbol`/`direction` query"
+        },
+        {
+          "info": {
+            "name": "Closed Trades Aggregate",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/hyperliquid/trades/aggregate",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address: a 0x EVM address or an ENS name (e.g. vitalik.eth). Solana addresses are not supported."
+              },
+              {
+                "name": "group_by",
+                "value": "",
+                "type": "query",
+                "description": "Dimension to roll up by. day = UTC calendar day (the P&L calendar / equity-curve source); symbol = per market; direction = long vs short; size_bucket = notional-USD tiers; hold_bucket = holding-time tiers."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Window start, bounds close_time: Unix seconds, an ISO datetime (2026-03-01T12:00:00Z), or a bare date (= midnight UTC). Omit for full history."
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "Window end, inclusive, bounds close_time: Unix seconds, an ISO datetime, or a bare date — a bare date means the END of that UTC day, so from=X&to=X covers the whole day X. Defaults to now."
+              },
+              {
+                "name": "dex",
+                "value": "",
+                "type": "query",
+                "description": "Market scope: main_dex for the native market only, omit to aggregate across ALL markets, or a builder market — one of: xyz, flx, vntl, hyna, km, abcd, cash, para, mkts. NOTE: the omit default differs from /leaderboard, where omitting dex means the native market only."
+              },
+              {
+                "name": "fill_gaps",
+                "value": "",
+                "type": "query",
+                "description": "group_by=day only: emit a zero row for every no-trade UTC day in the window so the calendar is dense. Requires from (a bounded window); ignored for other group_by values."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a wallet's closed trades rolled up server-side into one row per group — so the P&L calendar, per-symbol / direction / size attribution, and the realized equity curve are one call each instead of paging the whole trade history.\n\n**`group_by`:** `day` (UTC calendar day — the calendar and equity-curve source), `symbol` (per market), `direction` (long vs short), `size_bucket` (notional-USD tiers: `<1k`, `1k-10k`, `10k-100k`, `100k-1m`, `1m+`), or `hold_bucket` (holding-time tiers: `<5m`, `5m"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

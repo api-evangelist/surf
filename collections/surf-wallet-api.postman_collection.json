@@ -1,0 +1,1203 @@
+{
+  "item": [
+    {
+      "id": "355b5221-a208-4230-af4c-3f2e92dcb017",
+      "name": "Wallet",
+      "description": {
+        "content": "Inspect any wallet on Ethereum, Base, Solana, and other chains. View token balances, NFT holdings, entity labels, transfer history, full transaction logs, DeFi protocol positions (lending, staking, LP), and net worth trends over time.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "35041340-89f3-40bc-97aa-d70050fadc5f",
+          "name": "Aggregated Wallet Detail",
+          "request": {
+            "name": "Aggregated Wallet Detail",
+            "description": {
+              "content": "Returns a wallet's cross-chain portfolio with selectable sub-resources (balance, tokens, labels, NFTs). Always includes per-chain USD breakdown across 15+ EVM chains.\n\n**Available fields** (via `fields`): `balance`, `tokens`, `labels`, `nft`.\n\n**Lookup:** by `address`. Partial failures return available fields with per-field error info. Returns 422 if `fields` is invalid.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "wallet",
+                "detail"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Wallet address (0x hex for EVM, base58 for Solana)"
+                },
+                {
+                  "disabled": false,
+                  "key": "chain",
+                  "value": "<string>",
+                  "description": "Chain filter for `tokens`, `nft`, and `approvals`. When omitted, inferred from address format: 0x addresses query all EVM chains, base58 addresses query Solana."
+                },
+                {
+                  "disabled": false,
+                  "key": "fields",
+                  "value": "balance,tokens,labels,nft",
+                  "description": "Comma-separated sub-resources to include. Valid: `balance`, `tokens`, `labels`, `nft`, `approvals`. The `active_chains` field is always returned. `approvals` is opt-in (not in default) as it triggers additional upstream calls."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "90ae3c9d-4227-4bd1-9a1c-390f52d457c1",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "wallet",
+                    "detail"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "fields",
+                      "value": "balance,labels,approvals"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"active_chains\": [\n      {\n        \"chain\": \"string\",\n        \"usd_value\": 8421.017148973151,\n        \"chain_id\": 503\n      },\n      {\n        \"chain\": \"string\",\n        \"usd_value\": 4997.853834688391,\n        \"chain_id\": 7102\n      }\n    ],\n    \"approvals\": [\n      {\n        \"token_address\": \"string\",\n        \"symbol\": \"string\",\n        \"chain\": \"string\",\n        \"balance\": 9271.302461514038,\n        \"spenders\": [\n          {\n            \"spender_address\": \"string\",\n            \"allowance\": 5716.946699950696,\n            \"spender_name\": \"string\"\n          },\n          {\n            \"spender_address\": \"string\",\n            \"allowance\": 8323.760861078914,\n            \"spender_name\": \"string\"\n          }\n        ],\n        \"name\": \"string\"\n      },\n      {\n        \"token_address\": \"string\",\n        \"symbol\": \"string\",\n        \"chain\": \"string\",\n        \"balance\": 4243.808876717805,\n        \"spenders\": [\n          {\n            \"spender_address\": \"string\",\n            \"allowance\": 4774.424166703695,\n            \"spender_name\": \"string\"\n          },\n          {\n            \"spender_address\": \"string\",\n            \"allowance\": 603.2833489963574,\n            \"spender_name\": \"string\"\n          }\n        ],\n        \"name\": \"string\"\n      }\n    ],\n    \"errors\": [\n      {\n        \"field\": \"string\",\n        \"message\": \"string\"\n      },\n      {\n        \"field\": \"string\",\n        \"message\": \"string\"\n      }\n    ],\n    \"evm_balance\": {\n      \"address\": \"string\",\n      \"total_usd\": 9349.489697142923,\n      \"chain_balances\": [\n        {\n          \"chain\": \"string\",\n          \"usd_value\": 8371.583098628698,\n          \"chain_id\": 4836\n        },\n        {\n          \"chain\": \"string\",\n          \"usd_value\": 1424.1412048693746,\n          \"chain_id\": 625\n        }\n      ]\n    },\n    \"evm_tokens\": [\n      {\n        \"token_address\": \"string\",\n        \"symbol\": \"string\",\n        \"balance\": \"string\",\n        \"price\": 5765.967598625036,\n        \"usd_value\": 578.4666347415846,\n        \"is_verified\": true,\n        \"chain\": \"string\",\n        \"logo_url\": \"string\",\n        \"name\": \"string\"\n      },\n      {\n        \"token_address\": \"string\",\n        \"symbol\": \"string\",\n        \"balance\": \"string\",\n        \"price\": 8690.643176196592,\n        \"usd_value\": 9412.477573006952,\n        \"is_verified\": true,\n        \"chain\": \"string\",\n        \"logo_url\": \"string\",\n        \"name\": \"string\"\n      }\n    ],\n    \"labels\": {\n      \"address\": \"string\",\n      \"labels\": [\n        {\n          \"label\": \"string\",\n          \"confidence\": 3800.5927929564264\n        },\n        {\n          \"label\": \"string\",\n          \"confidence\": 7004.194870700112\n        }\n      ],\n      \"entity_name\": \"string\",\n      \"entity_type\": \"string\"\n    },\n    \"nft\": [\n      {\n        \"contract_address\": \"string\",\n        \"token_id\": \"string\",\n        \"chain\": \"string\",\n        \"collection_name\": \"string\",\n        \"image_url\": \"string\",\n        \"name\": \"string\",\n        \"usd_price\": 8720.446080086993\n      },\n      {\n        \"contract_address\": \"string\",\n        \"token_id\": \"string\",\n        \"chain\": \"string\",\n        \"collection_name\": \"string\",\n        \"image_url\": \"string\",\n        \"name\": \"string\",\n        \"usd_price\": 6764.261131185722\n      }\n    ],\n    \"sol_balance\": {\n      \"address\": \"string\",\n      \"sol_balance\": \"string\"\n    },\n    \"sol_tokens\": [\n      {\n        \"token_address\": \"string\",\n        \"symbol\": \"string\",\n        \"balance\": \"string\",\n        \"decimals\": 8943,\n        \"is_verified\": true,\n        \"logo_url\": \"string\",\n        \"name\": \"string\"\n      },\n      {\n        \"token_address\": \"string\",\n        \"symbol\": \"string\",\n        \"balance\": \"string\",\n        \"decimals\": 2686,\n        \"is_verified\": false,\n        \"logo_url\": \"string\",\n        \"name\": \"string\"\n      }\n    ]\n  },\n  \"meta\": {\n    \"credits_used\": 8341,\n    \"cached\": false,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseWalletDetailBody.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "161fb00d-7470-4554-9e18-a900724958a5",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "wallet",
+                    "detail"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "fields",
+                      "value": "balance,labels,approvals"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2da51da0-999a-45f1-9d79-4f694bd92730",
+          "name": "Wallet Transaction History",
+          "request": {
+            "name": "Wallet Transaction History",
+            "description": {
+              "content": "Returns all on-chain transactions for a wallet, classified by type (send, receive, swap, approve) with native token value. For ERC-20 token transfers with token identity and USD value, use `wallet-transfers` instead.\n\n**Lookup:** by `address`. Filter by `chain` — supports `ethereum`, `polygon`, `bsc`, `arbitrum`, `optimism`, `avalanche`, `fantom`, `base`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "wallet",
+                "history"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Wallet address — must be a raw 0x-prefixed hex address, not an ENS name"
+                },
+                {
+                  "disabled": false,
+                  "key": "chain",
+                  "value": "ethereum",
+                  "description": "Chain filter. Can be `ethereum`, `polygon`, `bsc`, `avalanche`, `arbitrum`, `optimism`, `fantom`, or `base`."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset. This feed is cursor-paginated upstream and only the most recent ~1000 transactions are reachable; a larger offset returns an empty page with meta.empty_reason rather than an error. For deep history prefer the `before` cursor — its upstream cost is bounded by `limit` and independent of depth, whereas a large offset is emulated by walking the whole feed."
+                },
+                {
+                  "disabled": false,
+                  "key": "before",
+                  "value": "<long>",
+                  "description": "Cursor for efficient deep pagination: return transactions strictly older than this Unix-seconds timestamp (exclusive). Pass the `timestamp` of the last item from the previous page; if items may share a second, pass that timestamp + 1 and de-duplicate on `tx_hash`. Unlike `offset` (which walks the feed), the number of upstream fetches is bounded by `limit` (DeBank returns up to 20 per page) and independent of how far back you page. Mutually exclusive with `offset`."
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "timestamp",
+                  "description": "Field to sort results by. The cursor-paginated upstream feed only supports `timestamp` correctly; unsupported values are rejected by the handler for correctness."
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Sort order. The cursor-paginated upstream feed only supports `desc` correctly; unsupported values are rejected by the handler for correctness."
+                },
+                {
+                  "disabled": false,
+                  "key": "include",
+                  "value": "<string>",
+                  "description": "Comma-separated enrichments to attach to each item. Currently valid: `labels` — adds `from_label` and `to_label` fields with entity information for each counterparty address."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "889b3792-1cb4-4e25-b3d0-c08d41a22db9",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "wallet",
+                    "history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "before",
+                      "value": "1704067200"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "timestamp"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "include",
+                      "value": "labels"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"tx_hash\": \"string\",\n      \"from_address\": \"string\",\n      \"to_address\": \"string\",\n      \"value\": \"string\",\n      \"timestamp\": 5212,\n      \"from_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 982.2972495173532\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 6382.105513037373\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"to_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 4839.030876220937\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 5176.136899002028\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"tx_type\": \"string\"\n    },\n    {\n      \"tx_hash\": \"string\",\n      \"from_address\": \"string\",\n      \"to_address\": \"string\",\n      \"value\": \"string\",\n      \"timestamp\": 7168,\n      \"from_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 4987.722533422008\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 9601.228020969753\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"to_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 9796.611123666666\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 6141.348329881274\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"tx_type\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 5886,\n    \"offset\": 1424,\n    \"credits_used\": 451,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 6161,\n    \"watermark\": 5940\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseWalletHistoryItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5b11c6b8-5586-4ec0-89b7-ca1abd81db20",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "wallet",
+                    "history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "before",
+                      "value": "1704067200"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "timestamp"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "include",
+                      "value": "labels"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "27cba96e-1bff-47ec-925d-d5531ca65e66",
+          "name": "Wallet Labels (Batch)",
+          "request": {
+            "name": "Wallet Labels (Batch)",
+            "description": {
+              "content": "Returns entity labels for multiple wallet addresses.\n\nPass up to 100 comma-separated addresses via the `addresses` query parameter.\n\n**Included fields:** entity name, type, and labels per address.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "wallet",
+                "labels",
+                "batch"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "addresses",
+                  "value": "<string>",
+                  "description": "(Required) Comma-separated wallet addresses to look up, max 100"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "e0e428fd-21ff-4a21-a043-d6763073f19d",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "wallet",
+                    "labels",
+                    "batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "addresses",
+                      "value": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045,0xdead"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"address\": \"string\",\n      \"labels\": [\n        {\n          \"label\": \"string\",\n          \"confidence\": 6500.05513358054\n        },\n        {\n          \"label\": \"string\",\n          \"confidence\": 1402.1319560527322\n        }\n      ],\n      \"entity_name\": \"string\",\n      \"entity_type\": \"string\"\n    },\n    {\n      \"address\": \"string\",\n      \"labels\": [\n        {\n          \"label\": \"string\",\n          \"confidence\": 4271.285186258475\n        },\n        {\n          \"label\": \"string\",\n          \"confidence\": 5273.722834714313\n        }\n      ],\n      \"entity_name\": \"string\",\n      \"entity_type\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 6198,\n    \"offset\": 3285,\n    \"credits_used\": 5666,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 2228,\n    \"watermark\": 7501\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseWalletLabelItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c463f6b8-161b-409f-a36b-f9f09cc35544",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "wallet",
+                    "labels",
+                    "batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "addresses",
+                      "value": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045,0xdead"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "bab9c7c4-24f9-48c8-abbf-dcfd8add574b",
+          "name": "Wallet Net Worth History",
+          "request": {
+            "name": "Wallet Net Worth History",
+            "description": {
+              "content": "Returns a time-series of the wallet's total net worth in USD.\n\nReturns ~288 data points at 5-minute intervals covering the last 24 hours. Fixed window — no custom time range supported.\n\n**Lookup:** by `address` (EVM only — 0x-prefixed hex). Solana addresses are not supported.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "wallet",
+                "net-worth"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Wallet address — must be a raw 0x-prefixed hex address (EVM only). Solana and ENS names are not supported."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "f4ba9066-7a2e-4aee-a24b-e9574c39269c",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "wallet",
+                    "net-worth"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"timestamp\": 2911,\n      \"usd_value\": 7423.019874691984\n    },\n    {\n      \"timestamp\": 9330,\n      \"usd_value\": 2685.616748361235\n    }\n  ],\n  \"meta\": {\n    \"limit\": 580,\n    \"offset\": 3069,\n    \"credits_used\": 408,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 7825,\n    \"watermark\": 8945\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseWalletNetWorthPoint.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4687f108-6a53-44ad-8743-151c8d0d6f40",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "wallet",
+                    "net-worth"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "16e2f2b7-148d-4daa-ba5a-bd8b5937fa98",
+          "name": "Wallet DeFi Protocol Positions",
+          "request": {
+            "name": "Wallet DeFi Protocol Positions",
+            "description": {
+              "content": "Returns all DeFi protocol positions for a wallet — lending, staking, LP, and farming with token breakdowns and USD values.\n\n**Lookup:** by `address` (EVM only — 0x-prefixed hex). Solana addresses are not supported.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "wallet",
+                "protocols"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Wallet address — must be a raw 0x-prefixed hex address, not an ENS name"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "2ba73719-c187-45ab-9545-49599aa6e2b9",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "wallet",
+                    "protocols"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"protocol_name\": \"string\",\n      \"chain\": \"string\",\n      \"total_usd\": 6003.676295544841,\n      \"positions\": [\n        {\n          \"name\": \"string\",\n          \"balance_usd\": 293.4757615718753,\n          \"borrow_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ],\n          \"lp_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ],\n          \"reward_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ],\n          \"supply_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ]\n        },\n        {\n          \"name\": \"string\",\n          \"balance_usd\": 82.41960349837373,\n          \"borrow_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ],\n          \"lp_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ],\n          \"reward_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ],\n          \"supply_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ]\n        }\n      ],\n      \"logo_url\": \"string\",\n      \"site_url\": \"string\"\n    },\n    {\n      \"protocol_name\": \"string\",\n      \"chain\": \"string\",\n      \"total_usd\": 29.871096819387155,\n      \"positions\": [\n        {\n          \"name\": \"string\",\n          \"balance_usd\": 594.4057776190781,\n          \"borrow_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ],\n          \"lp_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ],\n          \"reward_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ],\n          \"supply_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ]\n        },\n        {\n          \"name\": \"string\",\n          \"balance_usd\": 9295.379937011268,\n          \"borrow_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ],\n          \"lp_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ],\n          \"reward_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ],\n          \"supply_tokens\": [\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            },\n            {\n              \"symbol\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"amount\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"price\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"chain\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"name\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              },\n              \"token_address\": {\n                \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n              }\n            }\n          ]\n        }\n      ],\n      \"logo_url\": \"string\",\n      \"site_url\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 6335,\n    \"offset\": 8981,\n    \"credits_used\": 9340,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 2533,\n    \"watermark\": 7192\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseWalletProtocolItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1319848b-3bc2-4d13-9e4d-488f8b9227cf",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "wallet",
+                    "protocols"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "19bf0f1a-2b2b-442c-a26d-51915a7f5add",
+          "name": "Wallet Transfer History",
+          "request": {
+            "name": "Wallet Transfer History",
+            "description": {
+              "content": "Returns ERC-20/SPL token transfers with token identity, USD value, and flow direction (in/out). Unlike `wallet-history` which shows all tx types in native value, this focuses on token-level transfer activity.\n\nPass the **wallet address** in `address` — returns all ERC-20/SPL token transfers where this wallet is the sender or receiver.\n\n**Included fields:** token contract, token symbol, amount USD, counterparty, flow direction.\n\nFilter by specific token or flow direction (in/out).\n\n**Lookup:** `address` (wallet, raw 0x hex or base58 — ENS not supported). Filter by `chain` — supports `ethereum`, `base`, `bsc`, `arbitrum`, `tron`, `solana`.\n\n**Data refresh:** ~24 hours · **Chains:** Ethereum, Base, BSC, Arbitrum, Tron (Solana uses a different source with no delay)",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "wallet",
+                "transfers"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Wallet address — must be a raw address (0x-prefixed hex for EVM, base58 for Solana). ENS names like `vitalik.eth` are not supported; resolve to a 0x address first."
+                },
+                {
+                  "disabled": false,
+                  "key": "chain",
+                  "value": "ethereum",
+                  "description": "Chain. Can be `ethereum`, `base`, `solana`, `tron`, `bsc`, or `arbitrum`."
+                },
+                {
+                  "disabled": false,
+                  "key": "flow",
+                  "value": "<string>",
+                  "description": "Filter by transfer direction relative to the queried wallet. `in` for incoming, `out` for outgoing. Omit for both directions."
+                },
+                {
+                  "disabled": false,
+                  "key": "token",
+                  "value": "<string>",
+                  "description": "Filter by token contract address. Use `0x0000000000000000000000000000000000000000` for native token transfers. Omit for all tokens."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page. Default 20, max 100. NOTE: Solana (`chain=solana`) is hard-capped at 40 per call by the upstream Solscan API — values above 40 return at most 40 items. Check `meta.has_more` and paginate with `offset` to fetch beyond the first page."
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset. For Solana, this maps to Solscan's 1-indexed `page` parameter (page = offset/page_size + 1)."
+                },
+                {
+                  "disabled": false,
+                  "key": "include",
+                  "value": "<string>",
+                  "description": "Comma-separated enrichments to attach to each transfer. Currently valid: `labels` — adds `from_label` and `to_label` fields with entity information for each counterparty address."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "90dcf1bb-638b-48e2-98f9-1ca7632fc8d1",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "wallet",
+                    "transfers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "flow",
+                      "value": "in"
+                    },
+                    {
+                      "key": "token",
+                      "value": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "include",
+                      "value": "labels"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"tx_hash\": \"string\",\n      \"from_address\": \"string\",\n      \"to_address\": \"string\",\n      \"amount\": \"string\",\n      \"timestamp\": 2490,\n      \"activity_type\": \"string\",\n      \"amount_usd\": 2732.006817197222,\n      \"flow\": \"string\",\n      \"from_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 2569.4781841520753\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 4094.3814340894337\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"to_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 3620.345526943984\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 1287.9634889161684\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"token_address\": \"string\",\n      \"token_symbol\": \"string\"\n    },\n    {\n      \"tx_hash\": \"string\",\n      \"from_address\": \"string\",\n      \"to_address\": \"string\",\n      \"amount\": \"string\",\n      \"timestamp\": 818,\n      \"activity_type\": \"string\",\n      \"amount_usd\": 3028.2272514372753,\n      \"flow\": \"string\",\n      \"from_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 8150.405609981761\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 2437.038608016705\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"to_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 3927.934921374698\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 7039.564142298626\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"token_address\": \"string\",\n      \"token_symbol\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 3465,\n    \"offset\": 3563,\n    \"credits_used\": 3251,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 3736,\n    \"watermark\": 2859\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseWalletTransferItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cb5a7c2f-26d1-4b69-819f-e38ec33a94e7",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "wallet",
+                    "transfers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "flow",
+                      "value": "in"
+                    },
+                    {
+                      "key": "token",
+                      "value": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "include",
+                      "value": "labels"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "d25215af-8499-4785-9050-5cba06286e3d",
+    "name": "Hermod DEX Wallet API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n\n\nContact Support:\n Name: Cyber team\n Email: backend@cybertinolab.com",
+      "type": "text/plain"
+    }
+  }
+}

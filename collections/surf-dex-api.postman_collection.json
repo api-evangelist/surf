@@ -1,0 +1,260 @@
+{
+  "item": [
+    {
+      "id": "309063cd-7a12-4c30-9bab-56b55088f453",
+      "name": "DEX",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "07e2f937-2414-49cf-b4bd-41013451e4cb",
+          "name": "DEX Token OHLCV Price",
+          "request": {
+            "name": "DEX Token OHLCV Price",
+            "description": {
+              "content": "Returns DEX-pool-weighted OHLCV bars (timestamp, open, high, low, close, volume_usd) for a single token identified by `chain` + `address`. USD only. Bars are sorted ascending by `timestamp`.\n\n**Use for** meme coins, newly-launched tokens, and any DEX-native asset where `/v1/market/price` returns nothing. Prefer the standard `/v1/market/price` for major listed tokens (BTC, ETH, etc.).\n\n**Time window:** `time_range` (default `24h`) sets the window; `from`+`to` (Unix seconds or `YYYY-MM-DD`) override it. Bars use closed-interval semantics, so `24h × 1h` returns 25 bars. Maximum 1500 bars per call — combinations exceeding the cap (e.g. `30d × 5m`) return 422. `time_range=max` returns the largest allowed 1500-bar window for the selected interval.\n\n**Identity:** `chain` (enum) + `address` (EVM hex or Solana base58). No symbol input.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "dex",
+                "token",
+                "price"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "chain",
+                  "value": "<string>",
+                  "description": "(Required) Chain the token lives on. Can be `ethereum`, `base`, `bsc`, `arbitrum`, `optimism`, `polygon`, `avalanche`, or `solana`."
+                },
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Token contract address — 0x-prefixed hex (42 chars) for EVM chains, base58 for Solana. NOT a ticker symbol."
+                },
+                {
+                  "disabled": false,
+                  "key": "interval",
+                  "value": "1h",
+                  "description": "Candle bucket size. Sub-day intervals (`1m`-`4h`) are the typical choice for active DEX analysis."
+                },
+                {
+                  "disabled": false,
+                  "key": "time_range",
+                  "value": "24h",
+                  "description": "Window of historical data to return. `max` returns the largest allowed 1500-bar window for the selected interval. Ignored when both `from` and `to` are set."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of custom date range (Unix seconds or YYYY-MM-DD). Must be set together with `to`. Overrides `time_range` when set."
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End of custom date range (Unix seconds or YYYY-MM-DD). Must be set together with `from`. Overrides `time_range` when set."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "f462897f-b5f4-4b63-aaf9-b2232789bdfd",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "dex",
+                    "token",
+                    "price"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "address",
+                      "value": "0x6982508145454ce325ddbe47a25d4ec3d2311933"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "1h"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "24h"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-01-02"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"timestamp\": 1418,\n      \"open\": 3729.089743373919,\n      \"high\": 2349.255853509231,\n      \"low\": 1680.6475139197873,\n      \"close\": 4567.331484765117,\n      \"volume_usd\": 1216.6700241803685\n    },\n    {\n      \"timestamp\": 1812,\n      \"open\": 7739.114983849393,\n      \"high\": 697.2561830579249,\n      \"low\": 2074.30318627429,\n      \"close\": 531.8652723143491,\n      \"volume_usd\": 9433.010164399815\n    }\n  ],\n  \"meta\": {\n    \"credits_used\": 2249,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/SimpleListResponseDexTokenPriceBar.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6799f683-946e-4d20-b418-0e727ea021d2",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "dex",
+                    "token",
+                    "price"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "address",
+                      "value": "0x6982508145454ce325ddbe47a25d4ec3d2311933"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "1h"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "24h"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-01-02"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "83c61994-546d-49f4-a7a3-29b039420c9c",
+    "name": "Hermod DEX API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n\n\nContact Support:\n Name: Cyber team\n Email: backend@cybertinolab.com",
+      "type": "text/plain"
+    }
+  }
+}

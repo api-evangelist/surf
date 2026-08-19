@@ -1,0 +1,3220 @@
+{
+  "item": [
+    {
+      "id": "9e2e5e20-bd72-4eef-9b56-5348c8acb765",
+      "name": "Search",
+      "description": {
+        "content": "Find anything across Surf's data universe. Search for crypto projects, X (Twitter) accounts and posts, news articles, wallet addresses, web pages, investment funds, airdrop opportunities, and prediction market events — all from a single unified search interface.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "eb34aa48-0d26-469e-84ec-abf388eaf45a",
+          "name": "Airdrop Search",
+          "request": {
+            "name": "Airdrop Search",
+            "description": {
+              "content": "Searches and filters airdrop opportunities.\n\n**Filters:** keyword, status, reward type, task type.\n\nReturns paginated results with optional task details.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "airdrop"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Search keyword for coin name"
+                },
+                {
+                  "disabled": false,
+                  "key": "phase",
+                  "value": "active,claimable",
+                  "description": "Comma-separated lifecycle phases. `active` = tasks open, can participate (POTENTIAL + CONFIRMED). `claimable` = eligible, can claim (SNAPSHOT + VERIFICATION + REWARD_AVAILABLE). `completed` = done (DISTRIBUTED). Defaults to `active,claimable` to show actionable airdrops."
+                },
+                {
+                  "disabled": false,
+                  "key": "reward_type",
+                  "value": "<string>",
+                  "description": "Filter by reward type"
+                },
+                {
+                  "disabled": false,
+                  "key": "task_type",
+                  "value": "<string>",
+                  "description": "Filter activities containing tasks of this type"
+                },
+                {
+                  "disabled": false,
+                  "key": "has_open",
+                  "value": "false",
+                  "description": "Only return activities with currently OPEN tasks"
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "last_status_update",
+                  "description": "Field to sort results by"
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Sort order"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                },
+                {
+                  "disabled": false,
+                  "key": "include_tasks",
+                  "value": "false",
+                  "description": "Include full task list per activity"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "3eb2adf1-7889-49f8-99fd-9d478038ec1e",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "airdrop"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "airdrop"
+                    },
+                    {
+                      "key": "phase",
+                      "value": "active"
+                    },
+                    {
+                      "key": "reward_type",
+                      "value": "airdrop"
+                    },
+                    {
+                      "key": "task_type",
+                      "value": "social"
+                    },
+                    {
+                      "key": "has_open",
+                      "value": "true"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "last_status_update"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "include_tasks",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"project_name\": \"string\",\n      \"status\": \"string\",\n      \"total_raise\": 9133,\n      \"xscore\": 6272,\n      \"followers_count\": 486,\n      \"reward_date\": 6853,\n      \"last_status_update\": 9893,\n      \"coin_symbol\": \"string\",\n      \"logo_url\": \"string\",\n      \"project_id\": \"string\",\n      \"reward_type\": \"string\",\n      \"task_summary\": {\n        \"total\": 9011,\n        \"open\": 121,\n        \"types\": [\n          \"string\",\n          \"string\"\n        ]\n      },\n      \"tasks\": [\n        {\n          \"title\": \"string\",\n          \"type\": \"string\",\n          \"status\": \"string\",\n          \"is_exclusive\": false,\n          \"cost\": 6754,\n          \"time_minutes\": 9932,\n          \"open_date\": 4283,\n          \"close_date\": 3160,\n          \"blockchains\": [\n            \"string\",\n            \"string\"\n          ],\n          \"external_link\": \"string\"\n        },\n        {\n          \"title\": \"string\",\n          \"type\": \"string\",\n          \"status\": \"string\",\n          \"is_exclusive\": false,\n          \"cost\": 4581,\n          \"time_minutes\": 9688,\n          \"open_date\": 9262,\n          \"close_date\": 8747,\n          \"blockchains\": [\n            \"string\",\n            \"string\"\n          ],\n          \"external_link\": \"string\"\n        }\n      ]\n    },\n    {\n      \"project_name\": \"string\",\n      \"status\": \"string\",\n      \"total_raise\": 8513,\n      \"xscore\": 7413,\n      \"followers_count\": 4089,\n      \"reward_date\": 7067,\n      \"last_status_update\": 401,\n      \"coin_symbol\": \"string\",\n      \"logo_url\": \"string\",\n      \"project_id\": \"string\",\n      \"reward_type\": \"string\",\n      \"task_summary\": {\n        \"total\": 4724,\n        \"open\": 8734,\n        \"types\": [\n          \"string\",\n          \"string\"\n        ]\n      },\n      \"tasks\": [\n        {\n          \"title\": \"string\",\n          \"type\": \"string\",\n          \"status\": \"string\",\n          \"is_exclusive\": true,\n          \"cost\": 8030,\n          \"time_minutes\": 186,\n          \"open_date\": 2059,\n          \"close_date\": 9613,\n          \"blockchains\": [\n            \"string\",\n            \"string\"\n          ],\n          \"external_link\": \"string\"\n        },\n        {\n          \"title\": \"string\",\n          \"type\": \"string\",\n          \"status\": \"string\",\n          \"is_exclusive\": true,\n          \"cost\": 2583,\n          \"time_minutes\": 9013,\n          \"open_date\": 5176,\n          \"close_date\": 6249,\n          \"blockchains\": [\n            \"string\",\n            \"string\"\n          ],\n          \"external_link\": \"string\"\n        }\n      ]\n    }\n  ],\n  \"meta\": {\n    \"limit\": 9299,\n    \"offset\": 2966,\n    \"credits_used\": 1502,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 7591,\n    \"watermark\": 4043\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseAirdropSearchItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "647bf924-2beb-41c2-add0-cc96b345ebb5",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "airdrop"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "airdrop"
+                    },
+                    {
+                      "key": "phase",
+                      "value": "active"
+                    },
+                    {
+                      "key": "reward_type",
+                      "value": "airdrop"
+                    },
+                    {
+                      "key": "task_type",
+                      "value": "social"
+                    },
+                    {
+                      "key": "has_open",
+                      "value": "true"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "last_status_update"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "include_tasks",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5733f177-9b36-4597-b9fb-5b288c33dfa6",
+          "name": "Airdrop Activities",
+          "request": {
+            "name": "Airdrop Activities",
+            "description": {
+              "content": "Lists airdrop activities with pagination.\n\nReturns activity metadata including reward type, status, and social metrics.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "airdrop",
+                "activities"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "88a22e85-2a6e-4129-8741-471a13d9d372",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "airdrop",
+                    "activities"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"string\",\n      \"coin_name\": \"string\",\n      \"status\": \"string\",\n      \"reward\": \"string\",\n      \"reward_type\": \"string\",\n      \"created_at\": 1038,\n      \"updated_at\": 7862,\n      \"coin_symbol\": \"string\",\n      \"followers_count\": \"string\",\n      \"reward_date\": \"string\",\n      \"total_raise\": 2254,\n      \"xscore\": \"string\"\n    },\n    {\n      \"id\": \"string\",\n      \"coin_name\": \"string\",\n      \"status\": \"string\",\n      \"reward\": \"string\",\n      \"reward_type\": \"string\",\n      \"created_at\": 4521,\n      \"updated_at\": 992,\n      \"coin_symbol\": \"string\",\n      \"followers_count\": \"string\",\n      \"reward_date\": \"string\",\n      \"total_raise\": 4315,\n      \"xscore\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 3269,\n    \"offset\": 2512,\n    \"credits_used\": 2902,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 3770,\n    \"watermark\": 3223\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseAirdropActivityItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1068e9f9-85a5-4fdb-9499-1939b0bd4fe3",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "airdrop",
+                    "activities"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a9d3b07b-0f21-426f-b0e1-e28286cc548f",
+          "name": "Project Event Search",
+          "request": {
+            "name": "Project Event Search",
+            "description": {
+              "content": "Searches project events by keyword, optionally filtered by `type`.\n\n**Valid types:** `launch`, `upgrade`, `partnership`, `news`, `airdrop`, `listing`, `twitter`.\n\n**Lookup:** by UUID (`id`) or name (`q`). Returns 404 if the project is not found.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "events"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q."
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+                },
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "<string>",
+                  "description": "Filter by event type. Can be `launch`, `upgrade`, `partnership`, `news`, `airdrop`, `listing`, or `twitter`."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7e89b86c-c196-4c4f-88cf-902bdd739741",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "type",
+                      "value": "launch"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"type\": \"string\",\n      \"title\": \"string\",\n      \"date\": \"string\",\n      \"description\": \"string\",\n      \"logo_url\": \"string\"\n    },\n    {\n      \"type\": \"string\",\n      \"title\": \"string\",\n      \"date\": \"string\",\n      \"description\": \"string\",\n      \"logo_url\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 6461,\n    \"offset\": 9165,\n    \"credits_used\": 6377,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 7417,\n    \"watermark\": 3075\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseProjectEventItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ce0d1fd6-6e71-4b70-82f1-48531095f31d",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "type",
+                      "value": "launch"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c941f7e1-6dc0-4d02-868e-79dba8df428b",
+          "name": "Fund Search",
+          "request": {
+            "name": "Fund Search",
+            "description": {
+              "content": "Searches funds by keyword.\n\n**Included fields:** name, tier, type, logo, top invested projects.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "fund"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "(Required) Search keyword — fund name like `a16z`, `paradigm`, or `coinbase ventures`"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "6d153ae2-188a-4b59-addb-0c964749070e",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "fund"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "a16z"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"string\",\n      \"name\": \"string\",\n      \"tier\": 5974,\n      \"invested_projects_count\": 36,\n      \"top_projects\": [\n        {\n          \"project_id\": \"string\",\n          \"project_name\": \"string\",\n          \"is_lead\": true,\n          \"invested_at\": 3157,\n          \"project_logo\": \"string\",\n          \"project_slug\": \"string\",\n          \"recent_raise\": 2740.5189644187744,\n          \"total_raise\": 2612.253077652993\n        },\n        {\n          \"project_id\": \"string\",\n          \"project_name\": \"string\",\n          \"is_lead\": false,\n          \"invested_at\": 817,\n          \"project_logo\": \"string\",\n          \"project_slug\": \"string\",\n          \"recent_raise\": 3315.4265689899644,\n          \"total_raise\": 8139.5125853442705\n        }\n      ],\n      \"image\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"id\": \"string\",\n      \"name\": \"string\",\n      \"tier\": 6978,\n      \"invested_projects_count\": 1726,\n      \"top_projects\": [\n        {\n          \"project_id\": \"string\",\n          \"project_name\": \"string\",\n          \"is_lead\": true,\n          \"invested_at\": 7235,\n          \"project_logo\": \"string\",\n          \"project_slug\": \"string\",\n          \"recent_raise\": 8277.895571519215,\n          \"total_raise\": 1185.167987033996\n        },\n        {\n          \"project_id\": \"string\",\n          \"project_name\": \"string\",\n          \"is_lead\": true,\n          \"invested_at\": 3564,\n          \"project_logo\": \"string\",\n          \"project_slug\": \"string\",\n          \"recent_raise\": 1409.351640928529,\n          \"total_raise\": 3054.195444487766\n        }\n      ],\n      \"image\": \"string\",\n      \"type\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 6874,\n    \"offset\": 5044,\n    \"credits_used\": 7832,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 2415,\n    \"watermark\": 4018\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseFundSearchItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "39e79eff-f765-478a-80bb-f849821f6230",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "fund"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "a16z"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "788dcc44-0e26-4d57-8d74-a44d02241de6",
+          "name": "Fundraising Event Search",
+          "request": {
+            "name": "Fundraising Event Search",
+            "description": {
+              "content": "Searches source-backed fundraising and token-sale events, or returns the latest fundraising timeline when `q` is omitted.\n\nSupports inclusive UTC time bounds, source and importance filters, localization, deterministic sorting, and offset pagination. Results intentionally omit project or fundraiser identity because source context is not guaranteed to identify the organization raising funds.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "fundraising"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Optional project name, alias, symbol, title, or summary search query. When provided, the trimmed query must contain 2-100 Unicode characters."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Inclusive event-time lower bound. Accepts Unix seconds, YYYY-MM-DD, or RFC3339; date-only values start at 00:00:00 UTC."
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "Inclusive event-time upper bound. Accepts Unix seconds, YYYY-MM-DD, or RFC3339; date-only values end at 23:59:59 UTC. Defaults to the current time."
+                },
+                {
+                  "disabled": false,
+                  "key": "source",
+                  "value": "<string>",
+                  "description": "Filter by public source type: social or news."
+                },
+                {
+                  "disabled": false,
+                  "key": "lang",
+                  "value": "en",
+                  "description": "Display and search language. Missing translated fields fall back to English."
+                },
+                {
+                  "disabled": false,
+                  "key": "min_importance",
+                  "value": "<long>",
+                  "description": "Minimum importance score from 1 to 5. Omit to include unscored events."
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "recency",
+                  "description": "Sort by recency, query relevance, or importance. Relevance requires q."
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Sort order. Relevance only supports desc."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page."
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset. The offset plus limit cannot exceed 10000."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "e0287893-7075-4a7b-9c58-a654891f0a17",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "fundraising"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "elliptic"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-07-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-07-10"
+                    },
+                    {
+                      "key": "source",
+                      "value": "social"
+                    },
+                    {
+                      "key": "lang",
+                      "value": "en"
+                    },
+                    {
+                      "key": "min_importance",
+                      "value": "3"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "recency"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"string\",\n      \"title\": \"string\",\n      \"summary\": \"string\",\n      \"source\": {\n        \"type\": \"news\",\n        \"name\": \"string\",\n        \"url\": \"string\"\n      },\n      \"event_at\": 3229,\n      \"published_at\": 5854,\n      \"source_count\": 8513,\n      \"importance\": 3\n    },\n    {\n      \"id\": \"string\",\n      \"title\": \"string\",\n      \"summary\": \"string\",\n      \"source\": {\n        \"type\": \"news\",\n        \"name\": \"string\",\n        \"url\": \"string\"\n      },\n      \"event_at\": 5714,\n      \"published_at\": 5074,\n      \"source_count\": 4217,\n      \"importance\": 1\n    }\n  ],\n  \"meta\": {\n    \"limit\": 2766,\n    \"offset\": 4510,\n    \"credits_used\": 6569,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 2903,\n    \"watermark\": 6135\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseFundraisingSearchItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b5240044-7300-4d78-9b54-701ae3038eb0",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "fundraising"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "elliptic"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-07-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-07-10"
+                    },
+                    {
+                      "key": "source",
+                      "value": "social"
+                    },
+                    {
+                      "key": "lang",
+                      "value": "en"
+                    },
+                    {
+                      "key": "min_importance",
+                      "value": "3"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "recency"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6db9ba82-9641-4d45-b1ca-c1437101b467",
+          "name": "Kalshi Event Search [Deprecated]",
+          "request": {
+            "name": "Kalshi Event Search [Deprecated]",
+            "description": {
+              "content": "**[DEPRECATED]** Use `GET /v1/search/prediction-market?platform=kalshi` instead. This endpoint will continue to work but will not receive new features.\n\n---\n\nSearches Kalshi events by keyword and/or category.\n\n**Filters:**\n- Keyword matching event title, subtitle, or market title\n- Category\n\nAt least one of `q` or `category` is required. Returns events with nested markets.\n\n**Data refresh:** ~30 minutes",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "kalshi"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Search keyword matching event title, subtitle, or market title"
+                },
+                {
+                  "disabled": false,
+                  "key": "category",
+                  "value": "<string>",
+                  "description": "Filter by category"
+                },
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>",
+                  "description": "Market status filter: `active`, `closed`, `determined`, `disputed`, `finalized`, `inactive`, or `initialized`"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "56289642-ab7e-49ee-b0b9-46c042fbb884",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "kalshi"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "bitcoin"
+                    },
+                    {
+                      "key": "category",
+                      "value": "crypto"
+                    },
+                    {
+                      "key": "status",
+                      "value": "active"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"event_ticker\": \"string\",\n      \"event_title\": \"string\",\n      \"market_count\": 6923,\n      \"markets\": [\n        {\n          \"market_ticker\": \"string\",\n          \"event_ticker\": \"string\",\n          \"title\": \"string\",\n          \"status\": \"string\",\n          \"payout_type\": \"string\",\n          \"total_volume\": 5685,\n          \"notional_volume_usd\": 182.99132256731744,\n          \"open_interest\": 4978.532002696113,\n          \"last_day_open_interest\": 1976.954226329638,\n          \"category\": \"string\",\n          \"close_time\": 5559,\n          \"end_time\": 508,\n          \"event_title\": \"string\",\n          \"result\": \"string\",\n          \"start_time\": 7343,\n          \"subcategory\": \"string\"\n        },\n        {\n          \"market_ticker\": \"string\",\n          \"event_ticker\": \"string\",\n          \"title\": \"string\",\n          \"status\": \"string\",\n          \"payout_type\": \"string\",\n          \"total_volume\": 3272,\n          \"notional_volume_usd\": 8348.69174759846,\n          \"open_interest\": 9659.839818171597,\n          \"last_day_open_interest\": 7124.168177891294,\n          \"category\": \"string\",\n          \"close_time\": 5013,\n          \"end_time\": 2391,\n          \"event_title\": \"string\",\n          \"result\": \"string\",\n          \"start_time\": 57,\n          \"subcategory\": \"string\"\n        }\n      ],\n      \"event_subtitle\": \"string\"\n    },\n    {\n      \"event_ticker\": \"string\",\n      \"event_title\": \"string\",\n      \"market_count\": 5433,\n      \"markets\": [\n        {\n          \"market_ticker\": \"string\",\n          \"event_ticker\": \"string\",\n          \"title\": \"string\",\n          \"status\": \"string\",\n          \"payout_type\": \"string\",\n          \"total_volume\": 5974,\n          \"notional_volume_usd\": 8318.901661987693,\n          \"open_interest\": 124.50961888473722,\n          \"last_day_open_interest\": 5512.841894493699,\n          \"category\": \"string\",\n          \"close_time\": 6223,\n          \"end_time\": 3062,\n          \"event_title\": \"string\",\n          \"result\": \"string\",\n          \"start_time\": 893,\n          \"subcategory\": \"string\"\n        },\n        {\n          \"market_ticker\": \"string\",\n          \"event_ticker\": \"string\",\n          \"title\": \"string\",\n          \"status\": \"string\",\n          \"payout_type\": \"string\",\n          \"total_volume\": 3296,\n          \"notional_volume_usd\": 7430.19413606355,\n          \"open_interest\": 7734.893316700822,\n          \"last_day_open_interest\": 7221.839269944099,\n          \"category\": \"string\",\n          \"close_time\": 5862,\n          \"end_time\": 317,\n          \"event_title\": \"string\",\n          \"result\": \"string\",\n          \"start_time\": 8929,\n          \"subcategory\": \"string\"\n        }\n      ],\n      \"event_subtitle\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 6872,\n    \"offset\": 6824,\n    \"credits_used\": 6467,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 5193,\n    \"watermark\": 8981\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseKalshiEvent.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "15184d87-bfe2-4dc5-9ee3-1a09a525162f",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "kalshi"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "bitcoin"
+                    },
+                    {
+                      "key": "category",
+                      "value": "crypto"
+                    },
+                    {
+                      "key": "status",
+                      "value": "active"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f849c59f-08dc-4e53-baa4-952c8f1695a4",
+          "name": "News Article Search",
+          "request": {
+            "name": "News Article Search",
+            "description": {
+              "content": "Searches crypto news articles by keyword.\n\nReturns results ranked by relevance with highlighted matching fragments. Supports pagination via limit and offset.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "news"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "(Required) Search keyword or phrase"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "322ca7b9-f63d-431e-8899-22e372c07162",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "news"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "bitcoin ETF"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"string\",\n      \"title\": \"string\",\n      \"published_at\": 3661,\n      \"highlights\": {\n        \"key_0\": null,\n        \"key_1\": null\n      },\n      \"project_id\": \"string\",\n      \"project_name\": \"string\",\n      \"source\": \"string\",\n      \"summary\": \"string\",\n      \"url\": \"string\"\n    },\n    {\n      \"id\": \"string\",\n      \"title\": \"string\",\n      \"published_at\": 3642,\n      \"highlights\": {\n        \"key_0\": null\n      },\n      \"project_id\": \"string\",\n      \"project_name\": \"string\",\n      \"source\": \"string\",\n      \"summary\": \"string\",\n      \"url\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 9871,\n    \"offset\": 8334,\n    \"credits_used\": 8954,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 2232,\n    \"watermark\": 369\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseNewsArticleItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "300717d9-c7b1-4d34-b7b3-4ad81583b148",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "news"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "bitcoin ETF"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5da76141-b182-430a-bbd5-d7c60a4030d7",
+          "name": "Polymarket Event Search [Deprecated]",
+          "request": {
+            "name": "Polymarket Event Search [Deprecated]",
+            "description": {
+              "content": "**[DEPRECATED]** Use `GET /v1/search/prediction-market?platform=polymarket` instead. This endpoint will continue to work but will not receive new features.\n\n---\n\nSearches Polymarket events by keyword, tags, and/or category.\n\n**Filters:**\n- Keyword matching market question, event title, or description\n- Comma-separated tag labels\n- Surf-curated category\n\nAt least one of `q`, `tags`, or `category` is required. Returns events with nested markets ranked by volume.\n\n**Data refresh:** ~30 minutes",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "polymarket"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Search keyword matching market question, event title, or description"
+                },
+                {
+                  "disabled": false,
+                  "key": "tags",
+                  "value": "<string>",
+                  "description": "Comma-separated tag labels to filter by (matches any). Commonly used tags: `Crypto`, `Politics`, `Sports`, `Science`, `Pop Culture`"
+                },
+                {
+                  "disabled": false,
+                  "key": "category",
+                  "value": "<string>",
+                  "description": "Filter by Surf-curated category"
+                },
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "active",
+                  "description": "Market status filter: `active`, `finalized`, `ended`, `initialized`, or `closed`"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "eb07c734-fe93-4a5e-9720-c7108d0a5a76",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "polymarket"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "bitcoin"
+                    },
+                    {
+                      "key": "tags",
+                      "value": "politics"
+                    },
+                    {
+                      "key": "category",
+                      "value": "politics"
+                    },
+                    {
+                      "key": "status",
+                      "value": "active"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"event_slug\": \"string\",\n      \"title\": \"string\",\n      \"status\": \"string\",\n      \"volume_total\": 1417.6938383379888,\n      \"market_count\": 1522,\n      \"markets\": [\n        {\n          \"market_slug\": \"string\",\n          \"condition_id\": \"string\",\n          \"title\": \"string\",\n          \"volume_1_week\": 5306.446743352757,\n          \"volume_1_month\": 5572.454192425912,\n          \"volume_1_year\": 7543.825959562699,\n          \"volume_total\": 4031.7123886039917,\n          \"status\": \"string\",\n          \"category\": \"string\",\n          \"close_time\": 8193,\n          \"completed_time\": 7520,\n          \"description\": \"string\",\n          \"end_time\": 6895,\n          \"event_slug\": \"string\",\n          \"game_start_time\": 3458,\n          \"image\": \"string\",\n          \"negative_risk_id\": \"string\",\n          \"polymarket_link\": \"string\",\n          \"resolution_source\": \"string\",\n          \"side_a\": {\n            \"id\": \"string\",\n            \"label\": \"string\"\n          },\n          \"side_b\": {\n            \"id\": \"string\",\n            \"label\": \"string\"\n          },\n          \"start_time\": 640,\n          \"subcategory\": \"string\",\n          \"tags\": [\n            \"string\",\n            \"string\"\n          ],\n          \"winning_side\": \"string\"\n        },\n        {\n          \"market_slug\": \"string\",\n          \"condition_id\": \"string\",\n          \"title\": \"string\",\n          \"volume_1_week\": 2756.589318989391,\n          \"volume_1_month\": 2461.0836736508736,\n          \"volume_1_year\": 9860.620293713398,\n          \"volume_total\": 2717.377090598244,\n          \"status\": \"string\",\n          \"category\": \"string\",\n          \"close_time\": 2388,\n          \"completed_time\": 9097,\n          \"description\": \"string\",\n          \"end_time\": 2882,\n          \"event_slug\": \"string\",\n          \"game_start_time\": 1815,\n          \"image\": \"string\",\n          \"negative_risk_id\": \"string\",\n          \"polymarket_link\": \"string\",\n          \"resolution_source\": \"string\",\n          \"side_a\": {\n            \"id\": \"string\",\n            \"label\": \"string\"\n          },\n          \"side_b\": {\n            \"id\": \"string\",\n            \"label\": \"string\"\n          },\n          \"start_time\": 4357,\n          \"subcategory\": \"string\",\n          \"tags\": [\n            \"string\",\n            \"string\"\n          ],\n          \"winning_side\": \"string\"\n        }\n      ],\n      \"category\": \"string\",\n      \"description\": \"string\",\n      \"end_time\": 5374,\n      \"image\": \"string\",\n      \"settlement_sources\": \"string\",\n      \"start_time\": 8482,\n      \"subcategory\": \"string\",\n      \"tags\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    {\n      \"event_slug\": \"string\",\n      \"title\": \"string\",\n      \"status\": \"string\",\n      \"volume_total\": 5510.38375669171,\n      \"market_count\": 6684,\n      \"markets\": [\n        {\n          \"market_slug\": \"string\",\n          \"condition_id\": \"string\",\n          \"title\": \"string\",\n          \"volume_1_week\": 8778.521254490144,\n          \"volume_1_month\": 3990.871158521797,\n          \"volume_1_year\": 7911.578958779717,\n          \"volume_total\": 7911.151698461436,\n          \"status\": \"string\",\n          \"category\": \"string\",\n          \"close_time\": 4169,\n          \"completed_time\": 3061,\n          \"description\": \"string\",\n          \"end_time\": 9916,\n          \"event_slug\": \"string\",\n          \"game_start_time\": 4969,\n          \"image\": \"string\",\n          \"negative_risk_id\": \"string\",\n          \"polymarket_link\": \"string\",\n          \"resolution_source\": \"string\",\n          \"side_a\": {\n            \"id\": \"string\",\n            \"label\": \"string\"\n          },\n          \"side_b\": {\n            \"id\": \"string\",\n            \"label\": \"string\"\n          },\n          \"start_time\": 3094,\n          \"subcategory\": \"string\",\n          \"tags\": [\n            \"string\",\n            \"string\"\n          ],\n          \"winning_side\": \"string\"\n        },\n        {\n          \"market_slug\": \"string\",\n          \"condition_id\": \"string\",\n          \"title\": \"string\",\n          \"volume_1_week\": 5423.834905114689,\n          \"volume_1_month\": 8837.66327815179,\n          \"volume_1_year\": 1802.5360335287567,\n          \"volume_total\": 7302.706787252988,\n          \"status\": \"string\",\n          \"category\": \"string\",\n          \"close_time\": 1772,\n          \"completed_time\": 1253,\n          \"description\": \"string\",\n          \"end_time\": 1627,\n          \"event_slug\": \"string\",\n          \"game_start_time\": 1770,\n          \"image\": \"string\",\n          \"negative_risk_id\": \"string\",\n          \"polymarket_link\": \"string\",\n          \"resolution_source\": \"string\",\n          \"side_a\": {\n            \"id\": \"string\",\n            \"label\": \"string\"\n          },\n          \"side_b\": {\n            \"id\": \"string\",\n            \"label\": \"string\"\n          },\n          \"start_time\": 3789,\n          \"subcategory\": \"string\",\n          \"tags\": [\n            \"string\",\n            \"string\"\n          ],\n          \"winning_side\": \"string\"\n        }\n      ],\n      \"category\": \"string\",\n      \"description\": \"string\",\n      \"end_time\": 7001,\n      \"image\": \"string\",\n      \"settlement_sources\": \"string\",\n      \"start_time\": 5332,\n      \"subcategory\": \"string\",\n      \"tags\": [\n        \"string\",\n        \"string\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"limit\": 4337,\n    \"offset\": 5547,\n    \"credits_used\": 1893,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 7052,\n    \"watermark\": 1422\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponsePolymarketEvent.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f5b7d65a-8750-4015-ad85-0eae60e7e067",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "polymarket"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "bitcoin"
+                    },
+                    {
+                      "key": "tags",
+                      "value": "politics"
+                    },
+                    {
+                      "key": "category",
+                      "value": "politics"
+                    },
+                    {
+                      "key": "status",
+                      "value": "active"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5dcf7ce1-fced-4cc8-b40c-3f3ba430b1f5",
+          "name": "Search Prediction Markets",
+          "request": {
+            "name": "Search Prediction Markets",
+            "description": {
+              "content": "Browse and search prediction markets across all supported platforms.\n\nFilter by platform, category, status, keyword search, and smart money direction. Each result includes volume, open interest, trade counts, and smart money signals.\n\nSupports single-market lookup via `condition_id` or `market_ticker`.\n\n**Data refresh:** ~5 minutes.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "prediction-market"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "condition_id",
+                  "value": "<string>",
+                  "description": "Polymarket condition ID for single-market lookup"
+                },
+                {
+                  "disabled": false,
+                  "key": "market_ticker",
+                  "value": "<string>",
+                  "description": "Kalshi market ticker for single-market lookup"
+                },
+                {
+                  "disabled": false,
+                  "key": "platform",
+                  "value": "<string>",
+                  "description": "Filter by platform (omit for both)"
+                },
+                {
+                  "disabled": false,
+                  "key": "category",
+                  "value": "<string>",
+                  "description": "Filter by Surf-curated category"
+                },
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "active",
+                  "description": "Market status filter"
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "volume_7d",
+                  "description": "Sort field"
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Sort direction"
+                },
+                {
+                  "disabled": false,
+                  "key": "smart_money",
+                  "value": "<string>",
+                  "description": "Filter by smart money direction (Polymarket only)"
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Search markets by keyword in question text or ticker. Results include slug and event fields when available, but machine slugs are not searched."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "b8685969-d371-4057-ac41-a8d54de172b1",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "prediction-market"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "condition_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "market_ticker",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "platform",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "category",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "status",
+                      "value": "active"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "volume_7d"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "smart_money",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "q",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"platform\": \"string\",\n      \"question\": \"string\",\n      \"category\": \"string\",\n      \"status\": \"string\",\n      \"volume_1d\": 4488.769331388811,\n      \"volume_7d\": 8019.865905071803,\n      \"volume_30d\": 6649.44216134119,\n      \"trade_count_7d\": 1804,\n      \"open_interest_usd\": 5890.9329923366,\n      \"condition_id\": \"string\",\n      \"days_to_resolution\": 2209,\n      \"event_group_slug\": \"string\",\n      \"event_slug\": \"string\",\n      \"event_ticker\": \"string\",\n      \"event_title\": \"string\",\n      \"latest_price\": 2769.8535145894134,\n      \"market_link\": \"string\",\n      \"market_slug\": \"string\",\n      \"market_ticker\": \"string\",\n      \"matched_counterpart\": \"string\",\n      \"outcome_label\": \"string\",\n      \"smart_money_direction\": \"string\",\n      \"subcategory\": \"string\",\n      \"token_id\": \"string\"\n    },\n    {\n      \"platform\": \"string\",\n      \"question\": \"string\",\n      \"category\": \"string\",\n      \"status\": \"string\",\n      \"volume_1d\": 4770.6675302231615,\n      \"volume_7d\": 4782.911476915548,\n      \"volume_30d\": 6273.7960083985845,\n      \"trade_count_7d\": 2053,\n      \"open_interest_usd\": 8443.046169371948,\n      \"condition_id\": \"string\",\n      \"days_to_resolution\": 9069,\n      \"event_group_slug\": \"string\",\n      \"event_slug\": \"string\",\n      \"event_ticker\": \"string\",\n      \"event_title\": \"string\",\n      \"latest_price\": 1703.7163717353033,\n      \"market_link\": \"string\",\n      \"market_slug\": \"string\",\n      \"market_ticker\": \"string\",\n      \"matched_counterpart\": \"string\",\n      \"outcome_label\": \"string\",\n      \"smart_money_direction\": \"string\",\n      \"subcategory\": \"string\",\n      \"token_id\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 5580,\n    \"offset\": 5318,\n    \"credits_used\": 3637,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 1275,\n    \"watermark\": 4439\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseDiscoverMarketItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7b14bc5c-4f95-4b5c-a015-f3c181e2af23",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "prediction-market"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "condition_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "market_ticker",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "platform",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "category",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "status",
+                      "value": "active"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "volume_7d"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "smart_money",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "q",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a4cb7b70-6928-4d47-a8a5-a3cdca02a8a3",
+          "name": "Project Search",
+          "request": {
+            "name": "Project Search",
+            "description": {
+              "content": "Searches crypto projects by keyword.\n\n**Included fields:** name, description, chains, logo.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "project"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "(Required) Search keyword — project name or ticker like `uniswap`, `bitcoin`, or `ETH`"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "6a46ae4d-ff35-457b-a9af-d536b7d4e0c0",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "project"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "bitcoin"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"string\",\n      \"name\": \"string\",\n      \"chains\": [\n        \"string\",\n        \"string\"\n      ],\n      \"description\": \"string\",\n      \"logo_url\": \"string\",\n      \"slug\": \"string\",\n      \"symbol\": \"string\",\n      \"tags\": [\n        \"string\",\n        \"string\"\n      ],\n      \"tokens\": [\n        {\n          \"id\": \"string\",\n          \"name\": \"string\",\n          \"symbol\": \"string\",\n          \"image\": \"string\"\n        },\n        {\n          \"id\": \"string\",\n          \"name\": \"string\",\n          \"symbol\": \"string\",\n          \"image\": \"string\"\n        }\n      ]\n    },\n    {\n      \"id\": \"string\",\n      \"name\": \"string\",\n      \"chains\": [\n        \"string\",\n        \"string\"\n      ],\n      \"description\": \"string\",\n      \"logo_url\": \"string\",\n      \"slug\": \"string\",\n      \"symbol\": \"string\",\n      \"tags\": [\n        \"string\",\n        \"string\"\n      ],\n      \"tokens\": [\n        {\n          \"id\": \"string\",\n          \"name\": \"string\",\n          \"symbol\": \"string\",\n          \"image\": \"string\"\n        },\n        {\n          \"id\": \"string\",\n          \"name\": \"string\",\n          \"symbol\": \"string\",\n          \"image\": \"string\"\n        }\n      ]\n    }\n  ],\n  \"meta\": {\n    \"limit\": 6283,\n    \"offset\": 4968,\n    \"credits_used\": 7783,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 5243,\n    \"watermark\": 6007\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseProjectSearchItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "075b8e0a-fbe2-471d-8939-88ce0b757f86",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "project"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "bitcoin"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "de2391c1-8995-41a8-9e2f-640f14d061d6",
+          "name": "Social User Search",
+          "request": {
+            "name": "Social User Search",
+            "description": {
+              "content": "Searches X (Twitter) users by keyword.\n\n**Included fields:** handle, display name, bio, follower count, avatar.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "social",
+                "people"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "(Required) Search keyword or `@handle` for exact handle lookup. Use a keyword like `vitalik` for fuzzy matching across names and bios, or `@VitalikButerin` to find a specific account by handle"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "42e787b6-ec4c-4adb-8941-bd45f0606cfa",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "social",
+                    "people"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "vitalik"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"user_id\": \"string\",\n      \"handle\": \"string\",\n      \"name\": \"string\",\n      \"followers_count\": 3604,\n      \"following_count\": 8185,\n      \"avatar\": \"string\",\n      \"bio\": \"string\"\n    },\n    {\n      \"user_id\": \"string\",\n      \"handle\": \"string\",\n      \"name\": \"string\",\n      \"followers_count\": 3882,\n      \"following_count\": 5951,\n      \"avatar\": \"string\",\n      \"bio\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"has_more\": false,\n    \"limit\": 4963,\n    \"credits_used\": 8307,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"next_cursor\": \"string\",\n    \"watermark\": 5100\n  },\n  \"$schema\": \"https://example.com/schemas/CursorDataResponseXUser.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "08bd40de-ac23-4dfc-8516-44428de8defe",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "social",
+                    "people"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "vitalik"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "16c29d9e-e87b-4cd2-8078-902d7a87a738",
+          "name": "Social Post Search",
+          "request": {
+            "name": "Social Post Search",
+            "description": {
+              "content": "Searches X (Twitter) posts by keyword or `from:handle` syntax.\n\n**Included fields:** author, content, engagement metrics, timestamp.\n\n**Pagination:** check `meta.has_more`; if true, pass `meta.next_cursor` as the `cursor` query parameter in the next request.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "social",
+                "posts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "(Required) Search keyword(s), or X (Twitter) advanced-search operators. Supported operators: `from:handle` (by author), `to:handle` (replies to a user), `@handle` (mentions), `#hashtag`, `-word` (exclude a term), `min_faves:N` (min likes), `min_retweets:N`, `min_replies:N`, `since:YYYY-MM-DD`, `until:YYYY-MM-DD`, plus double-quoted exact phrases. Operators combine, e.g. `ethereum min_faves:1000 since:2024-01-01`. Plain keywords return newest-first. Note: there is no `min_views:` operator — filter or rank by views is not supported."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "aa1cfc5c-8add-47b1-9fdd-32133796677c",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "social",
+                    "posts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"tweet_id\": \"string\",\n      \"text\": \"string\",\n      \"url\": \"string\",\n      \"created_at\": 3490,\n      \"author\": {\n        \"user_id\": \"string\",\n        \"handle\": \"string\",\n        \"name\": \"string\",\n        \"avatar\": \"string\"\n      },\n      \"stats\": {\n        \"views\": 2751,\n        \"likes\": 5238,\n        \"reposts\": 9596,\n        \"replies\": 6181\n      },\n      \"cover_image_url\": \"string\",\n      \"lang\": \"string\",\n      \"media\": [\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        }\n      ],\n      \"title\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"tweet_id\": \"string\",\n      \"text\": \"string\",\n      \"url\": \"string\",\n      \"created_at\": 6601,\n      \"author\": {\n        \"user_id\": \"string\",\n        \"handle\": \"string\",\n        \"name\": \"string\",\n        \"avatar\": \"string\"\n      },\n      \"stats\": {\n        \"views\": 1150,\n        \"likes\": 4707,\n        \"reposts\": 8551,\n        \"replies\": 9671\n      },\n      \"cover_image_url\": \"string\",\n      \"lang\": \"string\",\n      \"media\": [\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        }\n      ],\n      \"title\": \"string\",\n      \"type\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"has_more\": false,\n    \"limit\": 3225,\n    \"credits_used\": 420,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"next_cursor\": \"string\",\n    \"watermark\": 107\n  },\n  \"$schema\": \"https://example.com/schemas/CursorDataResponseXTweet.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8d6fe5a3-1a57-4de8-9e6f-a6deecad827f",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "social",
+                    "posts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e58281ed-68a7-48c6-822f-1b3e0d4e6148",
+          "name": "Token Symbol Resolution",
+          "request": {
+            "name": "Token Symbol Resolution",
+            "description": {
+              "content": "Resolves an exact token ticker symbol to likely contract address candidates on supported chains.\n\nUse this before calling token endpoints that require a contract address. Pass a returned `chain` + `address` only to endpoints that support that chain.\n\nResults are ranked by Surf registry, listing, and market signals. `volume_usd` is kept for response compatibility, always returns `0`, and must not be used as a candidate ordering signal.\n\n**Included fields:** symbol, chain, address, decimals, volume_usd.\n\n**Chains:** Ethereum, Base, BSC, Arbitrum, Solana, Polygon, Optimism, Avalanche, Fantom, Tron, Linea, Mantle, Blast, Gnosis, zkSync, Scroll.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "token"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "(Required) Exact token ticker symbol to resolve (case-insensitive), like `USDC` or `PEPE`. NOT a contract address, trading pair, or fuzzy token name."
+                },
+                {
+                  "disabled": false,
+                  "key": "chain",
+                  "value": "<string>",
+                  "description": "Restrict resolution to one supported chain. Omit to search all supported chains."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "b8502ce8-2ca2-4a51-a92c-a898efbbf2b4",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "USDC"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "solana"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"symbol\": \"string\",\n      \"chain\": \"string\",\n      \"address\": \"string\",\n      \"decimals\": 6925,\n      \"volume_usd\": 4239.82385558052\n    },\n    {\n      \"symbol\": \"string\",\n      \"chain\": \"string\",\n      \"address\": \"string\",\n      \"decimals\": 8307,\n      \"volume_usd\": 182.06199623660436\n    }\n  ],\n  \"meta\": {\n    \"limit\": 8640,\n    \"offset\": 3984,\n    \"credits_used\": 8255,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 6236,\n    \"watermark\": 7106\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseSearchTokenItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8937d20d-b536-4626-992e-4b1baf429fcb",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "USDC"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "solana"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ff23373c-45d9-497a-8262-6be01a5a521c",
+          "name": "Wallet Search",
+          "request": {
+            "name": "Wallet Search",
+            "description": {
+              "content": "Searches wallets by ENS name, address label, or address prefix.\n\nReturns matching wallet addresses with entity labels.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "wallet"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "(Required) Search keyword like `binance`, `vitalik.eth`, or `0xd8dA...`"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "00ef7cdb-d353-46af-9353-d5e882ad1394",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "wallet"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "vitalik.eth"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"address\": \"string\",\n      \"addresses\": [\n        {\n          \"address\": \"string\",\n          \"chain\": \"string\"\n        },\n        {\n          \"address\": \"string\",\n          \"chain\": \"string\"\n        }\n      ],\n      \"chain\": \"string\",\n      \"entity_name\": \"string\",\n      \"entity_type\": \"string\",\n      \"label\": \"string\",\n      \"num_addresses\": 2223,\n      \"twitter\": \"string\"\n    },\n    {\n      \"address\": \"string\",\n      \"addresses\": [\n        {\n          \"address\": \"string\",\n          \"chain\": \"string\"\n        },\n        {\n          \"address\": \"string\",\n          \"chain\": \"string\"\n        }\n      ],\n      \"chain\": \"string\",\n      \"entity_name\": \"string\",\n      \"entity_type\": \"string\",\n      \"label\": \"string\",\n      \"num_addresses\": 4816,\n      \"twitter\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 2684,\n    \"offset\": 9344,\n    \"credits_used\": 4277,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 8769,\n    \"watermark\": 4029\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseWalletSearchItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4d062adf-3e87-4cd0-b8c8-8d48959c288f",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "wallet"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "vitalik.eth"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "67a4cd2d-228d-4436-9be1-08ba216b73b6",
+          "name": "Web Search",
+          "request": {
+            "name": "Web Search",
+            "description": {
+              "content": "Searches web pages, articles, and content by keyword.\n\n**Filters:** domain via `site` (e.g. `coindesk.com`).\n\n**Included fields:** titles, URLs, content snippets.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "search",
+                "web"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "(Required) Search query like `bitcoin price prediction 2026`"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                },
+                {
+                  "disabled": false,
+                  "key": "site",
+                  "value": "<string>",
+                  "description": "Comma-separated domain filter like `coindesk.com` or `cointelegraph.com`"
+                },
+                {
+                  "disabled": false,
+                  "key": "include_content",
+                  "value": "false",
+                  "description": "When false (default), search returns title/url/description only — fast (~2-3s) URL discovery. Set true to also include full markdown content for each result (~5-30KB per result, ~10-15s for limit=5). Use true only when the caller needs page content inline and won't follow up with `/web/fetch`."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "cdebba63-82d3-4705-ba2f-8e255913261d",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "web"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "bitcoin price prediction 2026"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "site",
+                      "value": "coindesk.com,cointelegraph.com"
+                    },
+                    {
+                      "key": "include_content",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"title\": \"string\",\n      \"url\": \"string\",\n      \"description\": \"string\",\n      \"content\": \"string\"\n    },\n    {\n      \"title\": \"string\",\n      \"url\": \"string\",\n      \"description\": \"string\",\n      \"content\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 6008,\n    \"offset\": 377,\n    \"credits_used\": 4494,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 3482,\n    \"watermark\": 4706\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseWebSearchResultItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2ca4e482-b333-4534-81bc-1656b9df61d1",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "search",
+                    "web"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "bitcoin price prediction 2026"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "site",
+                      "value": "coindesk.com,cointelegraph.com"
+                    },
+                    {
+                      "key": "include_content",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "18aab7b9-f55b-4c0f-8591-5397dd2d89f6",
+    "name": "Hermod DEX Search API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n\n\nContact Support:\n Name: Cyber team\n Email: backend@cybertinolab.com",
+      "type": "text/plain"
+    }
+  }
+}

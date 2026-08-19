@@ -1,0 +1,243 @@
+{
+  "item": [
+    {
+      "id": "ce941a7b-4cfb-4630-b748-33f3fbc83014",
+      "name": "Web",
+      "description": {
+        "content": "Fetch and search web content. Retrieve any URL and convert it to clean, LLM-friendly markdown, or search the internet for crypto-related articles, reports, and resources.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "6f5817a3-0830-49ce-83ef-d2c720980e6d",
+          "name": "Web Page Fetch",
+          "request": {
+            "name": "Web Page Fetch",
+            "description": {
+              "content": "Fetches a web page and converts it to clean, LLM-friendly markdown.\n\n**Options:**\n- `target_selector` — extract specific page sections\n- `remove_selector` — strip unwanted elements\n\nReturns 400 if the URL is invalid or unreachable.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "web",
+                "fetch"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "url",
+                  "value": "<string>",
+                  "description": "(Required) URL to fetch and parse"
+                },
+                {
+                  "disabled": false,
+                  "key": "target_selector",
+                  "value": "<string>",
+                  "description": "CSS selector to extract specific content"
+                },
+                {
+                  "disabled": false,
+                  "key": "remove_selector",
+                  "value": "<string>",
+                  "description": "CSS selector to remove unwanted elements"
+                },
+                {
+                  "disabled": false,
+                  "key": "wait_for_selector",
+                  "value": "<string>",
+                  "description": "CSS selector to wait for before extracting"
+                },
+                {
+                  "disabled": false,
+                  "key": "timeout",
+                  "value": "30000",
+                  "description": "Request timeout in milliseconds"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "a1889aab-0926-4539-92e1-b05733d335fb",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "web",
+                    "fetch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "url",
+                      "value": "https://ethereum.org"
+                    },
+                    {
+                      "key": "target_selector",
+                      "value": "article.main-content"
+                    },
+                    {
+                      "key": "remove_selector",
+                      "value": "nav,footer,.ads"
+                    },
+                    {
+                      "key": "wait_for_selector",
+                      "value": ".content-loaded"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "5000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"url\": \"string\",\n    \"content\": \"string\",\n    \"title\": \"string\"\n  },\n  \"meta\": {\n    \"credits_used\": 570,\n    \"cached\": false,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseWebFetchResultItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d33db1c4-cfc4-435d-9203-e991de48bab2",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "web",
+                    "fetch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "url",
+                      "value": "https://ethereum.org"
+                    },
+                    {
+                      "key": "target_selector",
+                      "value": "article.main-content"
+                    },
+                    {
+                      "key": "remove_selector",
+                      "value": "nav,footer,.ads"
+                    },
+                    {
+                      "key": "wait_for_selector",
+                      "value": ".content-loaded"
+                    },
+                    {
+                      "key": "timeout",
+                      "value": "5000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "08e3fbb1-9e02-44d4-9d1b-2ea304d2c643",
+    "name": "Hermod DEX Web API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n\n\nContact Support:\n Name: Cyber team\n Email: backend@cybertinolab.com",
+      "type": "text/plain"
+    }
+  }
+}

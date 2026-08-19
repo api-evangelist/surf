@@ -1,0 +1,1093 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Hermod DEX Prediction Market API",
+    "version": "sha-80d3407"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Prediction Market",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Prediction Market Analytics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/analytics",
+            "params": [
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Category to analyze. Omit to get platform-wide totals across all categories."
+              },
+              {
+                "name": "platform",
+                "value": "",
+                "type": "query",
+                "description": "Filter to one platform"
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window for category trends: `7d`, `30d`, `90d`, `180d`, or `1y`. Bucket size is fixed at 1 day — this endpoint uses `time_range` only and does NOT accept `interval`."
+              },
+              {
+                "name": "top_n",
+                "value": "",
+                "type": "query",
+                "description": "Number of top markets to include"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Sort field for momentum markets"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort direction"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Limit for momentum markets list"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset for momentum markets"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Trends, top markets, momentum distribution, and per-market momentum signals for prediction markets.\n\n**Platform-wide totals:** Omit `category` to get aggregated volume/OI/market-count across the entire prediction market (Polymarket + Kalshi combined). Use `platform` to filter to one exchange. This is the recommended way to answer questions like \"What is Polymarket's total volume this week?\" or \"How does Kalshi volume compare to Polymarket?\"\n\n**Category drill-down:** Provide `category` to scope a"
+        },
+        {
+          "info": {
+            "name": "Market Correlations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/correlations",
+            "params": [
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Category (correlations are within-category only)"
+              },
+              {
+                "name": "condition_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter to pairs involving this market"
+              },
+              {
+                "name": "min_correlation",
+                "value": "",
+                "type": "query",
+                "description": "Minimum absolute correlation"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns 30-day Pearson price correlation pairs between Polymarket markets within a category.\n\nCorrelation data covers the top 100 markets by 7-day volume globally; lower-volume markets may not have correlation data.\n\nFilter by `condition_id` to find all markets correlated with a specific market, or set `min_correlation` to control the threshold.\n\nThe `category` parameter is required.\n\n**Data refresh:** ~5 minutes."
+        },
+        {
+          "info": {
+            "name": "Kalshi Events",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/kalshi/events",
+            "params": [
+              {
+                "name": "event_ticker",
+                "value": "",
+                "type": "query",
+                "description": "Event ticker identifier. When omitted, returns top active events by volume. Use GET /v1/search/kalshi?q={keyword} to discover valid tickers."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns Kalshi events with nested markets, optionally filtered by `event_ticker`.\n\nEach event includes market count and a list of markets.\n\n**Data refresh:** ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "Kalshi Markets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/kalshi/markets",
+            "params": [
+              {
+                "name": "market_ticker",
+                "value": "",
+                "type": "query",
+                "description": "Market ticker identifier. When omitted, returns top active markets by volume. Use GET /v1/search/kalshi?q={keyword} to discover valid tickers."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns Kalshi markets, optionally filtered by `market_ticker`.\n\nEach market includes price, volume, and status.\n\n**Data refresh:** ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "Kalshi Open Interest History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/kalshi/open-interest",
+            "params": [
+              {
+                "name": "ticker",
+                "value": "",
+                "type": "query",
+                "description": "Market ticker identifier. Use GET /v1/prediction-market/kalshi/markets or GET /v1/search/kalshi?q={keyword} to discover valid tickers."
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window of history to return: `7d`, `30d`, `90d`, `180d`, or `1y`. This endpoint uses `time_range` only — it does NOT accept `interval`."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Daily open interest time series for a Kalshi market.\n\n**Data refresh:** ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "Kalshi Orderbook History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/kalshi/orderbooks",
+            "params": [
+              {
+                "name": "ticker",
+                "value": "",
+                "type": "query",
+                "description": "Kalshi market ticker"
+              },
+              {
+                "name": "start_time",
+                "value": "",
+                "type": "query",
+                "description": "Start time in Unix milliseconds. 0 means 7 days ago."
+              },
+              {
+                "name": "end_time",
+                "value": "",
+                "type": "query",
+                "description": "End time in Unix milliseconds. 0 means current time."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of snapshots to return"
+              },
+              {
+                "name": "pagination_key",
+                "value": "",
+                "type": "query",
+                "description": "Base64 cursor for pagination"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Historical orderbook snapshots for a Kalshi market. Returns yes-side bid/ask levels. Timestamps in milliseconds, prices in cents.\n\nData refresh: ~5 minutes"
+        },
+        {
+          "info": {
+            "name": "Kalshi Price History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/kalshi/prices",
+            "params": [
+              {
+                "name": "ticker",
+                "value": "",
+                "type": "query",
+                "description": "Market ticker identifier. Use GET /v1/prediction-market/kalshi/markets or GET /v1/search/kalshi?q={keyword} to discover valid tickers."
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window of history to return: `7d`, `30d`, `90d`, `180d`, or `1y`. Ignored when `interval=latest`. Distinct from `interval` (which sets bucket size within the window)."
+              },
+              {
+                "name": "interval",
+                "value": "",
+                "type": "query",
+                "description": "Bucket size for each point in the series: `1h` (hourly OHLC), `1d` (daily OHLC), or `latest` (single most-recent trade price). Distinct from `time_range` (window size)."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Price time series for a Kalshi market with daily or hourly OHLC data, or latest price from recent trades.\n\n**Data refresh:** ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "Kalshi Trades",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/kalshi/trades",
+            "params": [
+              {
+                "name": "ticker",
+                "value": "",
+                "type": "query",
+                "description": "Market ticker identifier. Use GET /v1/prediction-market/kalshi/markets or GET /v1/search/kalshi?q={keyword} to discover valid tickers."
+              },
+              {
+                "name": "taker_side",
+                "value": "",
+                "type": "query",
+                "description": "Filter by taker side: `yes` or `no`"
+              },
+              {
+                "name": "min_amount",
+                "value": "",
+                "type": "query",
+                "description": "Minimum notional volume in USD (each contract = $1)"
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Field to sort results by"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns individual trade records for a Kalshi market.\n\n**Filters:** `taker_side`, `min_contracts`, and date range.\n\n**Sort:** `timestamp` or `num_contracts`.\n\n**Data refresh:** real-time"
+        },
+        {
+          "info": {
+            "name": "Kalshi Volume History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/kalshi/volumes",
+            "params": [
+              {
+                "name": "ticker",
+                "value": "",
+                "type": "query",
+                "description": "Market ticker identifier. Use GET /v1/prediction-market/kalshi/markets or GET /v1/search/kalshi?q={keyword} to discover valid tickers."
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window of history to return: `7d`, `30d`, `90d`, `180d`, or `1y`. This endpoint uses `time_range` only — it does NOT accept `interval`."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Daily trading volume time series for a Kalshi market.\n\n**Data refresh:** ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "Cross-Platform Daily Comparison (Polymarket <> Kalshi)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/matching/daily",
+            "params": [
+              {
+                "name": "polymarket_condition_id",
+                "value": "",
+                "type": "query",
+                "description": "Polymarket condition ID"
+              },
+              {
+                "name": "kalshi_market_ticker",
+                "value": "",
+                "type": "query",
+                "description": "Kalshi market ticker"
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window of daily data to return: `1d`, `7d`, `30d`, `90d`, `180d`, `1y`, or `all`. Bucket size is fixed at 1 day — this endpoint uses `time_range` only and does NOT accept `interval`."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum rows"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns daily volume and open interest comparison for a specific Polymarket <> Kalshi matched pair.\n\nBoth `polymarket_condition_id` and `kalshi_market_ticker` are required. Use `matching-market-pairs` to discover matched pairs first.\n\n**Volume units:** Polymarket = USD, Kalshi = contracts."
+        },
+        {
+          "info": {
+            "name": "Cross-Platform Prediction Market Matcher (Polymarket <> Kalshi)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/matching/pairs",
+            "params": [
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Filter by category"
+              },
+              {
+                "name": "match_type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by match type"
+              },
+              {
+                "name": "active_only",
+                "value": "",
+                "type": "query",
+                "description": "Only return pairs where both markets are currently active"
+              },
+              {
+                "name": "min_confidence",
+                "value": "",
+                "type": "query",
+                "description": "Minimum confidence score (0-100)"
+              },
+              {
+                "name": "polymarket_condition_id",
+                "value": "",
+                "type": "query",
+                "description": "Find match for this Polymarket market"
+              },
+              {
+                "name": "kalshi_market_ticker",
+                "value": "",
+                "type": "query",
+                "description": "Find match for this Kalshi market"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Sort field"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum rows to return"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Cross-platform prediction market pair matcher — finds the same event listed on both Polymarket and Kalshi, with live price spread data. This is prediction-market only (Polymarket and Kalshi). For crypto exchange markets, use `exchange-markets`.\n\nFilter by category, match type, confidence score, or look up a specific market's cross-platform counterpart via `polymarket_condition_id` or `kalshi_market_ticker`.\n\nEach pair includes current prices and spread percentage for arbitrage analysis. Sort by "
+        },
+        {
+          "info": {
+            "name": "Polymarket Events",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/polymarket/events",
+            "params": [
+              {
+                "name": "event_slug",
+                "value": "",
+                "type": "query",
+                "description": "Polymarket event slug (identifies a multi-outcome question with several nested markets). Known World Cup match sibling slugs are expanded to the canonical match group. Discover slugs via /v1/search/prediction-market?platform=polymarket&q={keyword}. For a single Yes/No market, use /polymarket/markets with market_slug instead — this endpoint only accepts event_slug, not market_slug."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns Polymarket events with nested markets, optionally filtered by `event_slug`.\n\nEach event includes aggregated status, volume, and a list of markets with `side_a`/`side_b` outcomes.\n\n**Data refresh:** ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "Polymarket Leaderboard",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/polymarket/leaderboard",
+            "params": [
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Ranking metric"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort direction"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a ranked leaderboard of Polymarket traders by realized PnL, volume, or trade count.\n\nSortable by `pnl`, `volume`, or `trade_count`. Each entry includes the wallet address and aggregate trading statistics.\n\n**Data refresh:** ~5 minutes."
+        },
+        {
+          "info": {
+            "name": "Polymarket Markets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/polymarket/markets",
+            "params": [
+              {
+                "name": "market_slug",
+                "value": "",
+                "type": "query",
+                "description": "Polymarket market slug (identifies a single Yes/No outcome). Discover slugs via /v1/search/prediction-market?platform=polymarket&q={keyword}. For a multi-outcome question (e.g. 'who wins the 2024 election'), use the /polymarket/events endpoint with event_slug instead."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns Polymarket markets, optionally filtered by `market_slug`.\n\nEach market includes `side_a` and `side_b` outcomes. Current prices are available via `/polymarket/prices` using the `condition_id`.\n\n**Data refresh:** ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "Polymarket Open Interest History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/polymarket/open-interest",
+            "params": [
+              {
+                "name": "condition_id",
+                "value": "",
+                "type": "query",
+                "description": "Market condition identifier"
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window of history to return: `7d`, `30d`, `90d`, `180d`, or `1y`. This endpoint uses `time_range` only — it does NOT accept `interval`."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Daily open interest time series showing total value locked in a Polymarket market.\n\n**Data refresh:** ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "Polymarket Orderbook History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/polymarket/orderbooks",
+            "params": [
+              {
+                "name": "token_id",
+                "value": "",
+                "type": "query",
+                "description": "Token identifier"
+              },
+              {
+                "name": "start_time",
+                "value": "",
+                "type": "query",
+                "description": "Start time in Unix milliseconds. 0 means 7 days ago."
+              },
+              {
+                "name": "end_time",
+                "value": "",
+                "type": "query",
+                "description": "End time in Unix milliseconds. 0 means current time."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of snapshots to return"
+              },
+              {
+                "name": "pagination_key",
+                "value": "",
+                "type": "query",
+                "description": "Base64 cursor for pagination"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Historical orderbook snapshots for a Polymarket token. Returns raw bid/ask depth levels. Timestamps in milliseconds.\n\nData refresh: ~5 minutes"
+        },
+        {
+          "info": {
+            "name": "Polymarket Wallet Positions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/polymarket/positions",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Polymarket proxy wallet address"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Given a specific wallet address, returns that wallet's open positions on Polymarket markets.\n\nThis is a single-wallet lookup — you must provide the wallet `address`.\n\n**Not what you need?**\n- To discover top/smart wallets across all of Polymarket, use `polymarket-smart-money` (view=positioning for aggregate signals, view=trades for individual whale trades).\n- To find top traders by PnL or volume, use `polymarket-leaderboard`.\n\n**Data refresh:** ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "Polymarket OHLCV Candlesticks",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/polymarket/price-ohlcv/:condition_id",
+            "params": [
+              {
+                "name": "condition_id",
+                "value": "",
+                "type": "path",
+                "description": "Polymarket condition ID"
+              },
+              {
+                "name": "start_time",
+                "value": "",
+                "type": "query",
+                "description": "Start time (Unix seconds). 0 means no lower bound. Cache aligns to 5-minute buckets, so two requests within the same bucket return the same cached result."
+              },
+              {
+                "name": "end_time",
+                "value": "",
+                "type": "query",
+                "description": "End time (Unix seconds). 0 means current time. Cache aligns to 5-minute buckets, so two requests within the same bucket return the same cached result."
+              },
+              {
+                "name": "interval",
+                "value": "",
+                "type": "query",
+                "description": "Candle interval in minutes: 1=1min, 60=1hour, 1440=1day"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "OHLCV candlestick data for charting a Polymarket market — open, high, low, close, volume per candle.\nUse this for rendering price charts with candlestick or bar visualizations.\nFor simple price time series (one price per interval), use `prices` instead.\n\nData refresh: ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "Polymarket Price History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/polymarket/prices",
+            "params": [
+              {
+                "name": "condition_id",
+                "value": "",
+                "type": "query",
+                "description": "Market condition identifier"
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window of history to return (how much data, from now backward): `7d`, `30d`, `90d`, `180d`, or `1y`. Ignored when `interval=latest`. Distinct from `interval` (which sets bucket size within this window)."
+              },
+              {
+                "name": "interval",
+                "value": "",
+                "type": "query",
+                "description": "Bucket size for each point in the returned series: `1h` (hourly), `1d` (daily), or `latest` (single most-recent snapshot). Distinct from `time_range` (which sets the window size)."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Simple price time series for a Polymarket market — one price point per interval.\nUse this for tracking price trends over time.\nFor OHLCV candlestick data (open/high/low/close for charting libraries), use `price-ohlcv` instead.\n\n**Data refresh:** ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "Polymarket Smart Money",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/polymarket/smart-money",
+            "params": [
+              {
+                "name": "view",
+                "value": "",
+                "type": "query",
+                "description": "positioning = aggregate smart wallet direction per market; trades = individual $10K+ trades with wallet metadata"
+              },
+              {
+                "name": "condition_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter to a specific market (omit to browse all)"
+              },
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Filter by category"
+              },
+              {
+                "name": "direction",
+                "value": "",
+                "type": "query",
+                "description": "Filter by net smart money direction (only for view=positioning)"
+              },
+              {
+                "name": "whale_tier",
+                "value": "",
+                "type": "query",
+                "description": "Trade size tier filter (only for view=trades)"
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start time as Unix seconds or date string (only for view=trades)"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End time as Unix seconds or date string (only for view=trades)"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Sort field"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort direction"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Smart wallet analytics for Polymarket markets.\n\nview=positioning (default): Aggregate smart wallet direction per market — net bullish/bearish signal and conviction.\nview=trades: Individual $10K+ trades with wallet address, amount, outcome, price, and wallet age.\n\n**Data refresh:** ~5 minutes"
+        },
+        {
+          "info": {
+            "name": "Polymarket Trades",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/polymarket/trades",
+            "params": [
+              {
+                "name": "condition_id",
+                "value": "",
+                "type": "query",
+                "description": "Market condition identifier"
+              },
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address — returns trades where the address is maker or taker"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by activity type: `trade` (default, spot trades only), `redemption` (splits/merges/redemptions), or `all` (all activity). Use `redemption` or `all` to get non-trade wallet activity; `address` is required for these types."
+              },
+              {
+                "name": "outcome_label",
+                "value": "",
+                "type": "query",
+                "description": "Filter by outcome label: `Yes` or `No`"
+              },
+              {
+                "name": "min_amount",
+                "value": "",
+                "type": "query",
+                "description": "Minimum trade amount in USD"
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Field to sort results by"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Trade and activity history for a Polymarket market or wallet.\n\nFilter by market (condition_id), wallet (address), outcome (Yes/No), minimum trade size, and time range. Use type=redemption for splits/merges/redemptions, type=all for everything.\n\n**Data refresh:** ~5 minutes"
+        },
+        {
+          "info": {
+            "name": "Polymarket Volume Split (YES/NO)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/polymarket/volume-split/:condition_id",
+            "params": [
+              {
+                "name": "condition_id",
+                "value": "",
+                "type": "path",
+                "description": "Polymarket condition ID"
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Time granularity for volume aggregation"
+              },
+              {
+                "name": "start_time",
+                "value": "",
+                "type": "query",
+                "description": "Start time (Unix seconds). 0 means no lower bound. Cache aligns to 5-minute buckets, so two requests within the same bucket return the same cached result."
+              },
+              {
+                "name": "end_time",
+                "value": "",
+                "type": "query",
+                "description": "End time (Unix seconds). 0 means current time. Cache aligns to 5-minute buckets, so two requests within the same bucket return the same cached result."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Volume split by YES/NO outcome sides per interval (hour/day/week), plus total volume and trade count.\nUse this to see directional volume bias.\nFor aggregate volume without YES/NO breakdown, use `volumes` instead.\n\nData refresh: ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "Polymarket Volume History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/prediction-market/polymarket/volumes",
+            "params": [
+              {
+                "name": "condition_id",
+                "value": "",
+                "type": "query",
+                "description": "Market condition identifier (required if token_id not provided)"
+              },
+              {
+                "name": "token_id",
+                "value": "",
+                "type": "query",
+                "description": "Token ID (alternative identifier, resolved to condition_id internally)"
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window of history to return (how much data, from now backward): `7d`, `30d`, `90d`, `180d`, or `1y`. Distinct from `interval` (which sets bucket size within the window)."
+              },
+              {
+                "name": "interval",
+                "value": "",
+                "type": "query",
+                "description": "Bucket size for each point in the returned series: `1h` (hourly) or `1d` (daily). Distinct from `time_range` (which sets the window size)."
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Aggregation granularity (alternative to interval). When provided, queries daily table with buy/sell volume breakdown."
+              },
+              {
+                "name": "start_time",
+                "value": "",
+                "type": "query",
+                "description": "Start time as Unix seconds (alternative to time_range)"
+              },
+              {
+                "name": "end_time",
+                "value": "",
+                "type": "query",
+                "description": "End time as Unix seconds (alternative to time_range)"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Aggregate trading volume (USD) and trade count as a time series.\nUse this for volume trend analysis.\nFor YES/NO volume breakdown by outcome side, use `volume-split` instead.\n\n**Data refresh:** ~30 minutes"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

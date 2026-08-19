@@ -5,7 +5,7 @@ source: https://github.com/asksurf-ai/surf-mcp
 server:
   name: surf
   repo: https://github.com/asksurf-ai/surf-mcp
-  package: "@surf-ai/surf-mcp"
+  package: '@surf-ai/surf-mcp'
   transport: stdio
   run: npx @surf-ai/surf-mcp
   requires:
@@ -14,10 +14,9 @@ server:
       SURF_API_KEY: Bearer API key from agents.asksurf.ai
   spec_source: https://api.asksurf.ai/gateway/openapi.json
   generation: Tools are dynamically generated from the Surf Data API OpenAPI spec (24h cache).
-notes: >-
-  Official MCP server. Exposes 12 domain-scoped tools, each taking a `command` (an OpenAPI
-  operationId) plus an optional `params` object, covering 86+ Data API endpoints. Compatible
-  with Claude Code, Cursor, and other MCP clients via .mcp.json.
+notes: Official MCP server. Exposes 12 domain-scoped tools, each taking a `command` (an OpenAPI operationId)
+  plus an optional `params` object, covering 86+ Data API endpoints. Compatible with Claude Code, Cursor,
+  and other MCP clients via .mcp.json.
 tools:
 - name: surf_market
   description: Pricing, rankings, indicators, ETF flows (Market domain)
@@ -43,3 +42,9 @@ tools:
   description: Aggregated crypto news feed and article detail (News domain)
 - name: surf_web
   description: Web page fetching and parsing (Web domain)
+deployment:
+  mode: local-stdio
+  verified: searched
+  tools: 12
+  checked: '2026-08-12'
+  source: catalog MCP census

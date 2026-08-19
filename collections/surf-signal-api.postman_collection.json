@@ -1,0 +1,736 @@
+{
+  "item": [
+    {
+      "id": "5f63a452-986d-4f21-9bdd-ce5215576ca7",
+      "name": "Signal",
+      "description": {
+        "content": "Explore ranked project signal score snapshots, token-of-day/week highlights, and project-level signal cards with latest price, price-change, dimension scores, compact signals, and AI summaries.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "f3646cda-8a7b-4cc2-8bae-d006c1de7f68",
+          "name": "Signal Detail",
+          "request": {
+            "name": "Signal Detail",
+            "description": {
+              "content": "Returns one project signal card.\n\n**Lookup:** pass exactly one of `id` (Surf token UUID) or `project_slug`. Use `time_range` (`24h` or `7d`) to select the score window.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "heatscore",
+                "detail"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Surf token UUID. Pass exactly one of id or project_slug."
+                },
+                {
+                  "disabled": false,
+                  "key": "project_slug",
+                  "value": "<string>",
+                  "description": "Project slug. Pass exactly one of id or project_slug."
+                },
+                {
+                  "disabled": false,
+                  "key": "time_range",
+                  "value": "24h",
+                  "description": "Window to compute signal score over: 24h or 7d."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "ace8787b-fe7b-48d1-aa66-6c3e2e4ba92e",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "heatscore",
+                    "detail"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "project_slug",
+                      "value": "synapse"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "24h"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"price_change_percent\": {\n      \"1h\": 6321.022116598982,\n      \"24h\": 8239.21140800687,\n      \"7d\": 9820.347291500155\n    },\n    \"core_state\": {\n      \"driver\": \"string\",\n      \"priority\": 8432,\n      \"reason\": \"string\",\n      \"state\": \"string\",\n      \"state_type\": \"string\",\n      \"strength\": \"string\"\n    },\n    \"heat_dimensions\": {\n      \"derivative\": 8315.930144755916,\n      \"derivative_components\": [\n        {\n          \"used\": false,\n          \"metric\": \"string\",\n          \"score\": 3494.2956382358448,\n          \"weight\": 5964.738853518827\n        },\n        {\n          \"used\": true,\n          \"metric\": \"string\",\n          \"score\": 128.60781804891695,\n          \"weight\": 5472.388197282087\n        }\n      ],\n      \"flow\": 9204.9449625701,\n      \"movement\": 6130.898507080722,\n      \"social\": 4157.242672026482\n    },\n    \"ai_summary\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\"\n    },\n    \"baseline\": 4220.441773844827,\n    \"change_percent\": 4453.598306860486,\n    \"change_vs_previous_percent\": 9617.980737752054,\n    \"computed_hour\": 8058,\n    \"driver\": \"string\",\n    \"evidence_score\": 9514.0002618958,\n    \"heat_score\": 3646.5413732584993,\n    \"heat_score_by_range\": {\n      \"key_0\": 2178.6854525066256,\n      \"key_1\": 4588.939815379709\n    },\n    \"heat_score_change_vs_previous_percent_by_range\": {\n      \"key_0\": 1418.8664032198274\n    },\n    \"heat_score_previous_by_range\": {\n      \"key_0\": 252.2205870601213,\n      \"key_1\": 1923.6139181619349,\n      \"key_2\": 7904.778815026584,\n      \"key_3\": 6380.6370997853055\n    },\n    \"liquidation_long_24h\": 360.11564329914813,\n    \"liquidation_long_short_ratio_24h\": 4754.673729322663,\n    \"liquidation_short_24h\": 8679.86186102321,\n    \"logo\": \"string\",\n    \"market_relevance\": 5512.461870762847,\n    \"metric\": \"string\",\n    \"name\": \"string\",\n    \"open_interest\": 2764.820764376238,\n    \"points_used\": 6812,\n    \"previous_value\": 957.315773597418,\n    \"price\": 1300.3164606778805,\n    \"project_id\": \"string\",\n    \"project_slug\": \"string\",\n    \"rank\": 5062,\n    \"score\": 5494.508101460416,\n    \"signed_z\": 9942.624354618376,\n    \"symbol\": \"string\",\n    \"time_range\": \"string\",\n    \"token_id\": \"string\",\n    \"token_signals\": {\n      \"key_0\": \"string\"\n    },\n    \"updated_at\": 1681,\n    \"value\": 837.7835156227686,\n    \"volume_24h\": 7217.666988894729,\n    \"volume_24h_change_percent\": 7425.940780076754\n  },\n  \"meta\": {\n    \"credits_used\": 7694,\n    \"cached\": false,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseSignalProject.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "932bdded-c0da-4fc7-8fa3-43e305b60620",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "heatscore",
+                    "detail"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "project_slug",
+                      "value": "synapse"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "24h"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "37a69b2e-8174-4f57-b9fb-21dca01ebc9a",
+          "name": "Signal Projects",
+          "request": {
+            "name": "Signal Projects",
+            "description": {
+              "content": "Returns a paginated ranked snapshot of project signal cards.\n\n**Included fields:** project identity, score, latest price, price-change percentages, core state, dimension scores, compact token signals, AI summaries, and supporting market metrics.\n\n**Filters:** `time_range` (`24h` or `7d`). Supports `limit`/`offset` pagination.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "heatscore",
+                "projects"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "time_range",
+                  "value": "24h",
+                  "description": "Window to compute signal scores over: 24h or 7d. Returns a ranked snapshot, not a time-series."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7ffa35c0-435c-4e55-a55e-02e54c2dec9d",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "heatscore",
+                    "projects"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "time_range",
+                      "value": "24h"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"price_change_percent\": {\n        \"1h\": 806.9015123789392,\n        \"24h\": 2441.7803097082146,\n        \"7d\": 5075.048253790257\n      },\n      \"core_state\": {\n        \"driver\": \"string\",\n        \"priority\": 7737,\n        \"reason\": \"string\",\n        \"state\": \"string\",\n        \"state_type\": \"string\",\n        \"strength\": \"string\"\n      },\n      \"heat_dimensions\": {\n        \"derivative\": 4855.822186546747,\n        \"derivative_components\": [\n          {\n            \"used\": true,\n            \"metric\": \"string\",\n            \"score\": 2007.124747259782,\n            \"weight\": 3126.421038053985\n          },\n          {\n            \"used\": true,\n            \"metric\": \"string\",\n            \"score\": 5716.850325348168,\n            \"weight\": 1262.9897694613478\n          }\n        ],\n        \"flow\": 9881.228738113781,\n        \"movement\": 8977.158965439472,\n        \"social\": 7395.331212071707\n      },\n      \"ai_summary\": {\n        \"key_0\": \"string\"\n      },\n      \"baseline\": 3705.2418301210755,\n      \"change_percent\": 1227.6599647048004,\n      \"change_vs_previous_percent\": 8966.791958984782,\n      \"computed_hour\": 938,\n      \"driver\": \"string\",\n      \"evidence_score\": 3.123961952593568,\n      \"heat_score\": 477.14098717547284,\n      \"heat_score_by_range\": {\n        \"key_0\": 4885.776626110804,\n        \"key_1\": 4279.902181421163\n      },\n      \"heat_score_change_vs_previous_percent_by_range\": {\n        \"key_0\": 3501.1817334330376,\n        \"key_1\": 3442.1668045713973\n      },\n      \"heat_score_previous_by_range\": {\n        \"key_0\": 3683.713602540505\n      },\n      \"liquidation_long_24h\": 7399.598543790355,\n      \"liquidation_long_short_ratio_24h\": 2422.5551365999563,\n      \"liquidation_short_24h\": 9790.448944182448,\n      \"logo\": \"string\",\n      \"market_relevance\": 3465.0507757576434,\n      \"metric\": \"string\",\n      \"name\": \"string\",\n      \"open_interest\": 8888.344900012617,\n      \"points_used\": 320,\n      \"previous_value\": 2353.064764701762,\n      \"price\": 1977.4208910881453,\n      \"project_id\": \"string\",\n      \"project_slug\": \"string\",\n      \"rank\": 8594,\n      \"score\": 1480.428574779611,\n      \"signed_z\": 1295.8867486093418,\n      \"symbol\": \"string\",\n      \"time_range\": \"string\",\n      \"token_id\": \"string\",\n      \"token_signals\": {\n        \"key_0\": \"string\"\n      },\n      \"updated_at\": 3460,\n      \"value\": 5837.449019253561,\n      \"volume_24h\": 7797.384509641555,\n      \"volume_24h_change_percent\": 2951.6718080464652\n    },\n    {\n      \"price_change_percent\": {\n        \"1h\": 348.70333273239294,\n        \"24h\": 2515.2230556209865,\n        \"7d\": 1592.0173337652755\n      },\n      \"core_state\": {\n        \"driver\": \"string\",\n        \"priority\": 6387,\n        \"reason\": \"string\",\n        \"state\": \"string\",\n        \"state_type\": \"string\",\n        \"strength\": \"string\"\n      },\n      \"heat_dimensions\": {\n        \"derivative\": 1731.339867665288,\n        \"derivative_components\": [\n          {\n            \"used\": true,\n            \"metric\": \"string\",\n            \"score\": 9265.410378821614,\n            \"weight\": 1597.0216665359383\n          },\n          {\n            \"used\": false,\n            \"metric\": \"string\",\n            \"score\": 3836.2246317044855,\n            \"weight\": 9824.548791081614\n          }\n        ],\n        \"flow\": 6039.41722523558,\n        \"movement\": 1696.2593506740097,\n        \"social\": 9101.674396203873\n      },\n      \"ai_summary\": {\n        \"key_0\": \"string\"\n      },\n      \"baseline\": 7292.33923503524,\n      \"change_percent\": 6717.352370175025,\n      \"change_vs_previous_percent\": 932.3522977953979,\n      \"computed_hour\": 1922,\n      \"driver\": \"string\",\n      \"evidence_score\": 2042.107004204119,\n      \"heat_score\": 8984.30093053139,\n      \"heat_score_by_range\": {\n        \"key_0\": 6498.737434014991\n      },\n      \"heat_score_change_vs_previous_percent_by_range\": {\n        \"key_0\": 1535.7371092414462\n      },\n      \"heat_score_previous_by_range\": {\n        \"key_0\": 3422.0257992027127\n      },\n      \"liquidation_long_24h\": 1265.1196629812023,\n      \"liquidation_long_short_ratio_24h\": 6275.003977675926,\n      \"liquidation_short_24h\": 5040.865523658953,\n      \"logo\": \"string\",\n      \"market_relevance\": 2826.0392168174562,\n      \"metric\": \"string\",\n      \"name\": \"string\",\n      \"open_interest\": 4563.199763134048,\n      \"points_used\": 660,\n      \"previous_value\": 358.50697744633567,\n      \"price\": 1959.4612119032329,\n      \"project_id\": \"string\",\n      \"project_slug\": \"string\",\n      \"rank\": 3637,\n      \"score\": 1386.685030787016,\n      \"signed_z\": 6017.7496485112115,\n      \"symbol\": \"string\",\n      \"time_range\": \"string\",\n      \"token_id\": \"string\",\n      \"token_signals\": {\n        \"key_0\": \"string\",\n        \"key_1\": \"string\"\n      },\n      \"updated_at\": 3136,\n      \"value\": 1888.2899025275212,\n      \"volume_24h\": 9572.044291604983,\n      \"volume_24h_change_percent\": 9895.51829954976\n    }\n  ],\n  \"meta\": {\n    \"limit\": 7559,\n    \"offset\": 2524,\n    \"credits_used\": 8544,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 3517,\n    \"watermark\": 6190\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseSignalProject.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a50ff267-fbfb-4751-9dd4-9e35dc7d9add",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "heatscore",
+                    "projects"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "time_range",
+                      "value": "24h"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b1f4736e-f666-45b8-8621-011fd768ed97",
+          "name": "Signal Token Of The Day",
+          "request": {
+            "name": "Signal Token Of The Day",
+            "description": {
+              "content": "Returns the token-of-the-day project signal cards with latest price, price-change percentages, dimension scores, compact signals, and AI summaries. Supports `limit`/`offset` pagination.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "heatscore",
+                "token-of-the-day"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "2891026e-806f-43a7-9b51-445a37066422",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "heatscore",
+                    "token-of-the-day"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"price_change_percent\": {\n        \"1h\": 806.9015123789392,\n        \"24h\": 2441.7803097082146,\n        \"7d\": 5075.048253790257\n      },\n      \"core_state\": {\n        \"driver\": \"string\",\n        \"priority\": 7737,\n        \"reason\": \"string\",\n        \"state\": \"string\",\n        \"state_type\": \"string\",\n        \"strength\": \"string\"\n      },\n      \"heat_dimensions\": {\n        \"derivative\": 4855.822186546747,\n        \"derivative_components\": [\n          {\n            \"used\": true,\n            \"metric\": \"string\",\n            \"score\": 2007.124747259782,\n            \"weight\": 3126.421038053985\n          },\n          {\n            \"used\": true,\n            \"metric\": \"string\",\n            \"score\": 5716.850325348168,\n            \"weight\": 1262.9897694613478\n          }\n        ],\n        \"flow\": 9881.228738113781,\n        \"movement\": 8977.158965439472,\n        \"social\": 7395.331212071707\n      },\n      \"ai_summary\": {\n        \"key_0\": \"string\"\n      },\n      \"baseline\": 3705.2418301210755,\n      \"change_percent\": 1227.6599647048004,\n      \"change_vs_previous_percent\": 8966.791958984782,\n      \"computed_hour\": 938,\n      \"driver\": \"string\",\n      \"evidence_score\": 3.123961952593568,\n      \"heat_score\": 477.14098717547284,\n      \"heat_score_by_range\": {\n        \"key_0\": 4885.776626110804,\n        \"key_1\": 4279.902181421163\n      },\n      \"heat_score_change_vs_previous_percent_by_range\": {\n        \"key_0\": 3501.1817334330376,\n        \"key_1\": 3442.1668045713973\n      },\n      \"heat_score_previous_by_range\": {\n        \"key_0\": 3683.713602540505\n      },\n      \"liquidation_long_24h\": 7399.598543790355,\n      \"liquidation_long_short_ratio_24h\": 2422.5551365999563,\n      \"liquidation_short_24h\": 9790.448944182448,\n      \"logo\": \"string\",\n      \"market_relevance\": 3465.0507757576434,\n      \"metric\": \"string\",\n      \"name\": \"string\",\n      \"open_interest\": 8888.344900012617,\n      \"points_used\": 320,\n      \"previous_value\": 2353.064764701762,\n      \"price\": 1977.4208910881453,\n      \"project_id\": \"string\",\n      \"project_slug\": \"string\",\n      \"rank\": 8594,\n      \"score\": 1480.428574779611,\n      \"signed_z\": 1295.8867486093418,\n      \"symbol\": \"string\",\n      \"time_range\": \"string\",\n      \"token_id\": \"string\",\n      \"token_signals\": {\n        \"key_0\": \"string\"\n      },\n      \"updated_at\": 3460,\n      \"value\": 5837.449019253561,\n      \"volume_24h\": 7797.384509641555,\n      \"volume_24h_change_percent\": 2951.6718080464652\n    },\n    {\n      \"price_change_percent\": {\n        \"1h\": 348.70333273239294,\n        \"24h\": 2515.2230556209865,\n        \"7d\": 1592.0173337652755\n      },\n      \"core_state\": {\n        \"driver\": \"string\",\n        \"priority\": 6387,\n        \"reason\": \"string\",\n        \"state\": \"string\",\n        \"state_type\": \"string\",\n        \"strength\": \"string\"\n      },\n      \"heat_dimensions\": {\n        \"derivative\": 1731.339867665288,\n        \"derivative_components\": [\n          {\n            \"used\": true,\n            \"metric\": \"string\",\n            \"score\": 9265.410378821614,\n            \"weight\": 1597.0216665359383\n          },\n          {\n            \"used\": false,\n            \"metric\": \"string\",\n            \"score\": 3836.2246317044855,\n            \"weight\": 9824.548791081614\n          }\n        ],\n        \"flow\": 6039.41722523558,\n        \"movement\": 1696.2593506740097,\n        \"social\": 9101.674396203873\n      },\n      \"ai_summary\": {\n        \"key_0\": \"string\"\n      },\n      \"baseline\": 7292.33923503524,\n      \"change_percent\": 6717.352370175025,\n      \"change_vs_previous_percent\": 932.3522977953979,\n      \"computed_hour\": 1922,\n      \"driver\": \"string\",\n      \"evidence_score\": 2042.107004204119,\n      \"heat_score\": 8984.30093053139,\n      \"heat_score_by_range\": {\n        \"key_0\": 6498.737434014991\n      },\n      \"heat_score_change_vs_previous_percent_by_range\": {\n        \"key_0\": 1535.7371092414462\n      },\n      \"heat_score_previous_by_range\": {\n        \"key_0\": 3422.0257992027127\n      },\n      \"liquidation_long_24h\": 1265.1196629812023,\n      \"liquidation_long_short_ratio_24h\": 6275.003977675926,\n      \"liquidation_short_24h\": 5040.865523658953,\n      \"logo\": \"string\",\n      \"market_relevance\": 2826.0392168174562,\n      \"metric\": \"string\",\n      \"name\": \"string\",\n      \"open_interest\": 4563.199763134048,\n      \"points_used\": 660,\n      \"previous_value\": 358.50697744633567,\n      \"price\": 1959.4612119032329,\n      \"project_id\": \"string\",\n      \"project_slug\": \"string\",\n      \"rank\": 3637,\n      \"score\": 1386.685030787016,\n      \"signed_z\": 6017.7496485112115,\n      \"symbol\": \"string\",\n      \"time_range\": \"string\",\n      \"token_id\": \"string\",\n      \"token_signals\": {\n        \"key_0\": \"string\",\n        \"key_1\": \"string\"\n      },\n      \"updated_at\": 3136,\n      \"value\": 1888.2899025275212,\n      \"volume_24h\": 9572.044291604983,\n      \"volume_24h_change_percent\": 9895.51829954976\n    }\n  ],\n  \"meta\": {\n    \"limit\": 7559,\n    \"offset\": 2524,\n    \"credits_used\": 8544,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 3517,\n    \"watermark\": 6190\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseSignalProject.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5d56cd87-74b4-4446-be12-8cc02d8969f0",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "heatscore",
+                    "token-of-the-day"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "59c2e911-a6e9-4349-aa48-1d5c5749c0a4",
+          "name": "Signal Token Of The Week",
+          "request": {
+            "name": "Signal Token Of The Week",
+            "description": {
+              "content": "Returns the token-of-week project signal cards with latest price, price-change percentages, dimension scores, compact signals, and AI summaries. Supports `limit`/`offset` pagination.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "heatscore",
+                "token-of-week"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "04276a47-2c42-4470-958b-9c3761edf2ea",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "heatscore",
+                    "token-of-week"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"price_change_percent\": {\n        \"1h\": 806.9015123789392,\n        \"24h\": 2441.7803097082146,\n        \"7d\": 5075.048253790257\n      },\n      \"core_state\": {\n        \"driver\": \"string\",\n        \"priority\": 7737,\n        \"reason\": \"string\",\n        \"state\": \"string\",\n        \"state_type\": \"string\",\n        \"strength\": \"string\"\n      },\n      \"heat_dimensions\": {\n        \"derivative\": 4855.822186546747,\n        \"derivative_components\": [\n          {\n            \"used\": true,\n            \"metric\": \"string\",\n            \"score\": 2007.124747259782,\n            \"weight\": 3126.421038053985\n          },\n          {\n            \"used\": true,\n            \"metric\": \"string\",\n            \"score\": 5716.850325348168,\n            \"weight\": 1262.9897694613478\n          }\n        ],\n        \"flow\": 9881.228738113781,\n        \"movement\": 8977.158965439472,\n        \"social\": 7395.331212071707\n      },\n      \"ai_summary\": {\n        \"key_0\": \"string\"\n      },\n      \"baseline\": 3705.2418301210755,\n      \"change_percent\": 1227.6599647048004,\n      \"change_vs_previous_percent\": 8966.791958984782,\n      \"computed_hour\": 938,\n      \"driver\": \"string\",\n      \"evidence_score\": 3.123961952593568,\n      \"heat_score\": 477.14098717547284,\n      \"heat_score_by_range\": {\n        \"key_0\": 4885.776626110804,\n        \"key_1\": 4279.902181421163\n      },\n      \"heat_score_change_vs_previous_percent_by_range\": {\n        \"key_0\": 3501.1817334330376,\n        \"key_1\": 3442.1668045713973\n      },\n      \"heat_score_previous_by_range\": {\n        \"key_0\": 3683.713602540505\n      },\n      \"liquidation_long_24h\": 7399.598543790355,\n      \"liquidation_long_short_ratio_24h\": 2422.5551365999563,\n      \"liquidation_short_24h\": 9790.448944182448,\n      \"logo\": \"string\",\n      \"market_relevance\": 3465.0507757576434,\n      \"metric\": \"string\",\n      \"name\": \"string\",\n      \"open_interest\": 8888.344900012617,\n      \"points_used\": 320,\n      \"previous_value\": 2353.064764701762,\n      \"price\": 1977.4208910881453,\n      \"project_id\": \"string\",\n      \"project_slug\": \"string\",\n      \"rank\": 8594,\n      \"score\": 1480.428574779611,\n      \"signed_z\": 1295.8867486093418,\n      \"symbol\": \"string\",\n      \"time_range\": \"string\",\n      \"token_id\": \"string\",\n      \"token_signals\": {\n        \"key_0\": \"string\"\n      },\n      \"updated_at\": 3460,\n      \"value\": 5837.449019253561,\n      \"volume_24h\": 7797.384509641555,\n      \"volume_24h_change_percent\": 2951.6718080464652\n    },\n    {\n      \"price_change_percent\": {\n        \"1h\": 348.70333273239294,\n        \"24h\": 2515.2230556209865,\n        \"7d\": 1592.0173337652755\n      },\n      \"core_state\": {\n        \"driver\": \"string\",\n        \"priority\": 6387,\n        \"reason\": \"string\",\n        \"state\": \"string\",\n        \"state_type\": \"string\",\n        \"strength\": \"string\"\n      },\n      \"heat_dimensions\": {\n        \"derivative\": 1731.339867665288,\n        \"derivative_components\": [\n          {\n            \"used\": true,\n            \"metric\": \"string\",\n            \"score\": 9265.410378821614,\n            \"weight\": 1597.0216665359383\n          },\n          {\n            \"used\": false,\n            \"metric\": \"string\",\n            \"score\": 3836.2246317044855,\n            \"weight\": 9824.548791081614\n          }\n        ],\n        \"flow\": 6039.41722523558,\n        \"movement\": 1696.2593506740097,\n        \"social\": 9101.674396203873\n      },\n      \"ai_summary\": {\n        \"key_0\": \"string\"\n      },\n      \"baseline\": 7292.33923503524,\n      \"change_percent\": 6717.352370175025,\n      \"change_vs_previous_percent\": 932.3522977953979,\n      \"computed_hour\": 1922,\n      \"driver\": \"string\",\n      \"evidence_score\": 2042.107004204119,\n      \"heat_score\": 8984.30093053139,\n      \"heat_score_by_range\": {\n        \"key_0\": 6498.737434014991\n      },\n      \"heat_score_change_vs_previous_percent_by_range\": {\n        \"key_0\": 1535.7371092414462\n      },\n      \"heat_score_previous_by_range\": {\n        \"key_0\": 3422.0257992027127\n      },\n      \"liquidation_long_24h\": 1265.1196629812023,\n      \"liquidation_long_short_ratio_24h\": 6275.003977675926,\n      \"liquidation_short_24h\": 5040.865523658953,\n      \"logo\": \"string\",\n      \"market_relevance\": 2826.0392168174562,\n      \"metric\": \"string\",\n      \"name\": \"string\",\n      \"open_interest\": 4563.199763134048,\n      \"points_used\": 660,\n      \"previous_value\": 358.50697744633567,\n      \"price\": 1959.4612119032329,\n      \"project_id\": \"string\",\n      \"project_slug\": \"string\",\n      \"rank\": 3637,\n      \"score\": 1386.685030787016,\n      \"signed_z\": 6017.7496485112115,\n      \"symbol\": \"string\",\n      \"time_range\": \"string\",\n      \"token_id\": \"string\",\n      \"token_signals\": {\n        \"key_0\": \"string\",\n        \"key_1\": \"string\"\n      },\n      \"updated_at\": 3136,\n      \"value\": 1888.2899025275212,\n      \"volume_24h\": 9572.044291604983,\n      \"volume_24h_change_percent\": 9895.51829954976\n    }\n  ],\n  \"meta\": {\n    \"limit\": 7559,\n    \"offset\": 2524,\n    \"credits_used\": 8544,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 3517,\n    \"watermark\": 6190\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseSignalProject.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b82ae972-51b2-4da2-a216-519dd29667b1",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "heatscore",
+                    "token-of-week"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "708df6cc-37a4-4025-8999-23e35f2aa798",
+    "name": "Hermod DEX Signal API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n\n\nContact Support:\n Name: Cyber team\n Email: backend@cybertinolab.com",
+      "type": "text/plain"
+    }
+  }
+}

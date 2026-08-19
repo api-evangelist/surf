@@ -1,0 +1,468 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Hermod DEX Social API",
+    "version": "sha-80d3407"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Social",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Aggregated Social Analytics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/social/detail",
+            "params": [
+              {
+                "name": "x_id",
+                "value": "",
+                "type": "query",
+                "description": "Numeric X (Twitter) account ID (takes priority over `q`)"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Entity name to resolve like `uniswap`, `ethereum`, or `aave`"
+              },
+              {
+                "name": "fields",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated sub-resources to include. Can be `sentiment`, `follower_geo`, or `smart_followers`."
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window to aggregate sentiment data over: `24h`, `48h`, `7d`, `30d`, `3m`, `6m`, or `1y`. Returns a single snapshot (not a time-series). This endpoint uses `time_range` only — it does NOT accept `interval`. For mindshare time-series use /v1/social/mindshare."
+              },
+              {
+                "name": "geo_limit",
+                "value": "",
+                "type": "query",
+                "description": "Max geo locations to return"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns Twitter/X analytics for a crypto project: sentiment score, follower geography, and smart follower breakdown (VCs, KOLs, developers). For individual user profiles use `social-user` instead.\n\n**Available fields** (via `fields`): `sentiment`, `follower_geo`, `smart_followers`.\n\n**Lookup:** by X account ID (`x_id`) or project name (`q`, e.g. `uniswap`, `solana`). The `q` parameter must be a crypto project name, not a personal Twitter handle. Returns 404 if the project has no linked Twitter a"
+        },
+        {
+          "info": {
+            "name": "Project Mindshare Time Series",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/social/mindshare",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Surf project UUID. Provide one of `id` or `q`."
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Entity name to resolve like `uniswap`, `ethereum`, or `aave`. Provide one of `id` or `q`."
+              },
+              {
+                "name": "interval",
+                "value": "",
+                "type": "query",
+                "description": "Bucket size for each point in the returned time-series: `5m`, `1h`, `1d`, or `7d`. This is NOT a window — this endpoint has no default window, pass `from`/`to` to bound the range. Not the same parameter as `time_range` (which does not exist on this endpoint). Note: when `include_tag_percents=true`, `5m` falls back to hourly data for the per-tag series (Argus has no 5m granularity for tag percentages)."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start timestamp. Accepts Unix seconds (1704067200) or date string (2024-01-01)"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End timestamp. Accepts Unix seconds (1706745600) or date string (2024-02-01)"
+              },
+              {
+                "name": "include_tag_percents",
+                "value": "",
+                "type": "query",
+                "description": "Set to `true` to additionally return per-tag mindshare percentage time-series in the `tag_percents` field. A project can belong to multiple tags; each tag returns its own sparse time-series (values are 0~100 percentages, not ratios). Default `false` — response shape is byte-identical to the legacy format."
+              },
+              {
+                "name": "source",
+                "value": "",
+                "type": "query",
+                "description": "Data lane: `x` (X/Twitter, default) or `binance_square` (Binance Square). Response shape is identical across sources."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns mindshare (social view count) **time-series trend** for a project, aggregated by `interval`.\n\n**Intervals:** `5m`, `1h`, `1d`, `7d`. `interval` is REQUIRED.\n\n**Filters:** date range with `from`/`to` (Unix seconds). Lookup by Surf project UUID (`id`) or by name (`q`) — exactly one of the two is required.\n\n**No pagination and no `time_range`** — this endpoint does NOT accept `limit`, `offset`, or `time_range`. Size of the returned series is controlled by `from`/`to` divided by `interval`.\n"
+        },
+        {
+          "info": {
+            "name": "Social Mindshare Ranking",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/social/ranking",
+            "params": [
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "tag",
+                "value": "",
+                "type": "query",
+                "description": "Filter by project category. `l1` = Layer 1, `l2` = Layer 2/scaling, `dex` = DEX/AMM, `derivatives` = perps/options, `cex` = centralized exchange, `gamefi` = gaming, `nft` = NFT collections, `oracle` = oracle, `prediction` = prediction market, `rwa` = real-world assets, `yield` = yield/asset management, `data` = data/analytics, `devtool` = developer tooling, `compliance` = compliance/regtech, `meme` = meme/token launchpad."
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window to compute the ranking over: `24h`, `48h`, `7d`, or `30d`. Returns a single ranked snapshot (not a time-series). This endpoint uses `time_range` only — it does NOT accept `interval`."
+              },
+              {
+                "name": "sentiment",
+                "value": "",
+                "type": "query",
+                "description": "Filter by sentiment polarity. Only projects with sufficient tweet data are classified."
+              },
+              {
+                "name": "source",
+                "value": "",
+                "type": "query",
+                "description": "Data lane: `x` (X/Twitter, default) or `binance_square` (Binance Square). Response shape is identical across sources."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns top crypto projects ranked by mindshare (social view count), refreshed every 5 minutes.\n\n**Filters:**\n- `tag` — scope to a category (e.g. `dex`, `l1`, `meme`)\n- `time_range` — ranking window (`24h`, `48h`, `7d`, `30d`)\n\nSupports `limit`/`offset` pagination."
+        },
+        {
+          "info": {
+            "name": "Social Sentiment",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/social/sentiment",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Surf project UUID"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Project name or symbol for entity resolution"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns the aggregate social sentiment score for a project.\n\nScore ranges from -1.0 (bearish) to 1.0 (bullish)."
+        },
+        {
+          "info": {
+            "name": "Smart Follower Count History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/social/smart-followers/history",
+            "params": [
+              {
+                "name": "x_id",
+                "value": "",
+                "type": "query",
+                "description": "Numeric X (Twitter) account ID (takes priority over `q`)"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Project name to resolve (e.g. `uniswap`, `ethereum`). Must be a project with a linked X account — personal handles like `VitalikButerin` return 404. Use `x_id` for individual accounts."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max data points to return (upstream typically provides ~36 daily points)"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns smart follower count time-series for a project, sorted by date descending.\n\n**Lookup:** by X account ID (`x_id`) or project name (`q`). The `q` parameter must be a project name (e.g. `uniswap`, `ethereum`), not a personal X handle — use `x_id` for individual accounts. Returns 404 if the project has no linked X account."
+        },
+        {
+          "info": {
+            "name": "Tweet Replies",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/social/tweet/replies",
+            "params": [
+              {
+                "name": "tweet_id",
+                "value": "",
+                "type": "query",
+                "description": "Tweet ID to get replies for"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max results to return"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns replies/comments on a specific tweet.\n\n**Lookup:** by `tweet_id`."
+        },
+        {
+          "info": {
+            "name": "Social Posts by IDs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/social/tweets",
+            "params": [
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated numeric post ID strings, max 100"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns X (Twitter) posts by numeric post ID strings.\n\nPass up to 100 comma-separated IDs via the `ids` query parameter."
+        },
+        {
+          "info": {
+            "name": "Social User Profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/social/user",
+            "params": [
+              {
+                "name": "handle",
+                "value": "",
+                "type": "query",
+                "description": "X (Twitter) username without @ like `cz_binance` or `vitalikbuterin`"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a basic X/Twitter profile (name, bio, avatar, follower/following counts) for any handle. For crypto project social analytics (sentiment, smart followers, geo), use `social-detail` instead.\n\n**Lookup:** by `handle` (without @)."
+        },
+        {
+          "info": {
+            "name": "User Followers List",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/social/user/followers",
+            "params": [
+              {
+                "name": "handle",
+                "value": "",
+                "type": "query",
+                "description": "X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max results to return"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a list of followers for the specified handle on X (Twitter).\n\n**Lookup:** by `handle` (without @)."
+        },
+        {
+          "info": {
+            "name": "User Following List",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/social/user/following",
+            "params": [
+              {
+                "name": "handle",
+                "value": "",
+                "type": "query",
+                "description": "X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max results to return"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a list of users that the specified handle follows on X (Twitter).\n\n**Lookup:** by `handle` (without @)."
+        },
+        {
+          "info": {
+            "name": "User Social Posts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/social/user/posts",
+            "params": [
+              {
+                "name": "handle",
+                "value": "",
+                "type": "query",
+                "description": "X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+              },
+              {
+                "name": "filter",
+                "value": "",
+                "type": "query",
+                "description": "Filter tweets: `all` returns everything, `original` excludes retweets"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns recent X (Twitter) posts by a specific user, ordered by recency.\n\n**Lookup:** by `handle` (without @). Use `filter=original` to exclude retweets.\n\n**Pagination:** check `meta.has_more`; if true, pass `meta.next_cursor` as the `cursor` query parameter in the next request."
+        },
+        {
+          "info": {
+            "name": "User Replies",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/social/user/replies",
+            "params": [
+              {
+                "name": "handle",
+                "value": "",
+                "type": "query",
+                "description": "X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max results to return"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns recent replies by the specified handle on X (Twitter).\n\n**Lookup:** by `handle` (without @)."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

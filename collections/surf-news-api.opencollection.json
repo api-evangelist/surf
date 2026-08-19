@@ -1,0 +1,100 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Hermod DEX News API",
+    "version": "sha-80d3407"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "News",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "News Article Detail",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/news/detail",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Article ID (returned as id in feed/search results)"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns the full content of a single news article by its ID (returned as `id` in feed and search results)."
+        },
+        {
+          "info": {
+            "name": "Crypto News Feed",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/news/feed",
+            "params": [
+              {
+                "name": "source",
+                "value": "",
+                "type": "query",
+                "description": "Filter by news source"
+              },
+              {
+                "name": "project",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated project names to filter by"
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Filter articles published on or after this time. Accepts Unix seconds or date string (2024-01-01)"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "Filter articles published on or before this time. Accepts Unix seconds or date string (2024-02-01)"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Sort order: recency (newest first) or trending (deterministic newest-first alias until engagement ranking is available)"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page (max 50)"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns crypto news from major sources.\n\n**Filters:** `source` (enum), `project`, and time range (`from`/`to`).\n\n**Sort:** `recency` (default) or `trending`.\n\nUse the detail endpoint with article `id` for full content."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

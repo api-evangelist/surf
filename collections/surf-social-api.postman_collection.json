@@ -1,0 +1,2316 @@
+{
+  "item": [
+    {
+      "id": "7c2b953c-f0b0-4782-9326-d34db4e011a8",
+      "name": "Social",
+      "description": {
+        "content": "Monitor crypto social activity on X (Twitter). Look up user profiles and their posts, track project sentiment scores and follower geography, discover smart followers, and analyze mindshare trends over time to gauge social momentum.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "5a87dcca-c9b3-4afd-a775-ee8134de1c69",
+          "name": "Aggregated Social Analytics",
+          "request": {
+            "name": "Aggregated Social Analytics",
+            "description": {
+              "content": "Returns Twitter/X analytics for a crypto project: sentiment score, follower geography, and smart follower breakdown (VCs, KOLs, developers). For individual user profiles use `social-user` instead.\n\n**Available fields** (via `fields`): `sentiment`, `follower_geo`, `smart_followers`.\n\n**Lookup:** by X account ID (`x_id`) or project name (`q`, e.g. `uniswap`, `solana`). The `q` parameter must be a crypto project name, not a personal Twitter handle. Returns 404 if the project has no linked Twitter account.\n\nFor sentiment **trends over time**, use `/social/mindshare` instead.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "social",
+                "detail"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "x_id",
+                  "value": "<string>",
+                  "description": "Numeric X (Twitter) account ID (takes priority over `q`)"
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Entity name to resolve like `uniswap`, `ethereum`, or `aave`"
+                },
+                {
+                  "disabled": false,
+                  "key": "fields",
+                  "value": "sentiment,follower_geo,smart_followers",
+                  "description": "Comma-separated sub-resources to include. Can be `sentiment`, `follower_geo`, or `smart_followers`."
+                },
+                {
+                  "disabled": false,
+                  "key": "time_range",
+                  "value": "7d",
+                  "description": "Window to aggregate sentiment data over: `24h`, `48h`, `7d`, `30d`, `3m`, `6m`, or `1y`. Returns a single snapshot (not a time-series). This endpoint uses `time_range` only — it does NOT accept `interval`. For mindshare time-series use /v1/social/mindshare."
+                },
+                {
+                  "disabled": false,
+                  "key": "geo_limit",
+                  "value": "20",
+                  "description": "Max geo locations to return"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "682c555c-c6cc-4b6e-934d-a2231b2ad09d",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "detail"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "x_id",
+                      "value": "984188226826010624"
+                    },
+                    {
+                      "key": "q",
+                      "value": "uniswap"
+                    },
+                    {
+                      "key": "fields",
+                      "value": "sentiment"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "7d"
+                    },
+                    {
+                      "key": "geo_limit",
+                      "value": "10"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"twitter_id\": \"string\",\n    \"follower_geo\": {\n      \"total_follower_count\": 4243,\n      \"locations\": [\n        {\n          \"location\": \"string\",\n          \"follower_count\": 7656,\n          \"percentage\": 4957.763552201633\n        },\n        {\n          \"location\": \"string\",\n          \"follower_count\": 6014,\n          \"percentage\": 4867.142942338974\n        }\n      ]\n    },\n    \"project_id\": \"string\",\n    \"project_name\": \"string\",\n    \"sentiment\": {\n      \"score\": 4115.7888399912845,\n      \"time_range\": \"string\",\n      \"insufficient_social_data\": true\n    },\n    \"smart_followers\": {\n      \"count\": 1154,\n      \"followers\": [\n        {\n          \"twitter_id\": \"string\",\n          \"tag\": \"string\",\n          \"name\": \"string\",\n          \"handle\": \"string\",\n          \"avatar\": \"string\",\n          \"followers_count\": 8579,\n          \"rank\": 2358,\n          \"score\": 605.4962333549773,\n          \"description\": \"string\"\n        },\n        {\n          \"twitter_id\": \"string\",\n          \"tag\": \"string\",\n          \"name\": \"string\",\n          \"handle\": \"string\",\n          \"avatar\": \"string\",\n          \"followers_count\": 5995,\n          \"rank\": 3570,\n          \"score\": 2556.3896170517874,\n          \"description\": \"string\"\n        }\n      ]\n    }\n  },\n  \"meta\": {\n    \"credits_used\": 8733,\n    \"cached\": false,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseSocialDetailBody.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "edbee691-c716-4745-b6b3-dc5c5e0d23da",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "detail"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "x_id",
+                      "value": "984188226826010624"
+                    },
+                    {
+                      "key": "q",
+                      "value": "uniswap"
+                    },
+                    {
+                      "key": "fields",
+                      "value": "sentiment"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "7d"
+                    },
+                    {
+                      "key": "geo_limit",
+                      "value": "10"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "25652cf7-3868-4794-8e44-1c1fca53c3cc",
+          "name": "Project Mindshare Time Series",
+          "request": {
+            "name": "Project Mindshare Time Series",
+            "description": {
+              "content": "Returns mindshare (social view count) **time-series trend** for a project, aggregated by `interval`.\n\n**Intervals:** `5m`, `1h`, `1d`, `7d`. `interval` is REQUIRED.\n\n**Filters:** date range with `from`/`to` (Unix seconds). Lookup by Surf project UUID (`id`) or by name (`q`) — exactly one of the two is required.\n\n**No pagination and no `time_range`** — this endpoint does NOT accept `limit`, `offset`, or `time_range`. Size of the returned series is controlled by `from`/`to` divided by `interval`.\n\nUse this for sentiment **trends**, mindshare **over time**, or social momentum changes.\n\nFor a **point-in-time snapshot** of social analytics (sentiment score, follower geo, smart followers), use `/social/detail` instead.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "social",
+                "mindshare"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Surf project UUID. Provide one of `id` or `q`."
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Entity name to resolve like `uniswap`, `ethereum`, or `aave`. Provide one of `id` or `q`."
+                },
+                {
+                  "disabled": false,
+                  "key": "interval",
+                  "value": "<string>",
+                  "description": "(Required) Bucket size for each point in the returned time-series: `5m`, `1h`, `1d`, or `7d`. This is NOT a window — this endpoint has no default window, pass `from`/`to` to bound the range. Not the same parameter as `time_range` (which does not exist on this endpoint). Note: when `include_tag_percents=true`, `5m` falls back to hourly data for the per-tag series (Argus has no 5m granularity for tag percentages)."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start timestamp. Accepts Unix seconds (1704067200) or date string (2024-01-01)"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End timestamp. Accepts Unix seconds (1706745600) or date string (2024-02-01)"
+                },
+                {
+                  "disabled": false,
+                  "key": "include_tag_percents",
+                  "value": "<boolean>",
+                  "description": "Set to `true` to additionally return per-tag mindshare percentage time-series in the `tag_percents` field. A project can belong to multiple tags; each tag returns its own sparse time-series (values are 0~100 percentages, not ratios). Default `false` — response shape is byte-identical to the legacy format."
+                },
+                {
+                  "disabled": false,
+                  "key": "source",
+                  "value": "x",
+                  "description": "Data lane: `x` (X/Twitter, default) or `binance_square` (Binance Square). Response shape is identical across sources."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "a8bf5de4-1bad-41c5-9fc4-c3cc976a1556",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "mindshare"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "uniswap"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "1d"
+                    },
+                    {
+                      "key": "from",
+                      "value": "1704067200"
+                    },
+                    {
+                      "key": "to",
+                      "value": "1706745600"
+                    },
+                    {
+                      "key": "include_tag_percents",
+                      "value": "true"
+                    },
+                    {
+                      "key": "source",
+                      "value": "x"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"timestamp\": 3,\n      \"value\": 1550\n    },\n    {\n      \"timestamp\": 7903,\n      \"value\": 9682\n    }\n  ],\n  \"meta\": {\n    \"limit\": 4921,\n    \"offset\": 6570,\n    \"credits_used\": 4475,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 5813,\n    \"watermark\": 6774\n  },\n  \"$schema\": \"https://example.com/schemas/SocialMindshareBody.json\",\n  \"tag_percents\": [\n    {\n      \"tag\": \"string\",\n      \"points\": [\n        {\n          \"timestamp\": 7067,\n          \"percent\": 3855.17309311174\n        },\n        {\n          \"timestamp\": 4529,\n          \"percent\": 9384.159771570523\n        }\n      ],\n      \"rank\": 8989,\n      \"share_ratio\": 4482.439059061003\n    },\n    {\n      \"tag\": \"string\",\n      \"points\": [\n        {\n          \"timestamp\": 3858,\n          \"percent\": 6951.165603087061\n        },\n        {\n          \"timestamp\": 1010,\n          \"percent\": 4822.847061298719\n        }\n      ],\n      \"rank\": 8393,\n      \"share_ratio\": 9613.938036145539\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6a2d16b6-bff4-41e4-81b6-dd468ecd46ca",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "mindshare"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "uniswap"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "1d"
+                    },
+                    {
+                      "key": "from",
+                      "value": "1704067200"
+                    },
+                    {
+                      "key": "to",
+                      "value": "1706745600"
+                    },
+                    {
+                      "key": "include_tag_percents",
+                      "value": "true"
+                    },
+                    {
+                      "key": "source",
+                      "value": "x"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8cd31c0b-0ff8-49b0-a435-d6eeeddb3b56",
+          "name": "Social Mindshare Ranking",
+          "request": {
+            "name": "Social Mindshare Ranking",
+            "description": {
+              "content": "Returns top crypto projects ranked by mindshare (social view count), refreshed every 5 minutes.\n\n**Filters:**\n- `tag` — scope to a category (e.g. `dex`, `l1`, `meme`)\n- `time_range` — ranking window (`24h`, `48h`, `7d`, `30d`)\n\nSupports `limit`/`offset` pagination.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "social",
+                "ranking"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "tag",
+                  "value": "<string>",
+                  "description": "Filter by project category. `l1` = Layer 1, `l2` = Layer 2/scaling, `dex` = DEX/AMM, `derivatives` = perps/options, `cex` = centralized exchange, `gamefi` = gaming, `nft` = NFT collections, `oracle` = oracle, `prediction` = prediction market, `rwa` = real-world assets, `yield` = yield/asset management, `data` = data/analytics, `devtool` = developer tooling, `compliance` = compliance/regtech, `meme` = meme/token launchpad."
+                },
+                {
+                  "disabled": false,
+                  "key": "time_range",
+                  "value": "7d",
+                  "description": "Window to compute the ranking over: `24h`, `48h`, `7d`, or `30d`. Returns a single ranked snapshot (not a time-series). This endpoint uses `time_range` only — it does NOT accept `interval`."
+                },
+                {
+                  "disabled": false,
+                  "key": "sentiment",
+                  "value": "<string>",
+                  "description": "Filter by sentiment polarity. Only projects with sufficient tweet data are classified."
+                },
+                {
+                  "disabled": false,
+                  "key": "source",
+                  "value": "x",
+                  "description": "Data lane: `x` (X/Twitter, default) or `binance_square` (Binance Square). Response shape is identical across sources."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "d7263898-4860-48ee-ac79-cb0cc6a7160a",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "ranking"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "tag",
+                      "value": "dex"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "7d"
+                    },
+                    {
+                      "key": "sentiment",
+                      "value": "positive"
+                    },
+                    {
+                      "key": "source",
+                      "value": "x"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"rank\": 5806,\n      \"project\": {\n        \"id\": \"string\",\n        \"name\": \"string\",\n        \"slug\": \"string\"\n      },\n      \"sentiment\": \"string\",\n      \"sentiment_score\": 3470.611019756902,\n      \"tags\": [\n        \"string\",\n        \"string\"\n      ],\n      \"token\": {\n        \"name\": \"string\",\n        \"id\": \"string\",\n        \"image\": \"string\",\n        \"symbol\": \"string\"\n      },\n      \"trending_short_reason\": \"string\",\n      \"trending_summary\": \"string\",\n      \"twitter\": {\n        \"twitter_id\": \"string\",\n        \"display_name\": \"string\",\n        \"x_handle\": \"string\",\n        \"avatar_url\": \"string\"\n      }\n    },\n    {\n      \"rank\": 8264,\n      \"project\": {\n        \"id\": \"string\",\n        \"name\": \"string\",\n        \"slug\": \"string\"\n      },\n      \"sentiment\": \"string\",\n      \"sentiment_score\": 9064.069551361134,\n      \"tags\": [\n        \"string\",\n        \"string\"\n      ],\n      \"token\": {\n        \"name\": \"string\",\n        \"id\": \"string\",\n        \"image\": \"string\",\n        \"symbol\": \"string\"\n      },\n      \"trending_short_reason\": \"string\",\n      \"trending_summary\": \"string\",\n      \"twitter\": {\n        \"twitter_id\": \"string\",\n        \"display_name\": \"string\",\n        \"x_handle\": \"string\",\n        \"avatar_url\": \"string\"\n      }\n    }\n  ],\n  \"meta\": {\n    \"limit\": 8897,\n    \"offset\": 6511,\n    \"credits_used\": 7046,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 3468,\n    \"watermark\": 6380\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseMindshareTopProject.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "74b3355e-8541-42c4-b9dc-30987171a582",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "ranking"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "tag",
+                      "value": "dex"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "7d"
+                    },
+                    {
+                      "key": "sentiment",
+                      "value": "positive"
+                    },
+                    {
+                      "key": "source",
+                      "value": "x"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "86dafcb9-cc39-47d2-a52e-34484d64bc81",
+          "name": "Social Sentiment",
+          "request": {
+            "name": "Social Sentiment",
+            "description": {
+              "content": "Returns the aggregate social sentiment score for a project.\n\nScore ranges from -1.0 (bearish) to 1.0 (bullish).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "social",
+                "sentiment"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Surf project UUID"
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Project name or symbol for entity resolution"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "35504a28-1459-4b31-b877-d5cf1be00e0d",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "sentiment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "bitcoin"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"project_id\": \"string\",\n    \"project_name\": \"string\",\n    \"sentiment_score\": 3353.0012075968707,\n    \"insufficient_social_data\": true,\n    \"symbol\": \"string\"\n  },\n  \"meta\": {\n    \"credits_used\": 7692,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseSocialSentimentItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c64e5f78-91a7-472c-a4da-0712bb3e3655",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "sentiment"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "bitcoin"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9fa974a2-bf5a-4b51-84ed-6e9d3aebbf12",
+          "name": "Smart Follower Count History",
+          "request": {
+            "name": "Smart Follower Count History",
+            "description": {
+              "content": "Returns smart follower count time-series for a project, sorted by date descending.\n\n**Lookup:** by X account ID (`x_id`) or project name (`q`). The `q` parameter must be a project name (e.g. `uniswap`, `ethereum`), not a personal X handle — use `x_id` for individual accounts. Returns 404 if the project has no linked X account.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "social",
+                "smart-followers",
+                "history"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "x_id",
+                  "value": "<string>",
+                  "description": "Numeric X (Twitter) account ID (takes priority over `q`)"
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Project name to resolve (e.g. `uniswap`, `ethereum`). Must be a project with a linked X account — personal handles like `VitalikButerin` return 404. Use `x_id` for individual accounts."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "36",
+                  "description": "Max data points to return (upstream typically provides ~36 daily points)"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "660a8264-2192-413d-95e3-77d20d9c872b",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "smart-followers",
+                    "history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "x_id",
+                      "value": "984188226826010624"
+                    },
+                    {
+                      "key": "q",
+                      "value": "uniswap"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "36"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"date\": \"string\",\n      \"count\": 6692\n    },\n    {\n      \"date\": \"string\",\n      \"count\": 4436\n    }\n  ],\n  \"meta\": {\n    \"limit\": 7464,\n    \"offset\": 8286,\n    \"credits_used\": 7140,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 1974,\n    \"watermark\": 5963\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseSmartFollowerHistoryPoint.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "edd0eb36-28b4-4b30-8ca2-68c9b48ee61c",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "smart-followers",
+                    "history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "x_id",
+                      "value": "984188226826010624"
+                    },
+                    {
+                      "key": "q",
+                      "value": "uniswap"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "36"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "88782d39-2a89-4c1a-b0a2-84368cfe8edd",
+          "name": "Tweet Replies",
+          "request": {
+            "name": "Tweet Replies",
+            "description": {
+              "content": "Returns replies/comments on a specific tweet.\n\n**Lookup:** by `tweet_id`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "social",
+                "tweet",
+                "replies"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "tweet_id",
+                  "value": "<string>",
+                  "description": "(Required) Tweet ID to get replies for"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Max results to return"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "313e0e4b-2ba7-4d16-a09b-c90ff47528c9",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "tweet",
+                    "replies"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "tweet_id",
+                      "value": "1999187154530898007"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"tweet_id\": \"string\",\n      \"text\": \"string\",\n      \"url\": \"string\",\n      \"created_at\": 9069,\n      \"author\": {\n        \"user_id\": \"string\",\n        \"handle\": \"string\",\n        \"name\": \"string\",\n        \"avatar\": \"string\"\n      },\n      \"stats\": {\n        \"views\": 7915,\n        \"likes\": 9231,\n        \"reposts\": 6184,\n        \"replies\": 5137\n      },\n      \"cover_image_url\": \"string\",\n      \"lang\": \"string\",\n      \"media\": [\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        }\n      ],\n      \"title\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"tweet_id\": \"string\",\n      \"text\": \"string\",\n      \"url\": \"string\",\n      \"created_at\": 5039,\n      \"author\": {\n        \"user_id\": \"string\",\n        \"handle\": \"string\",\n        \"name\": \"string\",\n        \"avatar\": \"string\"\n      },\n      \"stats\": {\n        \"views\": 1830,\n        \"likes\": 8094,\n        \"reposts\": 1745,\n        \"replies\": 7600\n      },\n      \"cover_image_url\": \"string\",\n      \"lang\": \"string\",\n      \"media\": [\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        }\n      ],\n      \"title\": \"string\",\n      \"type\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"has_more\": false,\n    \"limit\": 1942,\n    \"credits_used\": 7376,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"next_cursor\": \"string\",\n    \"watermark\": 1552\n  },\n  \"$schema\": \"https://example.com/schemas/CursorDataResponseXTweet.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "70b435d1-5b90-44d4-95be-f650316d5ea1",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "tweet",
+                    "replies"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "tweet_id",
+                      "value": "1999187154530898007"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f71297af-875b-4d0f-bff9-70da192ccdbb",
+          "name": "Social Posts by IDs",
+          "request": {
+            "name": "Social Posts by IDs",
+            "description": {
+              "content": "Returns X (Twitter) posts by numeric post ID strings.\n\nPass up to 100 comma-separated IDs via the `ids` query parameter.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "social",
+                "tweets"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "ids",
+                  "value": "<string>",
+                  "description": "(Required) Comma-separated numeric post ID strings, max 100"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "ce516cae-e4fe-497c-b054-2caeb113dcb0",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "tweets"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "ids",
+                      "value": "1880293339000000000,1880293339000000001"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"tweet_id\": \"string\",\n      \"text\": \"string\",\n      \"url\": \"string\",\n      \"created_at\": 9626,\n      \"author\": {\n        \"user_id\": \"string\",\n        \"handle\": \"string\",\n        \"name\": \"string\",\n        \"avatar\": \"string\"\n      },\n      \"stats\": {\n        \"views\": 6813,\n        \"likes\": 7107,\n        \"reposts\": 9726,\n        \"replies\": 2210\n      },\n      \"cover_image_url\": \"string\",\n      \"lang\": \"string\",\n      \"media\": [\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        }\n      ],\n      \"title\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"tweet_id\": \"string\",\n      \"text\": \"string\",\n      \"url\": \"string\",\n      \"created_at\": 9585,\n      \"author\": {\n        \"user_id\": \"string\",\n        \"handle\": \"string\",\n        \"name\": \"string\",\n        \"avatar\": \"string\"\n      },\n      \"stats\": {\n        \"views\": 5537,\n        \"likes\": 9572,\n        \"reposts\": 8878,\n        \"replies\": 2363\n      },\n      \"cover_image_url\": \"string\",\n      \"lang\": \"string\",\n      \"media\": [\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        }\n      ],\n      \"title\": \"string\",\n      \"type\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 1015,\n    \"offset\": 762,\n    \"credits_used\": 21,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 6103,\n    \"watermark\": 3716\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseXTweet.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "87c2ee6d-b601-4237-aad8-f51ad8baf943",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "tweets"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "ids",
+                      "value": "1880293339000000000,1880293339000000001"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5cf55fba-2c72-47a0-b010-0314f26500b5",
+          "name": "Social User Profile",
+          "request": {
+            "name": "Social User Profile",
+            "description": {
+              "content": "Returns a basic X/Twitter profile (name, bio, avatar, follower/following counts) for any handle. For crypto project social analytics (sentiment, smart followers, geo), use `social-detail` instead.\n\n**Lookup:** by `handle` (without @).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "social",
+                "user"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "handle",
+                  "value": "<string>",
+                  "description": "(Required) X (Twitter) username without @ like `cz_binance` or `vitalikbuterin`"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "c6e8f477-2e95-49bc-9bd4-e981df4ba026",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "user"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "handle",
+                      "value": "vitalikbuterin"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"user_id\": \"string\",\n    \"handle\": \"string\",\n    \"name\": \"string\",\n    \"followers_count\": 3188,\n    \"following_count\": 3925,\n    \"avatar\": \"string\",\n    \"bio\": \"string\"\n  },\n  \"meta\": {\n    \"credits_used\": 3275,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseXUser.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "98b31861-9434-4209-8187-f52c86c90876",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "user"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "handle",
+                      "value": "vitalikbuterin"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "04032212-72ea-4472-af6f-4539fa61b30f",
+          "name": "User Followers List",
+          "request": {
+            "name": "User Followers List",
+            "description": {
+              "content": "Returns a list of followers for the specified handle on X (Twitter).\n\n**Lookup:** by `handle` (without @).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "social",
+                "user",
+                "followers"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "handle",
+                  "value": "<string>",
+                  "description": "(Required) X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Max results to return"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "89123b90-50a0-4971-95a3-f228b92e7420",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "user",
+                    "followers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "handle",
+                      "value": "vitalikbuterin"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"user_id\": \"string\",\n      \"handle\": \"string\",\n      \"name\": \"string\",\n      \"followers_count\": 6599,\n      \"following_count\": 7937,\n      \"avatar\": \"string\",\n      \"bio\": \"string\"\n    },\n    {\n      \"user_id\": \"string\",\n      \"handle\": \"string\",\n      \"name\": \"string\",\n      \"followers_count\": 4900,\n      \"following_count\": 6024,\n      \"avatar\": \"string\",\n      \"bio\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"has_more\": true,\n    \"limit\": 1982,\n    \"credits_used\": 7000,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"next_cursor\": \"string\",\n    \"watermark\": 4715\n  },\n  \"$schema\": \"https://example.com/schemas/CursorDataResponseXUser.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "003b787a-0320-4f93-9f00-733f040c3bf9",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "user",
+                    "followers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "handle",
+                      "value": "vitalikbuterin"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ee02c730-de27-404a-a332-01e9b75e2600",
+          "name": "User Following List",
+          "request": {
+            "name": "User Following List",
+            "description": {
+              "content": "Returns a list of users that the specified handle follows on X (Twitter).\n\n**Lookup:** by `handle` (without @).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "social",
+                "user",
+                "following"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "handle",
+                  "value": "<string>",
+                  "description": "(Required) X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Max results to return"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "938a81a8-f4b2-4c75-8be4-59e9fdc036af",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "user",
+                    "following"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "handle",
+                      "value": "vitalikbuterin"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"user_id\": \"string\",\n      \"handle\": \"string\",\n      \"name\": \"string\",\n      \"followers_count\": 6599,\n      \"following_count\": 7937,\n      \"avatar\": \"string\",\n      \"bio\": \"string\"\n    },\n    {\n      \"user_id\": \"string\",\n      \"handle\": \"string\",\n      \"name\": \"string\",\n      \"followers_count\": 4900,\n      \"following_count\": 6024,\n      \"avatar\": \"string\",\n      \"bio\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"has_more\": true,\n    \"limit\": 1982,\n    \"credits_used\": 7000,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"next_cursor\": \"string\",\n    \"watermark\": 4715\n  },\n  \"$schema\": \"https://example.com/schemas/CursorDataResponseXUser.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b9602275-b585-45e4-86e4-f5c907bb3e06",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "user",
+                    "following"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "handle",
+                      "value": "vitalikbuterin"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d9c61b57-90bf-4387-9cf4-44511752651c",
+          "name": "User Social Posts",
+          "request": {
+            "name": "User Social Posts",
+            "description": {
+              "content": "Returns recent X (Twitter) posts by a specific user, ordered by recency.\n\n**Lookup:** by `handle` (without @). Use `filter=original` to exclude retweets.\n\n**Pagination:** check `meta.has_more`; if true, pass `meta.next_cursor` as the `cursor` query parameter in the next request.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "social",
+                "user",
+                "posts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "handle",
+                  "value": "<string>",
+                  "description": "(Required) X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+                },
+                {
+                  "disabled": false,
+                  "key": "filter",
+                  "value": "all",
+                  "description": "Filter tweets: `all` returns everything, `original` excludes retweets"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "6b26d4db-d566-44c4-9456-a68c0bfd50fd",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "user",
+                    "posts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "handle",
+                      "value": "vitalikbuterin"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter",
+                      "value": "all"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"tweet_id\": \"string\",\n      \"text\": \"string\",\n      \"url\": \"string\",\n      \"created_at\": 9069,\n      \"author\": {\n        \"user_id\": \"string\",\n        \"handle\": \"string\",\n        \"name\": \"string\",\n        \"avatar\": \"string\"\n      },\n      \"stats\": {\n        \"views\": 7915,\n        \"likes\": 9231,\n        \"reposts\": 6184,\n        \"replies\": 5137\n      },\n      \"cover_image_url\": \"string\",\n      \"lang\": \"string\",\n      \"media\": [\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        }\n      ],\n      \"title\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"tweet_id\": \"string\",\n      \"text\": \"string\",\n      \"url\": \"string\",\n      \"created_at\": 5039,\n      \"author\": {\n        \"user_id\": \"string\",\n        \"handle\": \"string\",\n        \"name\": \"string\",\n        \"avatar\": \"string\"\n      },\n      \"stats\": {\n        \"views\": 1830,\n        \"likes\": 8094,\n        \"reposts\": 1745,\n        \"replies\": 7600\n      },\n      \"cover_image_url\": \"string\",\n      \"lang\": \"string\",\n      \"media\": [\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        }\n      ],\n      \"title\": \"string\",\n      \"type\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"has_more\": false,\n    \"limit\": 1942,\n    \"credits_used\": 7376,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"next_cursor\": \"string\",\n    \"watermark\": 1552\n  },\n  \"$schema\": \"https://example.com/schemas/CursorDataResponseXTweet.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7ef1c6b5-4ce7-4d0f-97f7-60d8ce228db5",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "user",
+                    "posts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "handle",
+                      "value": "vitalikbuterin"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filter",
+                      "value": "all"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "229ebbd8-799f-478f-94dd-da57b1e5cea6",
+          "name": "User Replies",
+          "request": {
+            "name": "User Replies",
+            "description": {
+              "content": "Returns recent replies by the specified handle on X (Twitter).\n\n**Lookup:** by `handle` (without @).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "social",
+                "user",
+                "replies"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "handle",
+                  "value": "<string>",
+                  "description": "(Required) X (Twitter) username without @ like `vitalikbuterin` or `cz_binance`"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Max results to return"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "bf4f2b10-45cd-44df-8b77-409d05d3dbcb",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "user",
+                    "replies"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "handle",
+                      "value": "vitalikbuterin"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"tweet_id\": \"string\",\n      \"text\": \"string\",\n      \"url\": \"string\",\n      \"created_at\": 9069,\n      \"author\": {\n        \"user_id\": \"string\",\n        \"handle\": \"string\",\n        \"name\": \"string\",\n        \"avatar\": \"string\"\n      },\n      \"stats\": {\n        \"views\": 7915,\n        \"likes\": 9231,\n        \"reposts\": 6184,\n        \"replies\": 5137\n      },\n      \"cover_image_url\": \"string\",\n      \"lang\": \"string\",\n      \"media\": [\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        }\n      ],\n      \"title\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"tweet_id\": \"string\",\n      \"text\": \"string\",\n      \"url\": \"string\",\n      \"created_at\": 5039,\n      \"author\": {\n        \"user_id\": \"string\",\n        \"handle\": \"string\",\n        \"name\": \"string\",\n        \"avatar\": \"string\"\n      },\n      \"stats\": {\n        \"views\": 1830,\n        \"likes\": 8094,\n        \"reposts\": 1745,\n        \"replies\": 7600\n      },\n      \"cover_image_url\": \"string\",\n      \"lang\": \"string\",\n      \"media\": [\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        },\n        {\n          \"type\": \"string\",\n          \"url\": \"string\"\n        }\n      ],\n      \"title\": \"string\",\n      \"type\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"has_more\": false,\n    \"limit\": 1942,\n    \"credits_used\": 7376,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"next_cursor\": \"string\",\n    \"watermark\": 1552\n  },\n  \"$schema\": \"https://example.com/schemas/CursorDataResponseXTweet.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "eabcc17e-8d84-409d-8e19-1a7528b57470",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "social",
+                    "user",
+                    "replies"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "handle",
+                      "value": "vitalikbuterin"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "1503d920-baff-4e1e-bbf5-13336bc0afef",
+    "name": "Hermod DEX Social API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n\n\nContact Support:\n Name: Cyber team\n Email: backend@cybertinolab.com",
+      "type": "text/plain"
+    }
+  }
+}

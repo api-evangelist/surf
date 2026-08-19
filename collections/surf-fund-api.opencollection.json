@@ -1,0 +1,153 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Hermod DEX Fund API",
+    "version": "sha-80d3407"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Fund",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Fund Profile Detail",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/fund/detail",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Surf fund UUID. PREFERRED — always use this when available from a previous response (e.g. id from /search/fund). Takes priority over q."
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Fuzzy fund name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a crypto VC fund's full profile: description, jurisdiction, portfolio count, social links, and team members with roles.\n\n**Included fields:** X accounts, team members, recent research, invested project count.\n\nThis does NOT return the list of investments — use `/fund/portfolio` for that.\n\n**Lookup:** by UUID (`id`) or name (`q`). Returns 404 if not found."
+        },
+        {
+          "info": {
+            "name": "Fund Portfolio",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/fund/portfolio",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Surf fund UUID. PREFERRED — always use this when available from a previous response (e.g. id from /search/fund). Takes priority over q."
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Fuzzy fund name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              },
+              {
+                "name": "is_lead",
+                "value": "",
+                "type": "query",
+                "description": "Filter by lead investor status. Omit or leave empty for all investments."
+              },
+              {
+                "name": "invested_after",
+                "value": "",
+                "type": "query",
+                "description": "Only include investments at or after this Unix timestamp (seconds)"
+              },
+              {
+                "name": "invested_before",
+                "value": "",
+                "type": "query",
+                "description": "Only include investments before this Unix timestamp (seconds)"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Field to sort results by"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns investment rounds for a fund's portfolio, sorted by date (newest first).\n\nA project may appear multiple times if the fund participated in multiple rounds.\n\n**Included fields:** project name, logo, date, raise amount, lead investor status.\n\n**Lookup:** by UUID (`id`) or name (`q`)."
+        },
+        {
+          "info": {
+            "name": "Fund Ranking",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/fund/ranking",
+            "params": [
+              {
+                "name": "metric",
+                "value": "",
+                "type": "query",
+                "description": "Ranking metric. Can be `tier` (lower is better) or `portfolio_count` (number of invested projects)."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns top crypto VC funds ranked by tier or portfolio count.\n\n**Available metrics:** `tier` (lower is better), `portfolio_count` (number of invested projects)."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

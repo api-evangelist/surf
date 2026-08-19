@@ -1,0 +1,259 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Hermod DEX Project API",
+    "version": "sha-80d3407"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Project",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Project AI News",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/project/ai-news",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q."
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              },
+              {
+                "name": "lang",
+                "value": "",
+                "type": "query",
+                "description": "Language for AI-generated content"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "AI-generated news and signal analysis for a project. Each item includes title, summary, TL;DR, signal type, source URLs, and source tweet if applicable.\n\n**Signal types:** `price_analysis`, `mindshare`, `funding`, `twitter`, `ai_twitter`.\n\n**Lookup:** by UUID (`id`) or name (`q`). Filter by `lang` (en/zh/ja/kr). Returns 404 if not found."
+        },
+        {
+          "info": {
+            "name": "Project DeFi Metrics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/project/defi/metrics",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q."
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+              },
+              {
+                "name": "metric",
+                "value": "",
+                "type": "query",
+                "description": "Metric to query. Can be `volume`, `fees` (or `fee` alias), `revenue`, `tvl`, or `users`. Defaults to tvl."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)"
+              },
+              {
+                "name": "chain",
+                "value": "",
+                "type": "query",
+                "description": "Filter by chain. Can be `ethereum`, `polygon`, `bsc`, `arbitrum`, `optimism`, `base`, `avalanche`, `fantom`, or `solana`."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns historical time-series for a single DeFi protocol metric (e.g. daily TVL). Each data point has a Unix timestamp and value.\n\n**Available metrics:** `volume`, `fee`, `fees`, `revenue`, `tvl`, `users`.\n\n**Lookup:** by UUID (`id`) or name (`q`). Filter by `chain` and date range (`from`/`to`). Returns 404 if the project is not found.\n\n**Pagination:** check `meta.has_more`; when true, increase `offset` or `limit` to fetch the remaining points.\n\n**Note:** this endpoint only returns data for DeF"
+        },
+        {
+          "info": {
+            "name": "DeFi Protocol Ranking",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/project/defi/ranking",
+            "params": [
+              {
+                "name": "metric",
+                "value": "",
+                "type": "query",
+                "description": "Ranking metric. Can be `tvl`, `revenue`, `fees`, `volume`, or `users`."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a DeFi protocol leaderboard (e.g. Aave, Uniswap, Lido) ranked by TVL, fees, revenue, or users. For individual pool/vault yields, use `onchain-yield-ranking` instead.\n\n**Available metrics:** `tvl`, `revenue`, `fees`, `volume`, `users`."
+        },
+        {
+          "info": {
+            "name": "Aggregated Project Detail",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/project/detail",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q."
+              },
+              {
+                "name": "x_id",
+                "value": "",
+                "type": "query",
+                "description": "Numeric X (Twitter) account ID. Resolves to the associated project."
+              },
+              {
+                "name": "handle",
+                "value": "",
+                "type": "query",
+                "description": "X (Twitter) handle without @. Resolves to the associated project via twitter account lookup."
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+              },
+              {
+                "name": "fields",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated sub-resources to include. Can be `overview`, `token_info`, `tokenomics`, `funding`, `team`, `contracts`, `social`, or `tge_status`."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a crypto project's profile with selectable sub-resources: overview (description, chains, exchanges), token_info (price, market cap, supply, all-time high/low dates), tokenomics, funding, team, contracts, social, tge_status.\n\n**Available fields** (via `fields`): `overview`, `token_info`, `tokenomics`, `funding`, `team`, `contracts`, `social`, `tge_status`.\n\n**Important:** `tokenomics` is a legacy supply/valuation group (`total_supply`, `circulating_supply`, `market_cap_usd`, `fdv`). It do"
+        },
+        {
+          "info": {
+            "name": "Project Pulse [Deprecated]",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/project/pulse",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q."
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              },
+              {
+                "name": "lang",
+                "value": "",
+                "type": "query",
+                "description": "Language for AI-generated content"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "**[DEPRECATED]** Use `GET /v1/project/ai-news` instead. This endpoint will continue to work but will not receive new features.\n\n---\n\nAI-generated news and signal analysis for a project. Each item includes title, summary, TL;DR, signal type, source URLs, and source tweet if applicable.\n\n**Signal types:** `price_analysis`, `mindshare`, `funding`, `twitter`, `ai_twitter`.\n\n**Lookup:** by UUID (`id`) or name (`q`). Filter by `lang` (en/zh/ja/kr). Returns 404 if not found."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

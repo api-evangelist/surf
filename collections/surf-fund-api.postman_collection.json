@@ -1,0 +1,651 @@
+{
+  "item": [
+    {
+      "id": "68fd3d66-613a-4758-b407-f3050539d025",
+      "name": "Fund",
+      "description": {
+        "content": "Explore crypto venture capital. Look up fund profiles with team info and social links, browse their full investment portfolio with round details, and rank funds by tier or portfolio size.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b3c483a7-b1de-4a10-abf1-6b68a9bddf11",
+          "name": "Fund Profile Detail",
+          "request": {
+            "name": "Fund Profile Detail",
+            "description": {
+              "content": "Returns a crypto VC fund's full profile: description, jurisdiction, portfolio count, social links, and team members with roles.\n\n**Included fields:** X accounts, team members, recent research, invested project count.\n\nThis does NOT return the list of investments — use `/fund/portfolio` for that.\n\n**Lookup:** by UUID (`id`) or name (`q`). Returns 404 if not found.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "fund",
+                "detail"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Surf fund UUID. PREFERRED — always use this when available from a previous response (e.g. id from /search/fund). Takes priority over q."
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Fuzzy fund name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "70eb9e86-d655-4d79-8a36-2cc1a447af87",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "fund",
+                    "detail"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "ef3b6da9-283d-4080-b3c7-87b1b45924dc"
+                    },
+                    {
+                      "key": "q",
+                      "value": "a16z"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"string\",\n    \"name\": \"string\",\n    \"tier\": 9726,\n    \"links\": [\n      {\n        \"type\": \"string\",\n        \"value\": \"string\"\n      },\n      {\n        \"type\": \"string\",\n        \"value\": \"string\"\n      }\n    ],\n    \"x_accounts\": [\n      {\n        \"id\": \"string\",\n        \"handle\": \"string\",\n        \"followers_count\": 3212,\n        \"display_name\": \"string\",\n        \"profile_image\": \"string\"\n      },\n      {\n        \"id\": \"string\",\n        \"handle\": \"string\",\n        \"followers_count\": 5849,\n        \"display_name\": \"string\",\n        \"profile_image\": \"string\"\n      }\n    ],\n    \"members\": [\n      {\n        \"name\": \"string\",\n        \"roles\": [\n          \"string\",\n          \"string\"\n        ],\n        \"avatar\": \"string\"\n      },\n      {\n        \"name\": \"string\",\n        \"roles\": [\n          \"string\",\n          \"string\"\n        ],\n        \"avatar\": \"string\"\n      }\n    ],\n    \"recent_researches\": [\n      {\n        \"id\": \"string\",\n        \"title\": \"string\",\n        \"url\": \"string\",\n        \"published_at\": 2425\n      },\n      {\n        \"id\": \"string\",\n        \"title\": \"string\",\n        \"url\": \"string\",\n        \"published_at\": 1305\n      }\n    ],\n    \"invested_projects_count\": 7293,\n    \"description\": \"string\",\n    \"image\": \"string\",\n    \"jurisdiction\": \"string\",\n    \"type\": \"string\"\n  },\n  \"meta\": {\n    \"credits_used\": 2106,\n    \"cached\": false,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseFundDetailItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3830cc87-5d66-4735-be22-4566da7b2ebc",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "fund",
+                    "detail"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "ef3b6da9-283d-4080-b3c7-87b1b45924dc"
+                    },
+                    {
+                      "key": "q",
+                      "value": "a16z"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5d5e0460-3b7f-4bed-a2a4-bfb7fd1a0d2a",
+          "name": "Fund Portfolio",
+          "request": {
+            "name": "Fund Portfolio",
+            "description": {
+              "content": "Returns investment rounds for a fund's portfolio, sorted by date (newest first).\n\nA project may appear multiple times if the fund participated in multiple rounds.\n\n**Included fields:** project name, logo, date, raise amount, lead investor status.\n\n**Lookup:** by UUID (`id`) or name (`q`).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "fund",
+                "portfolio"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Surf fund UUID. PREFERRED — always use this when available from a previous response (e.g. id from /search/fund). Takes priority over q."
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Fuzzy fund name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                },
+                {
+                  "disabled": false,
+                  "key": "is_lead",
+                  "value": "<string>",
+                  "description": "Filter by lead investor status. Omit or leave empty for all investments."
+                },
+                {
+                  "disabled": false,
+                  "key": "invested_after",
+                  "value": "<long>",
+                  "description": "Only include investments at or after this Unix timestamp (seconds)"
+                },
+                {
+                  "disabled": false,
+                  "key": "invested_before",
+                  "value": "<long>",
+                  "description": "Only include investments before this Unix timestamp (seconds)"
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "invested_at",
+                  "description": "Field to sort results by"
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Sort order"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "410a0f83-ff34-452c-82a7-0cfbdf34e737",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "fund",
+                    "portfolio"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "ef3b6da9-283d-4080-b3c7-87b1b45924dc"
+                    },
+                    {
+                      "key": "q",
+                      "value": "a16z"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "is_lead",
+                      "value": "true"
+                    },
+                    {
+                      "key": "invested_after",
+                      "value": "1704067200"
+                    },
+                    {
+                      "key": "invested_before",
+                      "value": "1735689600"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "recent_raise"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"project_id\": \"string\",\n      \"project_name\": \"string\",\n      \"is_lead\": true,\n      \"invested_at\": 2514,\n      \"project_logo\": \"string\",\n      \"project_slug\": \"string\",\n      \"recent_raise\": 8288.576504370962,\n      \"total_raise\": 6276.3561076526885\n    },\n    {\n      \"project_id\": \"string\",\n      \"project_name\": \"string\",\n      \"is_lead\": false,\n      \"invested_at\": 9243,\n      \"project_logo\": \"string\",\n      \"project_slug\": \"string\",\n      \"recent_raise\": 3718.283360789174,\n      \"total_raise\": 4124.658021755248\n    }\n  ],\n  \"meta\": {\n    \"limit\": 6502,\n    \"offset\": 5254,\n    \"credits_used\": 3422,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 4051,\n    \"watermark\": 7707\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseFundPortfolioItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "594e8510-f5f5-472e-9bc6-520519cb8f1c",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "fund",
+                    "portfolio"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "ef3b6da9-283d-4080-b3c7-87b1b45924dc"
+                    },
+                    {
+                      "key": "q",
+                      "value": "a16z"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "is_lead",
+                      "value": "true"
+                    },
+                    {
+                      "key": "invested_after",
+                      "value": "1704067200"
+                    },
+                    {
+                      "key": "invested_before",
+                      "value": "1735689600"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "recent_raise"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3843410f-6143-4e71-a40b-aded9de7b08a",
+          "name": "Fund Ranking",
+          "request": {
+            "name": "Fund Ranking",
+            "description": {
+              "content": "Returns top crypto VC funds ranked by tier or portfolio count.\n\n**Available metrics:** `tier` (lower is better), `portfolio_count` (number of invested projects).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "fund",
+                "ranking"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "metric",
+                  "value": "<string>",
+                  "description": "(Required) Ranking metric. Can be `tier` (lower is better) or `portfolio_count` (number of invested projects)."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "f8a25059-1dca-44d5-9eb1-41466219baea",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "fund",
+                    "ranking"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "metric",
+                      "value": "tier"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"string\",\n      \"name\": \"string\",\n      \"tier\": 7772,\n      \"invested_projects_count\": 881,\n      \"top_projects\": [\n        {\n          \"project_id\": \"string\",\n          \"project_name\": \"string\",\n          \"is_lead\": false,\n          \"invested_at\": 78,\n          \"project_logo\": \"string\",\n          \"project_slug\": \"string\",\n          \"recent_raise\": 6710.242828718698,\n          \"total_raise\": 9860.075086054569\n        },\n        {\n          \"project_id\": \"string\",\n          \"project_name\": \"string\",\n          \"is_lead\": true,\n          \"invested_at\": 6591,\n          \"project_logo\": \"string\",\n          \"project_slug\": \"string\",\n          \"recent_raise\": 6797.321468701012,\n          \"total_raise\": 4293.5550009421195\n        }\n      ],\n      \"image\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"id\": \"string\",\n      \"name\": \"string\",\n      \"tier\": 1885,\n      \"invested_projects_count\": 604,\n      \"top_projects\": [\n        {\n          \"project_id\": \"string\",\n          \"project_name\": \"string\",\n          \"is_lead\": false,\n          \"invested_at\": 9995,\n          \"project_logo\": \"string\",\n          \"project_slug\": \"string\",\n          \"recent_raise\": 2024.1647077824277,\n          \"total_raise\": 7521.519594149118\n        },\n        {\n          \"project_id\": \"string\",\n          \"project_name\": \"string\",\n          \"is_lead\": true,\n          \"invested_at\": 4563,\n          \"project_logo\": \"string\",\n          \"project_slug\": \"string\",\n          \"recent_raise\": 3770.995084359555,\n          \"total_raise\": 1132.4748221500502\n        }\n      ],\n      \"image\": \"string\",\n      \"type\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 9768,\n    \"offset\": 2903,\n    \"credits_used\": 4456,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 9354,\n    \"watermark\": 8636\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseFundSearchItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "30a4dd93-629c-4acb-b1db-2d1213c7d2b8",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "fund",
+                    "ranking"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "metric",
+                      "value": "tier"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "c49966cd-e186-4c25-9002-83bf8df33562",
+    "name": "Hermod DEX Fund API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n\n\nContact Support:\n Name: Cyber team\n Email: backend@cybertinolab.com",
+      "type": "text/plain"
+    }
+  }
+}

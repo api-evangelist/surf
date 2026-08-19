@@ -1,0 +1,1354 @@
+{
+  "item": [
+    {
+      "id": "5b095626-719c-422c-9273-2c44f7a330f1",
+      "name": "Token",
+      "description": {
+        "content": "Analyze individual tokens on-chain. Look up top holders and their share of supply, track ERC-20/SPL token transfers, browse DEX swap history, and view upcoming token unlock schedules with allocation breakdowns.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "c6475179-9c2f-4518-9968-8ee934099063",
+          "name": "Token DEX Trade History",
+          "request": {
+            "name": "Token DEX Trade History",
+            "description": {
+              "content": "Returns recent DEX swap events for a token contract address.\n\n**Covered DEXes:** `uniswap`, `sushiswap`, `curve`, `balancer`, `pancakeswap` (and other major DEXes per chain).\n\n**Included fields:** trading pair, amounts, USD value, taker address.\n\n**Data refresh:** ~24 hours · **Chains:** Ethereum, Base, BSC, Arbitrum, Tron",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "token",
+                "dex-trades"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Token CONTRACT ADDRESS — 0x-prefixed hex (EVM chains only; Tron also accepts base58 `T...`). This is NOT a ticker symbol (e.g. do NOT pass `USDC` or `BTC`). To resolve a ticker symbol to a contract address, call GET /v1/search/token?q={symbol}&chain={chain} and use the `address` whose `chain` is supported by this endpoint. This endpoint has no `symbol` parameter."
+                },
+                {
+                  "disabled": false,
+                  "key": "chain",
+                  "value": "ethereum",
+                  "description": "Chain. Can be `ethereum`, `base`, `bsc`, `arbitrum`, or `tron`."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                },
+                {
+                  "disabled": false,
+                  "key": "include",
+                  "value": "<string>",
+                  "description": "Comma-separated enrichments to attach to each trade. Currently valid: `labels` — adds a `taker_label` field with entity information for the taker address."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "800ae8d5-a375-4836-bf62-9b03e4f029a9",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "token",
+                    "dex-trades"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "include",
+                      "value": "labels"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"block_time\": 8717,\n      \"project\": \"string\",\n      \"version\": \"string\",\n      \"token_pair\": \"string\",\n      \"token_bought_symbol\": \"string\",\n      \"token_sold_symbol\": \"string\",\n      \"token_bought_amount\": 4655.527519828994,\n      \"token_sold_amount\": 4173.53774020097,\n      \"amount_usd\": 5722.484631759296,\n      \"taker\": \"string\",\n      \"tx_hash\": \"string\",\n      \"taker_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 3238.3258276673155\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 8146.105119507395\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"token_bought_address\": \"string\",\n      \"token_sold_address\": \"string\"\n    },\n    {\n      \"block_time\": 7197,\n      \"project\": \"string\",\n      \"version\": \"string\",\n      \"token_pair\": \"string\",\n      \"token_bought_symbol\": \"string\",\n      \"token_sold_symbol\": \"string\",\n      \"token_bought_amount\": 4581.184727068496,\n      \"token_sold_amount\": 7897.773450407443,\n      \"amount_usd\": 4234.938004832033,\n      \"taker\": \"string\",\n      \"tx_hash\": \"string\",\n      \"taker_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 2764.0934640404903\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 4286.739468900015\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"token_bought_address\": \"string\",\n      \"token_sold_address\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 1242,\n    \"offset\": 1639,\n    \"credits_used\": 9392,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 1857,\n    \"watermark\": 8944\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseDexTradeItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7eb24a8c-588c-4bb7-a685-805a865d91d1",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "token",
+                    "dex-trades"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "include",
+                      "value": "labels"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3a56bf94-7534-406e-b329-5f55b6d63123",
+          "name": "Token Holders",
+          "request": {
+            "name": "Token Holders",
+            "description": {
+              "content": "Returns top token holders for a contract address.\n\n**Included fields:** wallet address, balance, and percentage.\n\n**Lookup:** by `address` and `chain`. Supports EVM chains and Solana.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "token",
+                "holders"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Token CONTRACT ADDRESS — 0x-prefixed hex for EVM chains, base58 for Solana. This is NOT a ticker symbol (e.g. do NOT pass `USDC` or `BTC`). To resolve a ticker symbol to a contract address, call GET /v1/search/token?q={symbol}&chain={chain} and use the `address` whose `chain` is supported by this endpoint. This endpoint has no `symbol` parameter."
+                },
+                {
+                  "disabled": false,
+                  "key": "chain",
+                  "value": "<string>",
+                  "description": "(Required) Chain. Can be `ethereum`, `polygon`, `bsc`, `solana`, `avalanche`, `arbitrum`, `optimism`, or `base`."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                },
+                {
+                  "disabled": false,
+                  "key": "include",
+                  "value": "<string>",
+                  "description": "Comma-separated enrichments to attach to each holder. Currently valid: `labels` — adds a full `label` record alongside the flat `entity_name` / `entity_type` fields."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "6aa6b90e-528b-4225-8c55-0588788ce156",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "token",
+                    "holders"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "include",
+                      "value": "labels"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"address\": \"string\",\n      \"balance\": \"string\",\n      \"entity_name\": \"string\",\n      \"entity_type\": \"string\",\n      \"label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 3243.9220445341075\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 5500.669469348326\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"percentage\": 7151.5715012211485\n    },\n    {\n      \"address\": \"string\",\n      \"balance\": \"string\",\n      \"entity_name\": \"string\",\n      \"entity_type\": \"string\",\n      \"label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 6120.985048849864\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 2599.9531223892704\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"percentage\": 948.8359354565168\n    }\n  ],\n  \"meta\": {\n    \"limit\": 4146,\n    \"offset\": 4125,\n    \"credits_used\": 9278,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 1053,\n    \"watermark\": 6263\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseTokenHolderItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9f1e8607-8aff-4ce7-95c1-15cfe6c32529",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "token",
+                    "holders"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "include",
+                      "value": "labels"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "40be4c86-7c05-4221-94f8-785f6c9933a8",
+          "name": "Token Unlock Schedule",
+          "request": {
+            "name": "Token Unlock Schedule",
+            "description": {
+              "content": "Returns token unlock time-series with cumulative amounts, allocation breakdowns, total supply denominator, and unlocked-supply percentage.\n\n**Lookup:** by project UUID (`id`) or token `symbol`. Filter by date range with `from`/`to` — defaults to the current calendar month when omitted.\n\n**Important:** `unlock_amount` is a legacy alias for `cumulative_unlocked_amount`; it is already cumulative at each timestamp and must not be summed across rows. Use `unlocked_percentage_of_total_supply` for the unlock ratio.\n\nReturns 404 if no token found.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "token",
+                "tokenomics"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Surf project UUID. PREFERRED — always use this when available from a previous response. Takes priority over symbol."
+                },
+                {
+                  "disabled": false,
+                  "key": "symbol",
+                  "value": "<string>",
+                  "description": "Token symbol like `ARB`, `OP`, or `APT`"
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End of time range. Accepts Unix seconds (`1735689600`) or date string (`2025-01-01`)"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "8cec1333-05ef-4003-9009-74f79afdcc25",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "token",
+                    "tokenomics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "symbol",
+                      "value": "ARB"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2024-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2025-01-01"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"timestamp\": 2425,\n      \"unlock_amount\": 3737.6760239003147,\n      \"cumulative_unlocked_amount\": 3404.2963815236726,\n      \"allocations\": [\n        {\n          \"name\": \"string\",\n          \"amount\": 3856.339827883876\n        },\n        {\n          \"name\": \"string\",\n          \"amount\": 8259.682860540943\n        }\n      ],\n      \"total_supply\": 1246.8498239230018,\n      \"unlocked_percentage_of_total_supply\": 9929.670570551561\n    },\n    {\n      \"timestamp\": 5721,\n      \"unlock_amount\": 8227.95108458418,\n      \"cumulative_unlocked_amount\": 9006.33228774764,\n      \"allocations\": [\n        {\n          \"name\": \"string\",\n          \"amount\": 7082.146485176887\n        },\n        {\n          \"name\": \"string\",\n          \"amount\": 8720.672504680988\n        }\n      ],\n      \"total_supply\": 8771.885892959772,\n      \"unlocked_percentage_of_total_supply\": 6996.703051064026\n    }\n  ],\n  \"meta\": {\n    \"limit\": 172,\n    \"offset\": 7222,\n    \"credits_used\": 2703,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 1336,\n    \"watermark\": 8505\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseTokenUnlockPoint.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1afe3ae1-e8b3-42ec-bbff-297a5ff2a0b8",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "token",
+                    "tokenomics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "symbol",
+                      "value": "ARB"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2024-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2025-01-01"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "fadaa40c-aeeb-494b-8782-9b4a91403f55",
+          "name": "Top Transfer Counterparties",
+          "request": {
+            "name": "Top Transfer Counterparties",
+            "description": {
+              "content": "Ranked top counterparties (receivers or senders) of a token over a window — answers \"who are the top receivers/senders?\".\n\n**Lookup:** `address` (token contract) + `chain` + `direction` (`to` = top receivers, `from` = top senders). Rank by `metric` (`count`, `amount`, `amount_usd`).\n\n**Related:** raw rows → `/v1/token/transfers`; aggregate summary → `/v1/token/transfer-stats`.\n\n**Chains:** Ethereum, Base, BSC, Arbitrum, Tron · **Refresh:** ~24h",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "token",
+                "transfer-counterparties"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Token CONTRACT ADDRESS (0x-hex for EVM; Tron accepts base58 `T...` or 0x-hex). Not a ticker — resolve a symbol via GET /v1/search/token?q={symbol}&chain={chain} and use a returned address whose chain is supported by this endpoint."
+                },
+                {
+                  "disabled": false,
+                  "key": "chain",
+                  "value": "<string>",
+                  "description": "(Required) Chain the token contract is deployed on."
+                },
+                {
+                  "disabled": false,
+                  "key": "direction",
+                  "value": "<string>",
+                  "description": "(Required) Ranking direction: `to` = top receivers, `from` = top senders."
+                },
+                {
+                  "disabled": false,
+                  "key": "metric",
+                  "value": "count",
+                  "description": "Ranking key: `count` = transfer frequency, `amount` = decimal-adjusted token sum, `amount_usd` = USD value sum (USD lags ~3 days; unreliable for recent windows)."
+                },
+                {
+                  "disabled": false,
+                  "key": "time_range",
+                  "value": "7d",
+                  "description": "Look-back window (hard 90d cap)."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page."
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset."
+                },
+                {
+                  "disabled": false,
+                  "key": "include",
+                  "value": "<string>",
+                  "description": "Comma-separated enrichments. `labels` attaches an entity label per counterparty."
+                },
+                {
+                  "disabled": false,
+                  "key": "exclude_labels",
+                  "value": "<string>",
+                  "description": "Comma-separated entity categories to drop (best-effort): `cex`, `router`, `amm`, `bridge`. Results may be fewer than `limit` when top counterparties are infrastructure."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "c97b7a56-28d3-48fc-a0b4-19518f758875",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "token",
+                    "transfer-counterparties"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "direction",
+                      "value": "to"
+                    },
+                    {
+                      "key": "metric",
+                      "value": "count"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "7d"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "include",
+                      "value": "labels"
+                    },
+                    {
+                      "key": "exclude_labels",
+                      "value": "cex,router"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"counterparty_address\": \"string\",\n      \"transfer_count\": 1453,\n      \"amount\": \"string\",\n      \"first_transfer_at\": 9301,\n      \"last_transfer_at\": 290,\n      \"amount_usd\": 6329.679841493919,\n      \"label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 1031.557334619303\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 346.0867245104149\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      }\n    },\n    {\n      \"counterparty_address\": \"string\",\n      \"transfer_count\": 9230,\n      \"amount\": \"string\",\n      \"first_transfer_at\": 6440,\n      \"last_transfer_at\": 5600,\n      \"amount_usd\": 1711.9887991590776,\n      \"label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 9053.924925180487\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 3057.476339803479\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      }\n    }\n  ],\n  \"meta\": {\n    \"limit\": 1093,\n    \"offset\": 6351,\n    \"credits_used\": 1003,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 7793,\n    \"watermark\": 3765\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseTransferCounterpartyItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dd3af571-fdd9-4c82-8315-12b962666cec",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "token",
+                    "transfer-counterparties"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "direction",
+                      "value": "to"
+                    },
+                    {
+                      "key": "metric",
+                      "value": "count"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "7d"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "include",
+                      "value": "labels"
+                    },
+                    {
+                      "key": "exclude_labels",
+                      "value": "cex,router"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "42853289-2bf0-4dfd-8c01-bbff1c36f0ae",
+          "name": "Token Transfer Activity Summary",
+          "request": {
+            "name": "Token Transfer Activity Summary",
+            "description": {
+              "content": "Aggregate transfer-activity summary for a token over a window — total transfers, unique senders/receivers, total amount, first/last activity, and an optional daily series (`include=series`).\n\n**Lookup:** `address` (token contract) + `chain`.\n\n**Related:** per-counterparty ranking → `/v1/token/transfer-counterparties`; raw rows → `/v1/token/transfers`.\n\n**Chains:** Ethereum, Base, BSC, Arbitrum, Tron · **Refresh:** ~24h · USD value lags ~3 days (see `enriched_ratio`).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "token",
+                "transfer-stats"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Token CONTRACT ADDRESS (0x-hex for EVM; Tron accepts base58 `T...` or 0x-hex). Not a ticker — resolve a symbol via GET /v1/search/token?q={symbol}&chain={chain} and use a returned address whose chain is supported by this endpoint."
+                },
+                {
+                  "disabled": false,
+                  "key": "chain",
+                  "value": "<string>",
+                  "description": "(Required) Chain the token contract is deployed on."
+                },
+                {
+                  "disabled": false,
+                  "key": "time_range",
+                  "value": "7d",
+                  "description": "Look-back window (hard 90d cap)."
+                },
+                {
+                  "disabled": false,
+                  "key": "include",
+                  "value": "<string>",
+                  "description": "Comma-separated extras. `series` adds a daily trend breakdown (volume only)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "96e4d5bf-4d96-467b-8551-845a71cad05f",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "token",
+                    "transfer-stats"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "7d"
+                    },
+                    {
+                      "key": "include",
+                      "value": "series"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"total_transfers\": 5503,\n    \"unique_senders\": 1486,\n    \"unique_receivers\": 7429,\n    \"total_amount\": \"string\",\n    \"first_transfer_at\": 5800,\n    \"last_transfer_at\": 5546,\n    \"enriched_ratio\": 6888.93405760164,\n    \"series\": [\n      {\n        \"date\": 4314,\n        \"transfer_count\": 8010,\n        \"amount\": \"string\",\n        \"amount_usd\": 1010.6805093751037,\n        \"enriched_ratio\": 3247.751556054327\n      },\n      {\n        \"date\": 1406,\n        \"transfer_count\": 8113,\n        \"amount\": \"string\",\n        \"amount_usd\": 6185.131721899211,\n        \"enriched_ratio\": 6298.687085925529\n      }\n    ],\n    \"total_amount_usd\": 9667.513843251845\n  },\n  \"meta\": {\n    \"credits_used\": 3434,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"enriched_ratio\": 9447.29546476342\n  },\n  \"$schema\": \"https://example.com/schemas/TransferStatsResponse.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5f6522d8-ab23-4f58-9c94-55517fc4b131",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "token",
+                    "transfer-stats"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "7d"
+                    },
+                    {
+                      "key": "include",
+                      "value": "series"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a37af84a-ed02-445e-a94e-cd9d834621f2",
+          "name": "Token Transfer History",
+          "request": {
+            "name": "Token Transfer History",
+            "description": {
+              "content": "Returns recent transfer events **for a specific token** (ERC-20/TRC-20 contract).\n\nPass the **token contract address** in `address` — returns every on-chain transfer of that token regardless of sender/receiver.\n\n**Included fields:** sender, receiver, raw amount, block timestamp.\n\nUse this to analyze a token's on-chain activity (e.g. large movements, distribution patterns).\n\n**Lookup:** `address` (token contract) + `chain`. Sort by `asc` or `desc`.\n\n**Data refresh:** ~24 hours · **Chains:** Ethereum, Base, BSC, Arbitrum, Tron (Solana uses a different source with no delay)",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "token",
+                "transfers"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "address",
+                  "value": "<string>",
+                  "description": "(Required) Token CONTRACT ADDRESS — 0x-prefixed hex for EVM chains, base58 for Solana. This is NOT a ticker symbol (e.g. do NOT pass `USDC` or `BTC`). To resolve a ticker symbol to a contract address, call GET /v1/search/token?q={symbol}&chain={chain} and use the `address` whose `chain` is supported by this endpoint. This endpoint has no `symbol` parameter."
+                },
+                {
+                  "disabled": false,
+                  "key": "chain",
+                  "value": "<string>",
+                  "description": "(Required) Chain. Can be `ethereum`, `base`, `solana`, `tron`, `bsc`, or `arbitrum`."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of date range. Accepts Unix seconds or YYYY-MM-DD. Defaults to 30 days ago."
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End of date range. Accepts Unix seconds or YYYY-MM-DD. Defaults to today."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                },
+                {
+                  "disabled": false,
+                  "key": "include",
+                  "value": "<string>",
+                  "description": "Comma-separated enrichments to attach to each transfer. Currently valid: `labels` — adds `from_label` and `to_label` fields."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "209c3951-446d-4e54-a059-9bca65450048",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "token",
+                    "transfers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2025-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2025-03-01"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "include",
+                      "value": "labels"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"tx_hash\": \"string\",\n      \"from_address\": \"string\",\n      \"to_address\": \"string\",\n      \"amount\": \"string\",\n      \"timestamp\": 3905,\n      \"block_number\": 2816,\n      \"amount_usd\": 6877.791453927082,\n      \"from_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 2367.8960158196383\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 463.2188879148935\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"symbol\": \"string\",\n      \"to_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 554.8898954609994\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 2070.3259198085875\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      }\n    },\n    {\n      \"tx_hash\": \"string\",\n      \"from_address\": \"string\",\n      \"to_address\": \"string\",\n      \"amount\": \"string\",\n      \"timestamp\": 6386,\n      \"block_number\": 6692,\n      \"amount_usd\": 9032.615995048385,\n      \"from_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 6396.35591630518\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 7565.090861923669\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      },\n      \"symbol\": \"string\",\n      \"to_label\": {\n        \"address\": \"string\",\n        \"labels\": [\n          {\n            \"label\": \"string\",\n            \"confidence\": 9608.735118809991\n          },\n          {\n            \"label\": \"string\",\n            \"confidence\": 1680.4176020090244\n          }\n        ],\n        \"entity_name\": \"string\",\n        \"entity_type\": \"string\"\n      }\n    }\n  ],\n  \"meta\": {\n    \"limit\": 4069,\n    \"offset\": 485,\n    \"credits_used\": 5193,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 5254,\n    \"watermark\": 1835\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseTokenTransferItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7f3b1d96-71eb-4439-b4d9-64cc52e65d86",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "token",
+                    "transfers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "address",
+                      "value": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2025-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2025-03-01"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "include",
+                      "value": "labels"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "df716cc3-20f9-499e-b659-3b7840a86d84",
+    "name": "Hermod DEX Token API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n\n\nContact Support:\n Name: Cyber team\n Email: backend@cybertinolab.com",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,729 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Hermod DEX Search API",
+    "version": "sha-80d3407"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Search",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Airdrop Search",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/airdrop",
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search keyword for coin name"
+              },
+              {
+                "name": "phase",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated lifecycle phases. `active` = tasks open, can participate (POTENTIAL + CONFIRMED). `claimable` = eligible, can claim (SNAPSHOT + VERIFICATION + REWARD_AVAILABLE). `completed` = done (DISTRIBUTED). Defaults to `active,claimable` to show actionable airdrops."
+              },
+              {
+                "name": "reward_type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by reward type"
+              },
+              {
+                "name": "task_type",
+                "value": "",
+                "type": "query",
+                "description": "Filter activities containing tasks of this type"
+              },
+              {
+                "name": "has_open",
+                "value": "",
+                "type": "query",
+                "description": "Only return activities with currently OPEN tasks"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Field to sort results by"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              },
+              {
+                "name": "include_tasks",
+                "value": "",
+                "type": "query",
+                "description": "Include full task list per activity"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Searches and filters airdrop opportunities.\n\n**Filters:** keyword, status, reward type, task type.\n\nReturns paginated results with optional task details."
+        },
+        {
+          "info": {
+            "name": "Airdrop Activities",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/airdrop/activities",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Lists airdrop activities with pagination.\n\nReturns activity metadata including reward type, status, and social metrics."
+        },
+        {
+          "info": {
+            "name": "Project Event Search",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/events",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q."
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by event type. Can be `launch`, `upgrade`, `partnership`, `news`, `airdrop`, `listing`, or `twitter`."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Searches project events by keyword, optionally filtered by `type`.\n\n**Valid types:** `launch`, `upgrade`, `partnership`, `news`, `airdrop`, `listing`, `twitter`.\n\n**Lookup:** by UUID (`id`) or name (`q`). Returns 404 if the project is not found."
+        },
+        {
+          "info": {
+            "name": "Fund Search",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/fund",
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search keyword — fund name like `a16z`, `paradigm`, or `coinbase ventures`"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Searches funds by keyword.\n\n**Included fields:** name, tier, type, logo, top invested projects."
+        },
+        {
+          "info": {
+            "name": "Fundraising Event Search",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/fundraising",
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Optional project name, alias, symbol, title, or summary search query. When provided, the trimmed query must contain 2-100 Unicode characters."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Inclusive event-time lower bound. Accepts Unix seconds, YYYY-MM-DD, or RFC3339; date-only values start at 00:00:00 UTC."
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "Inclusive event-time upper bound. Accepts Unix seconds, YYYY-MM-DD, or RFC3339; date-only values end at 23:59:59 UTC. Defaults to the current time."
+              },
+              {
+                "name": "source",
+                "value": "",
+                "type": "query",
+                "description": "Filter by public source type: social or news."
+              },
+              {
+                "name": "lang",
+                "value": "",
+                "type": "query",
+                "description": "Display and search language. Missing translated fields fall back to English."
+              },
+              {
+                "name": "min_importance",
+                "value": "",
+                "type": "query",
+                "description": "Minimum importance score from 1 to 5. Omit to include unscored events."
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Sort by recency, query relevance, or importance. Relevance requires q."
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order. Relevance only supports desc."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page."
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset. The offset plus limit cannot exceed 10000."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Searches source-backed fundraising and token-sale events, or returns the latest fundraising timeline when `q` is omitted.\n\nSupports inclusive UTC time bounds, source and importance filters, localization, deterministic sorting, and offset pagination. Results intentionally omit project or fundraiser identity because source context is not guaranteed to identify the organization raising funds."
+        },
+        {
+          "info": {
+            "name": "Kalshi Event Search [Deprecated]",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/kalshi",
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search keyword matching event title, subtitle, or market title"
+              },
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Filter by category"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Market status filter: `active`, `closed`, `determined`, `disputed`, `finalized`, `inactive`, or `initialized`"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "**[DEPRECATED]** Use `GET /v1/search/prediction-market?platform=kalshi` instead. This endpoint will continue to work but will not receive new features.\n\n---\n\nSearches Kalshi events by keyword and/or category.\n\n**Filters:**\n- Keyword matching event title, subtitle, or market title\n- Category\n\nAt least one of `q` or `category` is required. Returns events with nested markets.\n\n**Data refresh:** ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "News Article Search",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/news",
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search keyword or phrase"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Searches crypto news articles by keyword.\n\nReturns results ranked by relevance with highlighted matching fragments. Supports pagination via limit and offset."
+        },
+        {
+          "info": {
+            "name": "Polymarket Event Search [Deprecated]",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/polymarket",
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search keyword matching market question, event title, or description"
+              },
+              {
+                "name": "tags",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated tag labels to filter by (matches any). Commonly used tags: `Crypto`, `Politics`, `Sports`, `Science`, `Pop Culture`"
+              },
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Filter by Surf-curated category"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Market status filter: `active`, `finalized`, `ended`, `initialized`, or `closed`"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "**[DEPRECATED]** Use `GET /v1/search/prediction-market?platform=polymarket` instead. This endpoint will continue to work but will not receive new features.\n\n---\n\nSearches Polymarket events by keyword, tags, and/or category.\n\n**Filters:**\n- Keyword matching market question, event title, or description\n- Comma-separated tag labels\n- Surf-curated category\n\nAt least one of `q`, `tags`, or `category` is required. Returns events with nested markets ranked by volume.\n\n**Data refresh:** ~30 minutes"
+        },
+        {
+          "info": {
+            "name": "Search Prediction Markets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/prediction-market",
+            "params": [
+              {
+                "name": "condition_id",
+                "value": "",
+                "type": "query",
+                "description": "Polymarket condition ID for single-market lookup"
+              },
+              {
+                "name": "market_ticker",
+                "value": "",
+                "type": "query",
+                "description": "Kalshi market ticker for single-market lookup"
+              },
+              {
+                "name": "platform",
+                "value": "",
+                "type": "query",
+                "description": "Filter by platform (omit for both)"
+              },
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Filter by Surf-curated category"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Market status filter"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Sort field"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort direction"
+              },
+              {
+                "name": "smart_money",
+                "value": "",
+                "type": "query",
+                "description": "Filter by smart money direction (Polymarket only)"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search markets by keyword in question text or ticker. Results include slug and event fields when available, but machine slugs are not searched."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Browse and search prediction markets across all supported platforms.\n\nFilter by platform, category, status, keyword search, and smart money direction. Each result includes volume, open interest, trade counts, and smart money signals.\n\nSupports single-market lookup via `condition_id` or `market_ticker`.\n\n**Data refresh:** ~5 minutes."
+        },
+        {
+          "info": {
+            "name": "Project Search",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/project",
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search keyword — project name or ticker like `uniswap`, `bitcoin`, or `ETH`"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Searches crypto projects by keyword.\n\n**Included fields:** name, description, chains, logo."
+        },
+        {
+          "info": {
+            "name": "Social User Search",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/social/people",
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search keyword or `@handle` for exact handle lookup. Use a keyword like `vitalik` for fuzzy matching across names and bios, or `@VitalikButerin` to find a specific account by handle"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Searches X (Twitter) users by keyword.\n\n**Included fields:** handle, display name, bio, follower count, avatar."
+        },
+        {
+          "info": {
+            "name": "Social Post Search",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/social/posts",
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search keyword(s), or X (Twitter) advanced-search operators. Supported operators: `from:handle` (by author), `to:handle` (replies to a user), `@handle` (mentions), `#hashtag`, `-word` (exclude a term), `min_faves:N` (min likes), `min_retweets:N`, `min_replies:N`, `since:YYYY-MM-DD`, `until:YYYY-MM-DD`, plus double-quoted exact phrases. Operators combine, e.g. `ethereum min_faves:1000 since:2024-01-01`. Plain keywords return newest-first. Note: there is no `min_views:` operator — filter or rank by views is not supported."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque cursor token from a previous response's next_cursor field for fetching the next page"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Searches X (Twitter) posts by keyword or `from:handle` syntax.\n\n**Included fields:** author, content, engagement metrics, timestamp.\n\n**Pagination:** check `meta.has_more`; if true, pass `meta.next_cursor` as the `cursor` query parameter in the next request."
+        },
+        {
+          "info": {
+            "name": "Token Symbol Resolution",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/token",
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Exact token ticker symbol to resolve (case-insensitive), like `USDC` or `PEPE`. NOT a contract address, trading pair, or fuzzy token name."
+              },
+              {
+                "name": "chain",
+                "value": "",
+                "type": "query",
+                "description": "Restrict resolution to one supported chain. Omit to search all supported chains."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Resolves an exact token ticker symbol to likely contract address candidates on supported chains.\n\nUse this before calling token endpoints that require a contract address. Pass a returned `chain` + `address` only to endpoints that support that chain.\n\nResults are ranked by Surf registry, listing, and market signals. `volume_usd` is kept for response compatibility, always returns `0`, and must not be used as a candidate ordering signal.\n\n**Included fields:** symbol, chain, address, decimals, volum"
+        },
+        {
+          "info": {
+            "name": "Wallet Search",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/wallet",
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search keyword like `binance`, `vitalik.eth`, or `0xd8dA...`"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Searches wallets by ENS name, address label, or address prefix.\n\nReturns matching wallet addresses with entity labels."
+        },
+        {
+          "info": {
+            "name": "Web Search",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/search/web",
+            "params": [
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Search query like `bitcoin price prediction 2026`"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              },
+              {
+                "name": "site",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated domain filter like `coindesk.com` or `cointelegraph.com`"
+              },
+              {
+                "name": "include_content",
+                "value": "",
+                "type": "query",
+                "description": "When false (default), search returns title/url/description only — fast (~2-3s) URL discovery. Set true to also include full markdown content for each result (~5-30KB per result, ~10-15s for limit=5). Use true only when the caller needs page content inline and won't follow up with `/web/fetch`."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Searches web pages, articles, and content by keyword.\n\n**Filters:** domain via `site` (e.g. `coindesk.com`).\n\n**Included fields:** titles, URLs, content snippets."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

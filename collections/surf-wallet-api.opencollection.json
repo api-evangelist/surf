@@ -1,0 +1,258 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Hermod DEX Wallet API",
+    "version": "sha-80d3407"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Wallet",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Aggregated Wallet Detail",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/wallet/detail",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address (0x hex for EVM, base58 for Solana)"
+              },
+              {
+                "name": "chain",
+                "value": "",
+                "type": "query",
+                "description": "Chain filter for `tokens`, `nft`, and `approvals`. When omitted, inferred from address format: 0x addresses query all EVM chains, base58 addresses query Solana."
+              },
+              {
+                "name": "fields",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated sub-resources to include. Valid: `balance`, `tokens`, `labels`, `nft`, `approvals`. The `active_chains` field is always returned. `approvals` is opt-in (not in default) as it triggers additional upstream calls."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a wallet's cross-chain portfolio with selectable sub-resources (balance, tokens, labels, NFTs). Always includes per-chain USD breakdown across 15+ EVM chains.\n\n**Available fields** (via `fields`): `balance`, `tokens`, `labels`, `nft`.\n\n**Lookup:** by `address`. Partial failures return available fields with per-field error info. Returns 422 if `fields` is invalid."
+        },
+        {
+          "info": {
+            "name": "Wallet Transaction History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/wallet/history",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address — must be a raw 0x-prefixed hex address, not an ENS name"
+              },
+              {
+                "name": "chain",
+                "value": "",
+                "type": "query",
+                "description": "Chain filter. Can be `ethereum`, `polygon`, `bsc`, `avalanche`, `arbitrum`, `optimism`, `fantom`, or `base`."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset. This feed is cursor-paginated upstream and only the most recent ~1000 transactions are reachable; a larger offset returns an empty page with meta.empty_reason rather than an error. For deep history prefer the `before` cursor — its upstream cost is bounded by `limit` and independent of depth, whereas a large offset is emulated by walking the whole feed."
+              },
+              {
+                "name": "before",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for efficient deep pagination: return transactions strictly older than this Unix-seconds timestamp (exclusive). Pass the `timestamp` of the last item from the previous page; if items may share a second, pass that timestamp + 1 and de-duplicate on `tx_hash`. Unlike `offset` (which walks the feed), the number of upstream fetches is bounded by `limit` (DeBank returns up to 20 per page) and independent of how far back you page. Mutually exclusive with `offset`."
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Field to sort results by. The cursor-paginated upstream feed only supports `timestamp` correctly; unsupported values are rejected by the handler for correctness."
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order. The cursor-paginated upstream feed only supports `desc` correctly; unsupported values are rejected by the handler for correctness."
+              },
+              {
+                "name": "include",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated enrichments to attach to each item. Currently valid: `labels` — adds `from_label` and `to_label` fields with entity information for each counterparty address."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns all on-chain transactions for a wallet, classified by type (send, receive, swap, approve) with native token value. For ERC-20 token transfers with token identity and USD value, use `wallet-transfers` instead.\n\n**Lookup:** by `address`. Filter by `chain` — supports `ethereum`, `polygon`, `bsc`, `arbitrum`, `optimism`, `avalanche`, `fantom`, `base`."
+        },
+        {
+          "info": {
+            "name": "Wallet Labels (Batch)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/wallet/labels/batch",
+            "params": [
+              {
+                "name": "addresses",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated wallet addresses to look up, max 100"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns entity labels for multiple wallet addresses.\n\nPass up to 100 comma-separated addresses via the `addresses` query parameter.\n\n**Included fields:** entity name, type, and labels per address."
+        },
+        {
+          "info": {
+            "name": "Wallet Net Worth History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/wallet/net-worth",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address — must be a raw 0x-prefixed hex address (EVM only). Solana and ENS names are not supported."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a time-series of the wallet's total net worth in USD.\n\nReturns ~288 data points at 5-minute intervals covering the last 24 hours. Fixed window — no custom time range supported.\n\n**Lookup:** by `address` (EVM only — 0x-prefixed hex). Solana addresses are not supported."
+        },
+        {
+          "info": {
+            "name": "Wallet DeFi Protocol Positions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/wallet/protocols",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address — must be a raw 0x-prefixed hex address, not an ENS name"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns all DeFi protocol positions for a wallet — lending, staking, LP, and farming with token breakdowns and USD values.\n\n**Lookup:** by `address` (EVM only — 0x-prefixed hex). Solana addresses are not supported."
+        },
+        {
+          "info": {
+            "name": "Wallet Transfer History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/wallet/transfers",
+            "params": [
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Wallet address — must be a raw address (0x-prefixed hex for EVM, base58 for Solana). ENS names like `vitalik.eth` are not supported; resolve to a 0x address first."
+              },
+              {
+                "name": "chain",
+                "value": "",
+                "type": "query",
+                "description": "Chain. Can be `ethereum`, `base`, `solana`, `tron`, `bsc`, or `arbitrum`."
+              },
+              {
+                "name": "flow",
+                "value": "",
+                "type": "query",
+                "description": "Filter by transfer direction relative to the queried wallet. `in` for incoming, `out` for outgoing. Omit for both directions."
+              },
+              {
+                "name": "token",
+                "value": "",
+                "type": "query",
+                "description": "Filter by token contract address. Use `0x0000000000000000000000000000000000000000` for native token transfers. Omit for all tokens."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page. Default 20, max 100. NOTE: Solana (`chain=solana`) is hard-capped at 40 per call by the upstream Solscan API — values above 40 return at most 40 items. Check `meta.has_more` and paginate with `offset` to fetch beyond the first page."
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset. For Solana, this maps to Solscan's 1-indexed `page` parameter (page = offset/page_size + 1)."
+              },
+              {
+                "name": "include",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated enrichments to attach to each transfer. Currently valid: `labels` — adds `from_label` and `to_label` fields with entity information for each counterparty address."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns ERC-20/SPL token transfers with token identity, USD value, and flow direction (in/out). Unlike `wallet-history` which shows all tx types in native value, this focuses on token-level transfer activity.\n\nPass the **wallet address** in `address` — returns all ERC-20/SPL token transfers where this wallet is the sender or receiver.\n\n**Included fields:** token contract, token symbol, amount USD, counterparty, flow direction.\n\nFilter by specific token or flow direction (in/out).\n\n**Lookup:** `a"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

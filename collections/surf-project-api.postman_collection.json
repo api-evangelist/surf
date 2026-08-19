@@ -1,0 +1,1107 @@
+{
+  "item": [
+    {
+      "id": "f22e2c62-9f7d-4983-9b20-f434b93e0b1f",
+      "name": "Project",
+      "description": {
+        "content": "Research crypto projects in depth. Retrieve aggregated project profiles covering overview, team, funding rounds, tokenomics, social links, and TGE status. Track DeFi protocol metrics like TVL, fees, revenue, trading volume, and active users over time.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "85bfe9ab-b0d6-4acf-991d-0e8d1118d87e",
+          "name": "Project AI News",
+          "request": {
+            "name": "Project AI News",
+            "description": {
+              "content": "AI-generated news and signal analysis for a project. Each item includes title, summary, TL;DR, signal type, source URLs, and source tweet if applicable.\n\n**Signal types:** `price_analysis`, `mindshare`, `funding`, `twitter`, `ai_twitter`.\n\n**Lookup:** by UUID (`id`) or name (`q`). Filter by `lang` (en/zh/ja/kr). Returns 404 if not found.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "project",
+                "ai-news"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q."
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                },
+                {
+                  "disabled": false,
+                  "key": "lang",
+                  "value": "en",
+                  "description": "Language for AI-generated content"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "60d2746f-0533-475c-9b1e-fd5824c08da9",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "project",
+                    "ai-news"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "lang",
+                      "value": "en"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"string\",\n      \"title\": \"string\",\n      \"signal_type\": \"string\",\n      \"timestamp\": 7931,\n      \"slug\": \"string\",\n      \"source_tweet\": {\n        \"tweet_id\": \"string\",\n        \"text\": \"string\",\n        \"post_at\": 4306,\n        \"views\": 9760,\n        \"likes\": 9981,\n        \"repost\": 9505,\n        \"comment\": 3531\n      },\n      \"sources\": [\n        \"string\",\n        \"string\"\n      ],\n      \"subtitle\": \"string\",\n      \"tldr\": [\n        \"string\",\n        \"string\"\n      ],\n      \"twitter_author\": {\n        \"twitter_id\": \"string\",\n        \"handle\": \"string\",\n        \"follower_count\": 7064,\n        \"smart_follower_count\": 5029,\n        \"avatar_url\": \"string\",\n        \"display_name\": \"string\"\n      }\n    },\n    {\n      \"id\": \"string\",\n      \"title\": \"string\",\n      \"signal_type\": \"string\",\n      \"timestamp\": 5595,\n      \"slug\": \"string\",\n      \"source_tweet\": {\n        \"tweet_id\": \"string\",\n        \"text\": \"string\",\n        \"post_at\": 2033,\n        \"views\": 5157,\n        \"likes\": 9101,\n        \"repost\": 7312,\n        \"comment\": 3310\n      },\n      \"sources\": [\n        \"string\",\n        \"string\"\n      ],\n      \"subtitle\": \"string\",\n      \"tldr\": [\n        \"string\",\n        \"string\"\n      ],\n      \"twitter_author\": {\n        \"twitter_id\": \"string\",\n        \"handle\": \"string\",\n        \"follower_count\": 172,\n        \"smart_follower_count\": 3891,\n        \"avatar_url\": \"string\",\n        \"display_name\": \"string\"\n      }\n    }\n  ],\n  \"meta\": {\n    \"limit\": 8860,\n    \"offset\": 8255,\n    \"credits_used\": 4491,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 2840,\n    \"watermark\": 5\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseProjectPulseItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "500a5cb6-7a8a-432e-b7cd-a0469b515fe9",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "project",
+                    "ai-news"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "lang",
+                      "value": "en"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "08927fd4-c095-4adf-9c41-3a7585fa4fcc",
+          "name": "Project DeFi Metrics",
+          "request": {
+            "name": "Project DeFi Metrics",
+            "description": {
+              "content": "Returns historical time-series for a single DeFi protocol metric (e.g. daily TVL). Each data point has a Unix timestamp and value.\n\n**Available metrics:** `volume`, `fee`, `fees`, `revenue`, `tvl`, `users`.\n\n**Lookup:** by UUID (`id`) or name (`q`). Filter by `chain` and date range (`from`/`to`). Returns 404 if the project is not found.\n\n**Pagination:** check `meta.has_more`; when true, increase `offset` or `limit` to fetch the remaining points.\n\n**Note:** this endpoint only returns data for DeFi protocol projects (e.g. `aave`, `uniswap`, `lido`, `makerdao`). Use `q` with a DeFi protocol name.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "project",
+                "defi",
+                "metrics"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q."
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+                },
+                {
+                  "disabled": false,
+                  "key": "metric",
+                  "value": "tvl",
+                  "description": "Metric to query. Can be `volume`, `fees` (or `fee` alias), `revenue`, `tvl`, or `users`. Defaults to tvl."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)"
+                },
+                {
+                  "disabled": false,
+                  "key": "chain",
+                  "value": "<string>",
+                  "description": "Filter by chain. Can be `ethereum`, `polygon`, `bsc`, `arbitrum`, `optimism`, `base`, `avalanche`, `fantom`, or `solana`."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "47afe6d5-458e-4d28-8b82-b4f308b2f9b3",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "project",
+                    "defi",
+                    "metrics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "uniswap"
+                    },
+                    {
+                      "key": "metric",
+                      "value": "tvl"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2024-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2024-02-01"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"timestamp\": 37,\n      \"value\": 613.6665249665919\n    },\n    {\n      \"timestamp\": 4660,\n      \"value\": 5762.6421104753545\n    }\n  ],\n  \"meta\": {\n    \"limit\": 7595,\n    \"offset\": 1679,\n    \"credits_used\": 9869,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 4613,\n    \"watermark\": 4863\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseProjectMetricPoint.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "78b3a399-14c5-43cc-a3a9-709eb64aa3df",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "project",
+                    "defi",
+                    "metrics"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "uniswap"
+                    },
+                    {
+                      "key": "metric",
+                      "value": "tvl"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2024-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2024-02-01"
+                    },
+                    {
+                      "key": "chain",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "394def2b-9245-4497-a720-a9a45241a9d5",
+          "name": "DeFi Protocol Ranking",
+          "request": {
+            "name": "DeFi Protocol Ranking",
+            "description": {
+              "content": "Returns a DeFi protocol leaderboard (e.g. Aave, Uniswap, Lido) ranked by TVL, fees, revenue, or users. For individual pool/vault yields, use `onchain-yield-ranking` instead.\n\n**Available metrics:** `tvl`, `revenue`, `fees`, `volume`, `users`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "project",
+                "defi",
+                "ranking"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "metric",
+                  "value": "<string>",
+                  "description": "(Required) Ranking metric. Can be `tvl`, `revenue`, `fees`, `volume`, or `users`."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "c55a2782-f23b-4bc3-80f4-daa4ca575b8f",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "project",
+                    "defi",
+                    "ranking"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "metric",
+                      "value": "tvl"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"name\": \"string\",\n      \"fees\": 8572.619262912509,\n      \"id\": \"string\",\n      \"logo_url\": \"string\",\n      \"revenue\": 5636.870445132798,\n      \"slug\": \"string\",\n      \"symbol\": \"string\",\n      \"tvl\": 2915.7375962055,\n      \"users\": 1981,\n      \"volume\": 2179.0527622131585\n    },\n    {\n      \"name\": \"string\",\n      \"fees\": 7674.05402632826,\n      \"id\": \"string\",\n      \"logo_url\": \"string\",\n      \"revenue\": 8383.192417211278,\n      \"slug\": \"string\",\n      \"symbol\": \"string\",\n      \"tvl\": 5109.443921200469,\n      \"users\": 2867,\n      \"volume\": 9229.565707556709\n    }\n  ],\n  \"meta\": {\n    \"limit\": 9565,\n    \"offset\": 5132,\n    \"credits_used\": 3668,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 262,\n    \"watermark\": 3021\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseProjectTopRankItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b86dcc4e-c79d-4038-8162-a7b76be3a839",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "project",
+                    "defi",
+                    "ranking"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "metric",
+                      "value": "tvl"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "569eeef1-378a-4482-aea8-6be82c8383bc",
+          "name": "Aggregated Project Detail",
+          "request": {
+            "name": "Aggregated Project Detail",
+            "description": {
+              "content": "Returns a crypto project's profile with selectable sub-resources: overview (description, chains, exchanges), token_info (price, market cap, supply, all-time high/low dates), tokenomics, funding, team, contracts, social, tge_status.\n\n**Available fields** (via `fields`): `overview`, `token_info`, `tokenomics`, `funding`, `team`, `contracts`, `social`, `tge_status`.\n\n**Important:** `tokenomics` is a legacy supply/valuation group (`total_supply`, `circulating_supply`, `market_cap_usd`, `fdv`). It does not include token unlock schedule, allocation, or unlock percentage data. For unlock schedule and unlocked-supply percentage, use `/token/tokenomics`.\n\n**Lookup:** accepts project names directly via `q` (e.g. `?q=aave`) — no need to call `/search/project` first. Also accepts UUID via `id`. Returns 404 if not found.\n\nFor DeFi metrics (TVL, fees, revenue, volume, users) and per-chain breakdown, use `/project/defi/metrics`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "project",
+                "detail"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q."
+                },
+                {
+                  "disabled": false,
+                  "key": "x_id",
+                  "value": "<string>",
+                  "description": "Numeric X (Twitter) account ID. Resolves to the associated project."
+                },
+                {
+                  "disabled": false,
+                  "key": "handle",
+                  "value": "<string>",
+                  "description": "X (Twitter) handle without @. Resolves to the associated project via twitter account lookup."
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+                },
+                {
+                  "disabled": false,
+                  "key": "fields",
+                  "value": "overview,token_info,tokenomics,funding,team,contracts,social,tge_status",
+                  "description": "Comma-separated sub-resources to include. Can be `overview`, `token_info`, `tokenomics`, `funding`, `team`, `contracts`, `social`, or `tge_status`."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "99972a62-b9b8-4b27-807b-aaa14900501c",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "project",
+                    "detail"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "x_id",
+                      "value": "984188226826010624"
+                    },
+                    {
+                      "key": "handle",
+                      "value": "uniswap"
+                    },
+                    {
+                      "key": "q",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "fields",
+                      "value": "overview,token_info,funding"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"contracts\": {\n      \"contracts\": [\n        {\n          \"chain\": \"string\",\n          \"address\": \"string\",\n          \"label\": \"string\"\n        },\n        {\n          \"chain\": \"string\",\n          \"address\": \"string\",\n          \"label\": \"string\"\n        }\n      ]\n    },\n    \"funding\": {\n      \"rounds\": [\n        {\n          \"round_name\": \"string\",\n          \"amount\": 3790.6720404944294,\n          \"date\": \"string\",\n          \"investors\": [\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          ],\n          \"valuation\": 1871.3272978636141\n        },\n        {\n          \"round_name\": \"string\",\n          \"amount\": 8403.230579517796,\n          \"date\": \"string\",\n          \"investors\": [\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          ],\n          \"valuation\": 427.3987248882927\n        }\n      ],\n      \"total_raise\": 8488.494210634217\n    },\n    \"overview\": {\n      \"id\": \"string\",\n      \"name\": \"string\",\n      \"x_followers\": 6641,\n      \"chains\": [\n        \"string\",\n        \"string\"\n      ],\n      \"description\": \"string\",\n      \"exchanges\": [\n        \"string\",\n        \"string\"\n      ],\n      \"logo_url\": \"string\",\n      \"slug\": \"string\",\n      \"tags\": [\n        \"string\",\n        \"string\"\n      ],\n      \"tge_status\": \"string\",\n      \"token_symbol\": \"string\",\n      \"website\": \"string\",\n      \"x_handle\": \"string\",\n      \"x_id\": \"string\"\n    },\n    \"social\": {\n      \"discord\": {\n        \"followers_count\": 4629,\n        \"handle\": \"string\",\n        \"url\": \"string\"\n      },\n      \"github\": {\n        \"followers_count\": 4811,\n        \"handle\": \"string\",\n        \"url\": \"string\"\n      },\n      \"telegram\": {\n        \"followers_count\": 7304,\n        \"handle\": \"string\",\n        \"url\": \"string\"\n      },\n      \"twitter\": {\n        \"followers_count\": 1263,\n        \"handle\": \"string\",\n        \"url\": \"string\"\n      }\n    },\n    \"team\": {\n      \"members\": [\n        {\n          \"name\": \"string\",\n          \"id\": \"string\",\n          \"image\": \"string\",\n          \"role\": \"string\",\n          \"social_links\": {\n            \"key_0\": \"string\",\n            \"key_1\": \"string\"\n          }\n        },\n        {\n          \"name\": \"string\",\n          \"id\": \"string\",\n          \"image\": \"string\",\n          \"role\": \"string\",\n          \"social_links\": {\n            \"key_0\": \"string\"\n          }\n        }\n      ]\n    },\n    \"tge_status\": {\n      \"current_status\": \"string\",\n      \"exchanges\": [\n        \"string\",\n        \"string\"\n      ],\n      \"last_event_time\": 3217\n    },\n    \"token_info\": {\n      \"symbol\": \"string\",\n      \"name\": \"string\",\n      \"all_time_high\": 7299.12077761794,\n      \"all_time_high_date\": 2905,\n      \"all_time_low\": 2096.5961694206803,\n      \"all_time_low_date\": 5462,\n      \"circulating_supply\": 1041.4183537512033,\n      \"fdv\": 6752.293788447102,\n      \"high_24h\": 7663.25892282961,\n      \"image\": \"string\",\n      \"low_24h\": 2291.18842187207,\n      \"market_cap_usd\": 816.916270250494,\n      \"price_change_24h\": 2548.9692805810205,\n      \"price_change_30d\": 9883.890129660269,\n      \"price_change_7d\": 9500.438959233898,\n      \"price_usd\": 5788.999605015199,\n      \"total_supply\": 1863.76120222023,\n      \"volume_24h\": 7123.339212538507\n    },\n    \"tokenomics\": {\n      \"circulating_supply\": 4779.971704170371,\n      \"fdv\": 7618.780923359164,\n      \"market_cap_usd\": 5662.466340396547,\n      \"total_supply\": 9970.724565613618\n    }\n  },\n  \"meta\": {\n    \"credits_used\": 1746,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseHumaProjectDetailBody.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6959f964-bc0a-4f24-914e-48e90bd3098e",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "project",
+                    "detail"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "x_id",
+                      "value": "984188226826010624"
+                    },
+                    {
+                      "key": "handle",
+                      "value": "uniswap"
+                    },
+                    {
+                      "key": "q",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "fields",
+                      "value": "overview,token_info,funding"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "abf147c4-6b46-41af-b687-cc6737174e9d",
+          "name": "Project Pulse [Deprecated]",
+          "request": {
+            "name": "Project Pulse [Deprecated]",
+            "description": {
+              "content": "**[DEPRECATED]** Use `GET /v1/project/ai-news` instead. This endpoint will continue to work but will not receive new features.\n\n---\n\nAI-generated news and signal analysis for a project. Each item includes title, summary, TL;DR, signal type, source URLs, and source tweet if applicable.\n\n**Signal types:** `price_analysis`, `mindshare`, `funding`, `twitter`, `ai_twitter`.\n\n**Lookup:** by UUID (`id`) or name (`q`). Filter by `lang` (en/zh/ja/kr). Returns 404 if not found.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "project",
+                "pulse"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Surf project UUID. PREFERRED — always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q."
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                },
+                {
+                  "disabled": false,
+                  "key": "lang",
+                  "value": "en",
+                  "description": "Language for AI-generated content"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "9d9026a9-9695-4f0a-a964-b89253b4117c",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "project",
+                    "pulse"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "lang",
+                      "value": "en"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"string\",\n      \"title\": \"string\",\n      \"signal_type\": \"string\",\n      \"timestamp\": 7931,\n      \"slug\": \"string\",\n      \"source_tweet\": {\n        \"tweet_id\": \"string\",\n        \"text\": \"string\",\n        \"post_at\": 4306,\n        \"views\": 9760,\n        \"likes\": 9981,\n        \"repost\": 9505,\n        \"comment\": 3531\n      },\n      \"sources\": [\n        \"string\",\n        \"string\"\n      ],\n      \"subtitle\": \"string\",\n      \"tldr\": [\n        \"string\",\n        \"string\"\n      ],\n      \"twitter_author\": {\n        \"twitter_id\": \"string\",\n        \"handle\": \"string\",\n        \"follower_count\": 7064,\n        \"smart_follower_count\": 5029,\n        \"avatar_url\": \"string\",\n        \"display_name\": \"string\"\n      }\n    },\n    {\n      \"id\": \"string\",\n      \"title\": \"string\",\n      \"signal_type\": \"string\",\n      \"timestamp\": 5595,\n      \"slug\": \"string\",\n      \"source_tweet\": {\n        \"tweet_id\": \"string\",\n        \"text\": \"string\",\n        \"post_at\": 2033,\n        \"views\": 5157,\n        \"likes\": 9101,\n        \"repost\": 7312,\n        \"comment\": 3310\n      },\n      \"sources\": [\n        \"string\",\n        \"string\"\n      ],\n      \"subtitle\": \"string\",\n      \"tldr\": [\n        \"string\",\n        \"string\"\n      ],\n      \"twitter_author\": {\n        \"twitter_id\": \"string\",\n        \"handle\": \"string\",\n        \"follower_count\": 172,\n        \"smart_follower_count\": 3891,\n        \"avatar_url\": \"string\",\n        \"display_name\": \"string\"\n      }\n    }\n  ],\n  \"meta\": {\n    \"limit\": 8860,\n    \"offset\": 8255,\n    \"credits_used\": 4491,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 2840,\n    \"watermark\": 5\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseProjectPulseItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ea6455a8-892b-4c0b-a91e-0c008c04e49c",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "project",
+                    "pulse"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "ethereum"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "lang",
+                      "value": "en"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "75930f48-8867-4578-9596-ba494ace4f8c",
+    "name": "Hermod DEX Project API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n\n\nContact Support:\n Name: Cyber team\n Email: backend@cybertinolab.com",
+      "type": "text/plain"
+    }
+  }
+}

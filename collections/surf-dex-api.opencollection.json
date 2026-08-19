@@ -1,0 +1,71 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Hermod DEX API",
+    "version": "sha-80d3407"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "DEX",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "DEX Token OHLCV Price",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/dex/token/price",
+            "params": [
+              {
+                "name": "chain",
+                "value": "",
+                "type": "query",
+                "description": "Chain the token lives on. Can be `ethereum`, `base`, `bsc`, `arbitrum`, `optimism`, `polygon`, `avalanche`, or `solana`."
+              },
+              {
+                "name": "address",
+                "value": "",
+                "type": "query",
+                "description": "Token contract address — 0x-prefixed hex (42 chars) for EVM chains, base58 for Solana. NOT a ticker symbol."
+              },
+              {
+                "name": "interval",
+                "value": "",
+                "type": "query",
+                "description": "Candle bucket size. Sub-day intervals (`1m`-`4h`) are the typical choice for active DEX analysis."
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window of historical data to return. `max` returns the largest allowed 1500-bar window for the selected interval. Ignored when both `from` and `to` are set."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of custom date range (Unix seconds or YYYY-MM-DD). Must be set together with `to`. Overrides `time_range` when set."
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End of custom date range (Unix seconds or YYYY-MM-DD). Must be set together with `from`. Overrides `time_range` when set."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns DEX-pool-weighted OHLCV bars (timestamp, open, high, low, close, volume_usd) for a single token identified by `chain` + `address`. USD only. Bars are sorted ascending by `timestamp`.\n\n**Use for** meme coins, newly-launched tokens, and any DEX-native asset where `/v1/market/price` returns nothing. Prefer the standard `/v1/market/price` for major listed tokens (BTC, ETH, etc.).\n\n**Time window:** `time_range` (default `24h`) sets the window; `from`+`to` (Unix seconds or `YYYY-MM-DD`) overri"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,465 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Hermod DEX Exchange API",
+    "version": "sha-80d3407"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Exchange",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Exchange Historical Candles",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/exchange/candles",
+            "params": [
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Exchange identifier"
+              },
+              {
+                "name": "pair",
+                "value": "",
+                "type": "query",
+                "description": "Trading pair in base/quote form, e.g. BTC/KRW"
+              },
+              {
+                "name": "interval",
+                "value": "",
+                "type": "query",
+                "description": "Candle interval"
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of time range. Accepts Unix seconds or date string"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End of time range. Accepts Unix seconds or date string"
+              },
+              {
+                "name": "include_synthetic",
+                "value": "",
+                "type": "query",
+                "description": "Whether to include carry-forward candles for no-trade intervals. Defaults to true for continuous charts; set false for raw exchange-only candles."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max number of candles to return. Weekly candles allow up to 300 rows for a 5-year chart; intraday intervals are capped at 100."
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns persisted OHLCV candles for a covered spot market.\n\n**Intervals:** `5m`, `4h`, and `1w`. bitFlyer is currently reliable for weekly (`1w`) OHLCV only.\n\n**Pagination:** use `from`/`to` to bound the time range and `limit` to cap returned candles. Results are ordered newest first.\n\n**Synthetic candles:** `include_synthetic=true` by default, so carry-forward candles for no-trade intervals are included for continuous charts. Set `include_synthetic=false` for raw exchange-only candles."
+        },
+        {
+          "info": {
+            "name": "Exchange Market Coverage",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/exchange/coverage",
+            "params": [
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Exchange identifier. When omitted, returns all supported exchanges."
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Free-text search over pair, base currency, or quote currency"
+              },
+              {
+                "name": "quote",
+                "value": "",
+                "type": "query",
+                "description": "Quote currency filter"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Market type"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Market status filter"
+              },
+              {
+                "name": "data_status",
+                "value": "",
+                "type": "query",
+                "description": "Market data coverage status filter"
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Sort field"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns covered spot markets with latest ticker metrics, candle availability, technical score, and data status.\n\n**Ticker fields:** latest price, 24h open/high/low, previous close, signed 24h price and percent change, and 24h base/quote volume when the exchange provides them.\n\nUse this endpoint to discover which Asian exchange markets have persisted market data. Use the returned `pair` values with `/exchange/candles` for historical OHLCV.\n\n**bitFlyer note:** bitFlyer coverage is currently strong"
+        },
+        {
+          "info": {
+            "name": "Exchange Order Book Depth",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/exchange/depth",
+            "params": [
+              {
+                "name": "pair",
+                "value": "",
+                "type": "query",
+                "description": "Trading pair (e.g. BTC/USDT)"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Market type: spot for spot trading, swap/perpetual/perp for perpetual contracts"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Number of price levels (1-100)"
+              },
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Exchange identifier. Note: hyperliquid uses USDC-settled perps (e.g. BTC/USDC:USDC); pass USDC-quoted pairs when querying hyperliquid."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns order book bid/ask levels with computed stats.\n\n**Included fields:** spread, spread percentage, mid-price, and total bid/ask depth.\n\nUse `limit` to control the number of price levels (1–100, default 20). Set `type=swap` to query perpetual contract order books instead of spot."
+        },
+        {
+          "info": {
+            "name": "Exchange Funding Rate History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/exchange/funding-history",
+            "params": [
+              {
+                "name": "pair",
+                "value": "",
+                "type": "query",
+                "description": "Trading pair (e.g. BTC/USDT)"
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD, ISO8601). Not all exchanges support historical queries; some only return recent data regardless of this value."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max number of records. For longer history, paginate using the last returned timestamp as the next from value."
+              },
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Exchange identifier. Note: hyperliquid uses USDC-settled perps (e.g. BTC/USDC:USDC); pass USDC-quoted pairs when querying hyperliquid."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns historical funding rate records for a perpetual contract.\n\n**Pagination:** use `from` to set the start time and `limit` to control result count. For longer history, pass the last returned timestamp as the next `from` value.\n\n**Note:** not all exchanges support historical queries via `from`; some only return recent data regardless.\n\nFor the latest funding rate snapshot, see `/exchange/perp?fields=funding`."
+        },
+        {
+          "info": {
+            "name": "Exchange OHLCV Candlesticks",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/exchange/klines",
+            "params": [
+              {
+                "name": "pair",
+                "value": "",
+                "type": "query",
+                "description": "Trading pair (e.g. BTC/USDT)"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Market type: spot for spot trading, swap/perpetual/perp for perpetual contracts"
+              },
+              {
+                "name": "interval",
+                "value": "",
+                "type": "query",
+                "description": "Candle size — bucket duration for each returned OHLCV row. This endpoint uses `interval` only; it does NOT accept `time_range`. Use `from` + `limit` to control the window."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD, ISO8601)"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max number of candles to return. Exchange may cap lower (e.g. 200-1000). For longer ranges, paginate using the last returned timestamp as the next from value."
+              },
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Exchange identifier. Note: hyperliquid uses USDC-settled perps (e.g. BTC/USDC:USDC); pass USDC-quoted pairs when querying hyperliquid."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns OHLCV candlestick data with period summary stats (high, low, total volume).\n\n**Intervals:** 15 options from `1m` to `1M`.\n\n**Pagination:** use `from` to set the start time and `limit` to control candle count. For longer ranges, pass the last returned candle's timestamp as the next `from` value. Exchange-side limits vary (200–1000 per request).\n\nSet `type=swap` to query perpetual contract candles instead of spot."
+        },
+        {
+          "info": {
+            "name": "Exchange Long/Short Ratio History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/exchange/long-short-ratio",
+            "params": [
+              {
+                "name": "pair",
+                "value": "",
+                "type": "query",
+                "description": "Trading pair (e.g. BTC/USDT)"
+              },
+              {
+                "name": "interval",
+                "value": "",
+                "type": "query",
+                "description": "Bucket size for each point in the series: `1h`, `4h`, or `1d`. This endpoint uses `interval` only; it does NOT accept `time_range`. Use `from` + `limit` to control the window."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD, ISO8601). Binance only retains the last 30 days of data; other exchanges may have different limits."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max number of records. For longer history, paginate using the last returned timestamp as the next from value."
+              },
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Exchange identifier"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns historical long/short ratio for a perpetual contract.\n\n**Included fields:** ratio value, long account percentage, short account percentage.\n\n**Granularity:** `interval` supports `1h`, `4h`, `1d`.\n\n**Pagination:** use `from` for start time and `limit` for result count. For longer history, pass the last returned timestamp as the next `from` value.\n\n**Note:** not all exchanges support historical queries via `from`; some only return recent data regardless.\n\nJust pass the base pair (e.g. `pai"
+        },
+        {
+          "info": {
+            "name": "Exchange Trading Pairs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/exchange/markets",
+            "params": [
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Exchange identifier. When omitted, searches across all supported exchanges."
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Market type filter. Use perpetual or perp for perpetual contracts (alias for swap)."
+              },
+              {
+                "name": "base",
+                "value": "",
+                "type": "query",
+                "description": "Filter by base currency"
+              },
+              {
+                "name": "quote",
+                "value": "",
+                "type": "query",
+                "description": "Filter by quote currency"
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Fuzzy search in pair/base/quote"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max results"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns trading pairs available on an exchange.\n\n**Filters:** `type` (`spot`, `swap`, `future`, `option`) or free-text `search`.\n\n**Included fields:** pair name, base/quote currencies, market type, active status, and default fee rates.\n\nUse the returned `pair` values as the `pair` parameter in other exchange endpoints."
+        },
+        {
+          "info": {
+            "name": "Exchange Perpetual Contract Snapshot",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/exchange/perp",
+            "params": [
+              {
+                "name": "pair",
+                "value": "",
+                "type": "query",
+                "description": "Trading pair (e.g. BTC/USDT). The swap settle suffix is added automatically from the quote currency, e.g. BTC/USDT:USDT or BTC/USDC:USDC."
+              },
+              {
+                "name": "fields",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated fields to include: 'funding' (current funding rate), 'oi' (open interest). Defaults to all fields."
+              },
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Exchange identifier. Hyperliquid uses USDC-settled perps (e.g. BTC/USDC:USDC)."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a perpetual futures snapshot for a trading pair: funding rate, open interest, mark/index price.\n\n**Available fields** (via `fields`):\n- `funding` — current funding rate, next settlement, mark/index price\n- `oi` — open interest in contracts and USD\n\nJust pass the base pair (e.g. `pair=BTC/USDT`). The swap settle suffix is added automatically from the quote currency, e.g. `BTC/USDT:USDT` or `BTC/USDC:USDC`."
+        },
+        {
+          "info": {
+            "name": "Exchange Ticker Price",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/exchange/price",
+            "params": [
+              {
+                "name": "pair",
+                "value": "",
+                "type": "query",
+                "description": "Trading pair (e.g. BTC/USDT)"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Market type: spot for spot trading, swap/perpetual/perp for perpetual contracts"
+              },
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Exchange identifier. Note: hyperliquid uses USDC-settled perps (e.g. BTC/USDC:USDC); pass USDC-quoted pairs when querying hyperliquid."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns the real-time ticker for a trading pair.\n\n**Included fields:** last price, bid/ask, 24h high/low, 24h volume, 24h price change.\n\nSet `type=swap` to query perpetual contract prices instead of spot. For historical price trends, use `/market/price`."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

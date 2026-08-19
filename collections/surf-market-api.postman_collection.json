@@ -1,0 +1,3139 @@
+{
+  "item": [
+    {
+      "id": "0fd94eb4-66b3-4a6b-a81a-2c143f18fd67",
+      "name": "Market",
+      "description": {
+        "content": "Get a high-level view of the crypto market. Browse token rankings by market cap or volume, track derivatives across all exchanges, monitor spot ETF fund flows, view liquidation events, compute technical indicators (RSI, MACD, Bollinger Bands, and more), explore on-chain valuation metrics (NUPL, MVRV, SOPR), and check the Fear & Greed Index.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "ea6d9859-9a1f-4153-8369-4299020c2126",
+          "name": "ETF Flow History",
+          "request": {
+            "name": "ETF Flow History",
+            "description": {
+              "content": "Returns daily spot ETF flow history.\n\n**Included fields:** net flow (USD), token price, per-ticker breakdown.\n\nSorted by date descending. `symbol`: `BTC`, `ETH`, `XRP`, `SOL`, or `HYPE`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "etf"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "symbol",
+                  "value": "<string>",
+                  "description": "(Required) Token symbol. Can be `BTC`, `ETH`, `XRP`, `SOL`, or `HYPE`."
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "timestamp",
+                  "description": "Field to sort results by"
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Sort order"
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD)"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End of time range. Accepts Unix seconds or date string (YYYY-MM-DD)"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "2e94e498-c342-4d76-904b-081c175c9a1c",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "etf"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "timestamp"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-01"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"flow_usd\": 6775.16377965179,\n      \"price_usd\": 213.37365529420003,\n      \"timestamp\": 6892,\n      \"settled\": true,\n      \"etfs\": [\n        {\n          \"ticker\": \"string\",\n          \"flow_usd\": 2929.9379307666386\n        },\n        {\n          \"ticker\": \"string\",\n          \"flow_usd\": 3734.1524614928135\n        }\n      ],\n      \"project_id\": \"string\",\n      \"symbol\": \"string\"\n    },\n    {\n      \"flow_usd\": 1796.0037759676184,\n      \"price_usd\": 6636.419250231345,\n      \"timestamp\": 8289,\n      \"settled\": false,\n      \"etfs\": [\n        {\n          \"ticker\": \"string\",\n          \"flow_usd\": 8310.213780255743\n        },\n        {\n          \"ticker\": \"string\",\n          \"flow_usd\": 2582.1730376152286\n        }\n      ],\n      \"project_id\": \"string\",\n      \"symbol\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"credits_used\": 9724,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/SimpleListResponseMarketETFFlowItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fd4ca43a-7412-4e91-a38b-5f5eb866e378",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "etf"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "timestamp"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-01"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e7c419a7-5ede-4217-b319-89ca7ff9600c",
+          "name": "Exchange Flow Exchanges",
+          "request": {
+            "name": "Exchange Flow Exchanges",
+            "description": {
+              "content": "Returns Hermod's curated exchange filters for exchange-flow metrics: upstream aggregate filters plus 20 high-coverage individual exchanges.\n\nUse the returned `symbol` values as the `exchange` query parameter on `/v1/market/onchain-indicator` when `metric` is one of `exchange-flows/inflow`, `exchange-flows/outflow`, `exchange-flows/netflow`, or `exchange-flows/reserve`.\n\nThe curated list intentionally excludes long-tail upstream exchange entities that return empty data or bad-request errors for flow metrics.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "exchange-flow",
+                "exchanges"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "symbol",
+                  "value": "<string>",
+                  "description": "(Required) Token ticker symbol. Can be `BTC` or `ETH`."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7968f4a9-396f-48a0-8380-3fd3df386269",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "exchange-flow",
+                    "exchanges"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"symbol\": \"string\",\n      \"name\": \"string\",\n      \"type\": \"string\",\n      \"supported_flow_filter\": false\n    },\n    {\n      \"symbol\": \"string\",\n      \"name\": \"string\",\n      \"type\": \"string\",\n      \"supported_flow_filter\": true\n    }\n  ],\n  \"meta\": {\n    \"limit\": 7892,\n    \"offset\": 6260,\n    \"credits_used\": 8201,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 7879,\n    \"watermark\": 6544\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseMarketExchangeFlowExchangeItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a5877059-6c94-49d4-87e7-bedda29b8b33",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "exchange-flow",
+                    "exchanges"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6fa7a85e-8998-4309-b710-ea13df7dda88",
+          "name": "Fear & Greed Index History",
+          "request": {
+            "name": "Fear & Greed Index History",
+            "description": {
+              "content": "Returns Bitcoin Fear & Greed Index history.\n\n**Included fields:** index value (0-100), classification label, BTC price at each data point.\n\nSorted newest-first. Use `from`/`to` to filter by date range.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "fear-greed"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD)"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End of time range. Accepts Unix seconds or date string (YYYY-MM-DD)"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "03fc627a-c382-4144-a19d-9a75abca661f",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "fear-greed"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "from",
+                      "value": "2026-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-01"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"value\": 8710,\n      \"classification\": \"string\",\n      \"price\": 7235.792539255157,\n      \"timestamp\": 9532\n    },\n    {\n      \"value\": 3550,\n      \"classification\": \"string\",\n      \"price\": 1701.0043570219934,\n      \"timestamp\": 6885\n    }\n  ],\n  \"meta\": {\n    \"credits_used\": 1260,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/SimpleListResponseMarketFearGreedHistoryItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f2d7c207-10ce-4a96-a3ee-680d7952cf1b",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "fear-greed"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "from",
+                      "value": "2026-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-01"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6030f37c-1693-4716-a279-2c787af98f34",
+          "name": "Futures Market Overview",
+          "request": {
+            "name": "Futures Market Overview",
+            "description": {
+              "content": "Returns futures market data across all tracked tokens in a single ranked snapshot.\n\n**Included fields:** open interest, funding rate, long/short ratio, 24h volume.\n\nSorted by `volume_24h` by default — use `sort_by` to change.\n\n**No pagination** — this endpoint returns the full list in one response. Does NOT accept `limit`, `offset`, or `symbol`; to filter to one token, look it up in the response locally.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "futures"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "volume_24h",
+                  "description": "Field to sort results by"
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Sort order"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "9ab0afbb-1298-4221-98af-ece897b13728",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "futures"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sort_by",
+                      "value": "volume_24h"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"symbol\": \"string\",\n      \"open_interest\": 1002.8478334638213,\n      \"funding_rate\": 864.4210881743875,\n      \"long_short_ratio\": 1870.355592555416,\n      \"volume_24h\": 9322.897440680332,\n      \"volume_change_24h\": 5780.834862189551,\n      \"updated_at\": 3248,\n      \"project_id\": \"string\"\n    },\n    {\n      \"symbol\": \"string\",\n      \"open_interest\": 6519.294123951894,\n      \"funding_rate\": 3092.655505811065,\n      \"long_short_ratio\": 4966.950291213266,\n      \"volume_24h\": 3114.6109858561877,\n      \"volume_change_24h\": 1973.919940950465,\n      \"updated_at\": 3737,\n      \"project_id\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"credits_used\": 5335,\n    \"cached\": false,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/SimpleListResponseMarketFuturesItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4bede3aa-4a85-4e9e-9d6b-4c8eb7c45119",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "futures"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sort_by",
+                      "value": "volume_24h"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "399f6e10-367a-476f-b48d-75b53374f788",
+          "name": "Liquidation Chart",
+          "request": {
+            "name": "Liquidation Chart",
+            "description": {
+              "content": "Returns OHLC-style aggregated liquidation data for a token on a specific exchange.\n\n**Filters:** `symbol`, `exchange`, `interval`.\n\nUseful for charting liquidation volume over time.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "liquidation",
+                "chart"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "symbol",
+                  "value": "<string>",
+                  "description": "(Required) Token ticker symbol like `BTC` or `ETH`"
+                },
+                {
+                  "disabled": false,
+                  "key": "interval",
+                  "value": "1h",
+                  "description": "Candlestick interval — bucket size for each point in the liquidation chart series: `1m`, `3m`, `5m`, `15m`, `30m`, `1h`, `4h`, `6h`, `8h`, `12h`, `1d`, or `1w`. This endpoint uses `interval` only; it does NOT accept `time_range`. Use `from`/`to` to bound the series."
+                },
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "Binance",
+                  "description": "Exchange name. Can be `Binance`, `OKX`, `Bybit`, `Bitget`, `Hyperliquid`, `Gate`, `HTX`, `Bitmex`, `Bitfinex`, `CoinEx`, `Aster`, or `Lighter`."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "500",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "c5067fb8-d9d3-4300-8356-8c2d5bb10825",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "liquidation",
+                    "chart"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "1h"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "Binance"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "500"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2024-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2024-02-01"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"timestamp\": 5884,\n      \"long_liquidation_usd\": 5924.0114606627685,\n      \"short_liquidation_usd\": 9145.332548868751,\n      \"contributing_exchanges\": [\n        \"string\",\n        \"string\"\n      ],\n      \"excluded_exchanges\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    {\n      \"timestamp\": 8518,\n      \"long_liquidation_usd\": 8599.912563284328,\n      \"short_liquidation_usd\": 3732.645019590304,\n      \"contributing_exchanges\": [\n        \"string\",\n        \"string\"\n      ],\n      \"excluded_exchanges\": [\n        \"string\",\n        \"string\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"credits_used\": 3208,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/SimpleListResponseLiquidationChartItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c45c6fea-18a0-44bf-bac9-844350489706",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "liquidation",
+                    "chart"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "1h"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "Binance"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "500"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2024-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2024-02-01"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e7e6ff7d-559f-4585-87de-38f3bbe55edd",
+          "name": "Liquidation by Exchange",
+          "request": {
+            "name": "Liquidation by Exchange",
+            "description": {
+              "content": "Returns liquidation breakdown by exchange in a single ranked snapshot.\n\n**Included fields:** total, long, and short volumes in USD.\n\n**Filters:** `symbol` and `time_range` (`1h`, `4h`, `12h`, `24h`).\n\n**No pagination and no `interval`** — this endpoint does NOT accept `limit`, `offset`, or `interval`. Returns the full exchange list in one response.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "liquidation",
+                "exchange-list"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "symbol",
+                  "value": "BTC",
+                  "description": "Token ticker symbol like `BTC` or `ETH`"
+                },
+                {
+                  "disabled": false,
+                  "key": "time_range",
+                  "value": "24h",
+                  "description": "Window to aggregate over for the snapshot: `1h`, `4h`, `12h`, or `24h`. Returns a single snapshot (not a time-series). This endpoint uses `time_range` only — it does NOT accept `interval`."
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "liquidation_usd",
+                  "description": "Field to sort results by"
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Sort order"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "4ccbd915-28b3-4b0a-bd71-dce082d5c100",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "liquidation",
+                    "exchange-list"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "24h"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "liquidation_usd"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"exchange\": \"string\",\n      \"liquidation_usd\": 9399.59251168123,\n      \"long_liquidation_usd\": 9743.627419276265,\n      \"short_liquidation_usd\": 49.29119702363538\n    },\n    {\n      \"exchange\": \"string\",\n      \"liquidation_usd\": 2308.8183486949943,\n      \"long_liquidation_usd\": 6176.38345176359,\n      \"short_liquidation_usd\": 1214.4863496171033\n    }\n  ],\n  \"meta\": {\n    \"credits_used\": 7602,\n    \"cached\": false,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/SimpleListResponseLiquidationExchangeItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c78d570c-832e-48de-a73a-bf1b9a3fd9ec",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "liquidation",
+                    "exchange-list"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "24h"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "liquidation_usd"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6f2ade73-9047-4b30-807b-ba05ba7a4e39",
+          "name": "Large Liquidation Orders",
+          "request": {
+            "name": "Large Liquidation Orders",
+            "description": {
+              "content": "Returns individual large liquidation orders above a USD threshold (`min_amount`, default 10000).\n\n**Filters:** `exchange` and `symbol`.\n\n**Pagination:** `limit`/`offset` page within a bounded, most-recent window. To page beyond that window, shift the time range: set `to` to `oldest_returned_timestamp + 1` (Unix seconds) and repeat, de-duplicating on `order_id`. `to` is **exclusive** (returns rows strictly older than `to`), so the `+1` re-includes the boundary second; using the oldest timestamp itself would skip any rows sharing that second. When `offset` exceeds the window the response returns an empty array with `meta.empty_reason` rather than falsely claiming exhaustion.\n\nFor aggregate totals and long/short breakdown by exchange, use `/market/liquidation/exchange-list`. For historical liquidation charts, use `/market/liquidation/chart`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "liquidation",
+                "order"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "Binance",
+                  "description": "Exchange name. Can be `Binance`, `OKX`, `Bybit`, `Bitget`, `Hyperliquid`, `Gate`, `HTX`, `Bitmex`, `Bitfinex`, `CoinEx`, `Aster`, or `Lighter`."
+                },
+                {
+                  "disabled": false,
+                  "key": "symbol",
+                  "value": "BTC",
+                  "description": "Token ticker symbol like `BTC` or `ETH`"
+                },
+                {
+                  "disabled": false,
+                  "key": "min_amount",
+                  "value": "10000",
+                  "description": "Minimum liquidation amount in USD"
+                },
+                {
+                  "disabled": false,
+                  "key": "side",
+                  "value": "<string>",
+                  "description": "Filter by liquidation side. Omit to return both."
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "timestamp",
+                  "description": "Field to sort results by"
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Sort order"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of time range (inclusive). Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End of time range, exclusive (returns rows strictly older than `to`). Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`). To page backward, set this to the oldest returned `timestamp` + 1 and de-duplicate on `order_id`."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "87968691-f587-4e1d-a8a0-7d4967181937",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "liquidation",
+                    "order"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "exchange",
+                      "value": "Binance"
+                    },
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "min_amount",
+                      "value": "10000"
+                    },
+                    {
+                      "key": "side",
+                      "value": "long"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "timestamp"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2024-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2024-02-01"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"order_id\": \"string\",\n      \"exchange\": \"string\",\n      \"symbol\": \"string\",\n      \"base_asset\": \"string\",\n      \"price\": 5814.761108284159,\n      \"usd_value\": 9578.886835314737,\n      \"side\": \"string\",\n      \"timestamp\": 2251\n    },\n    {\n      \"order_id\": \"string\",\n      \"exchange\": \"string\",\n      \"symbol\": \"string\",\n      \"base_asset\": \"string\",\n      \"price\": 5692.340349819304,\n      \"usd_value\": 3279.6334316676757,\n      \"side\": \"string\",\n      \"timestamp\": 6276\n    }\n  ],\n  \"meta\": {\n    \"limit\": 2631,\n    \"offset\": 3121,\n    \"credits_used\": 1406,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 3538,\n    \"watermark\": 5774\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseLiquidationOrderItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7a364e94-f055-4750-a9f9-bb7d626c0c2b",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "liquidation",
+                    "order"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "exchange",
+                      "value": "Binance"
+                    },
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "min_amount",
+                      "value": "10000"
+                    },
+                    {
+                      "key": "side",
+                      "value": "long"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "timestamp"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2024-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2024-02-01"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "15acf93e-fc3d-402f-ae6b-3ead637c54ab",
+          "name": "Exchange Listing Events",
+          "request": {
+            "name": "Exchange Listing Events",
+            "description": {
+              "content": "Returns historical exchange listing and delisting events.\n\n**Filters:** date range, exchange, token symbol, product type, event type.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "listing"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "(Required) Start date (YYYY-MM-DD or ISO 8601)"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End date (defaults to now)"
+                },
+                {
+                  "disabled": false,
+                  "key": "symbol",
+                  "value": "<string>",
+                  "description": "Filter by token symbol"
+                },
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "<string>",
+                  "description": "Filter by exchange name"
+                },
+                {
+                  "disabled": false,
+                  "key": "product",
+                  "value": "all",
+                  "description": "Filter by product type"
+                },
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "listing",
+                  "description": "Event type filter"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "4a625d7c-9182-43a8-98fe-38cac48a3507",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "listing"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "from",
+                      "value": "2024-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2024-03-01"
+                    },
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    },
+                    {
+                      "key": "product",
+                      "value": "all"
+                    },
+                    {
+                      "key": "type",
+                      "value": "listing"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"exchange_name\": \"string\",\n      \"product\": \"string\",\n      \"trading_pair\": \"string\",\n      \"event_type\": \"string\",\n      \"effective_at\": 3270,\n      \"base_symbol\": \"string\",\n      \"published_at\": 9548,\n      \"quote_symbol\": \"string\"\n    },\n    {\n      \"exchange_name\": \"string\",\n      \"product\": \"string\",\n      \"trading_pair\": \"string\",\n      \"event_type\": \"string\",\n      \"effective_at\": 4275,\n      \"base_symbol\": \"string\",\n      \"published_at\": 4521,\n      \"quote_symbol\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 3985,\n    \"offset\": 1400,\n    \"credits_used\": 8968,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 7009,\n    \"watermark\": 9320\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseListingEventItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b80ba14f-33b5-4ca4-9674-7167ae5b72c7",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "listing"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "from",
+                      "value": "2024-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2024-03-01"
+                    },
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    },
+                    {
+                      "key": "product",
+                      "value": "all"
+                    },
+                    {
+                      "key": "type",
+                      "value": "listing"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "21b6aa24-058a-40fc-9275-6f3d26e0ba95",
+          "name": "On-Chain Indicator",
+          "request": {
+            "name": "On-Chain Indicator",
+            "description": {
+              "content": "Returns on-chain indicator time-series for BTC or ETH.\n\n**Available metrics:** `nupl`, `sopr`, `mvrv`, `puell-multiple`, `nvm`, `nvt`, `nvt-golden-cross`, `exchange-flows` (inflow/outflow/netflow/reserve).\n\n**Long ranges:** each response is capped at about 100 data points. When `meta.has_more=true`, split `from`/`to` into smaller windows (about 90 days for daily data) and merge by timestamp client-side. For exchange-flow metrics, `all_exchange`, `spot_exchange`, and `derivative_exchange` are aggregate filters, not sums over the curated individual exchange list.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "onchain-indicator"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "symbol",
+                  "value": "<string>",
+                  "description": "(Required) Token ticker symbol. Can be `BTC` or `ETH`."
+                },
+                {
+                  "disabled": false,
+                  "key": "metric",
+                  "value": "<string>",
+                  "description": "(Required) On-chain metric name. Can be `nupl`, `sopr`, `mvrv`, `puell-multiple`, `nvm`, `nvt`, `nvt-golden-cross`, or `exchange-flows/{inflow,outflow,netflow,reserve}`."
+                },
+                {
+                  "disabled": false,
+                  "key": "granularity",
+                  "value": "day",
+                  "description": "Aggregation granularity."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD). Defaults to 90 days ago when omitted. Maximum range is 365 days. Responses are capped at about 100 data points; when meta.has_more is true, split from/to into smaller windows (about 90 days for daily data)."
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End of time range. Accepts Unix seconds or date string (YYYY-MM-DD). Defaults to today when omitted. Maximum range is 365 days. Responses are capped at about 100 data points; when meta.has_more is true, split from/to into smaller windows (about 90 days for daily data)."
+                },
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "all_exchange",
+                  "description": "Curated exchange filter for exchange-flow metrics. Use /v1/market/exchange-flow/exchanges to list labels."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7e276a36-4a6d-44c4-89d9-24c502d6a2e4",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "onchain-indicator"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "metric",
+                      "value": "nupl"
+                    },
+                    {
+                      "key": "granularity",
+                      "value": "day"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "all_exchange"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"value\": 4156.853649374436,\n      \"timestamp\": 8916,\n      \"exchange\": \"string\",\n      \"exchange_name\": \"string\",\n      \"metric\": \"string\",\n      \"project_id\": \"string\",\n      \"symbol\": \"string\"\n    },\n    {\n      \"value\": 1357.0410255771314,\n      \"timestamp\": 1181,\n      \"exchange\": \"string\",\n      \"exchange_name\": \"string\",\n      \"metric\": \"string\",\n      \"project_id\": \"string\",\n      \"symbol\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 217,\n    \"offset\": 7245,\n    \"credits_used\": 1318,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": true,\n    \"total\": 2345,\n    \"watermark\": 8788\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseMarketMetricPoint.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3a26a8c3-2336-4d5a-a3ee-de5387926f08",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "onchain-indicator"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "metric",
+                      "value": "nupl"
+                    },
+                    {
+                      "key": "granularity",
+                      "value": "day"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "all_exchange"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "03d8070b-186a-4ea6-a916-240673611978",
+          "name": "Options Market Data",
+          "request": {
+            "name": "Options Market Data",
+            "description": {
+              "content": "Returns options market data for a `symbol`.\n\n**Included fields:** open interest, volume, put/call ratio, max pain price.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "options"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "symbol",
+                  "value": "<string>",
+                  "description": "(Required) Token symbol. Can be `BTC`, `ETH`, `SOL`, `XRP`, `BNB`, `DOGE`, `ADA`, or `AVAX`."
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "volume_24h",
+                  "description": "Field to sort results by"
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Sort order"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "9556d562-fcbe-4dd5-aa5c-25690449cb51",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "options"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "volume_24h"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"symbol\": \"string\",\n      \"exchange\": \"string\",\n      \"open_interest\": 791.9159170351409,\n      \"volume_24h\": 7950.526829750446,\n      \"updated_at\": 9875,\n      \"max_pain_price\": 503.5926107044664,\n      \"project_id\": \"string\",\n      \"put_call_ratio\": 3639.6027506274254\n    },\n    {\n      \"symbol\": \"string\",\n      \"exchange\": \"string\",\n      \"open_interest\": 96.04221397875645,\n      \"volume_24h\": 8911.682619555977,\n      \"updated_at\": 5393,\n      \"max_pain_price\": 4058.219576869736,\n      \"project_id\": \"string\",\n      \"put_call_ratio\": 29.313384985090174\n    }\n  ],\n  \"meta\": {\n    \"credits_used\": 1075,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/SimpleListResponseMarketOptionsItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6b2587e9-a199-4885-9e57-8150002476d5",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "options"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "volume_24h"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ad0d1529-cd2e-4afc-84fa-80bd6ff3b5a2",
+          "name": "Token Price History",
+          "request": {
+            "name": "Token Price History",
+            "description": {
+              "content": "Returns historical price data points for a token over a specified time range.\n\n**Time range options:**\n- Predefined: `1d`, `7d`, `14d`, `30d`, `90d`, `180d`, `365d`, `max`\n- Custom: use `from` / `to` (Unix seconds or `YYYY-MM-DD`)\n\n**Granularity** is automatic based on range:\n- `1d` → 5-minute intervals\n- `7d`–`90d` → hourly\n- `180d`+ → daily",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "price"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "symbol",
+                  "value": "<string>",
+                  "description": "(Required) Single token ticker symbol like `BTC`, `ETH`, or `SOL` (multi-symbol not supported)"
+                },
+                {
+                  "disabled": false,
+                  "key": "time_range",
+                  "value": "30d",
+                  "description": "Window of historical data to return: `1d`, `7d`, `14d`, `30d`, `90d`, `180d`, `365d`, or `max`. Ignored when `from`/`to` are set. This endpoint uses `time_range` only — it does NOT accept `interval`; bucket granularity is chosen server-side based on the window size."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of custom date range (Unix timestamp or YYYY-MM-DD). Must be used together with `to`. Overrides `time_range` when set."
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End of custom date range (Unix timestamp or YYYY-MM-DD). Must be used together with `from`. Overrides `time_range` when set."
+                },
+                {
+                  "disabled": false,
+                  "key": "currency",
+                  "value": "usd",
+                  "description": "Quote currency like `usd`, `eur`, or `btc`"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "67c8483d-9d34-4d32-b3ff-566dff615570",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "price"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "30d"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2025-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2025-03-01"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "usd"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"value\": 5261.353605451485,\n      \"timestamp\": 4027,\n      \"exchange\": \"string\",\n      \"exchange_name\": \"string\",\n      \"metric\": \"string\",\n      \"project_id\": \"string\",\n      \"symbol\": \"string\"\n    },\n    {\n      \"value\": 392.22357995020053,\n      \"timestamp\": 1687,\n      \"exchange\": \"string\",\n      \"exchange_name\": \"string\",\n      \"metric\": \"string\",\n      \"project_id\": \"string\",\n      \"symbol\": \"string\"\n    }\n  ],\n  \"summary\": {\n    \"first\": 2998.169065883255,\n    \"last\": 8798.786714163874,\n    \"high\": 2567.925807953284,\n    \"low\": 3619.9988918378467,\n    \"change_abs\": 6214.523464408847,\n    \"change_pct\": 2438.278284070764,\n    \"latest_dt\": 1901,\n    \"n_points\": 1719\n  },\n  \"meta\": {\n    \"credits_used\": 6750,\n    \"cached\": false,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/MarketPriceResponse.json\",\n  \"project_id\": \"string\",\n  \"symbol\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "53f925f1-128f-4b2f-b19f-93a10ccf613f",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "price"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "time_range",
+                      "value": "30d"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2025-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2025-03-01"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "usd"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9e8d1a0e-869b-47d3-98b8-3b910627cc05",
+          "name": "Technical Indicator",
+          "request": {
+            "name": "Technical Indicator",
+            "description": {
+              "content": "Returns a technical indicator for a trading pair on a given exchange and interval.\n\n**Modes:**\n- Set `from`/`to` for time-series\n- Omit for latest value only\n\n**Indicator-specific tuning** via `options` (e.g. `period:7`, `fast_period:8,slow_period:21,signal_period:5`, `period:10,stddev:1.5`).\n\n**Available indicators:** `rsi`, `macd`, `ema`, `sma`, `bbands`, `stoch`, `adx`, `atr`, `cci`, `obv`, `vwap`, `dmi`, `ichimoku`, `supertrend`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "price-indicator"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "indicator",
+                  "value": "<string>",
+                  "description": "(Required) Technical indicator name. Can be `rsi`, `macd`, `ema`, `sma`, `bbands`, `stoch`, `adx`, `atr`, `cci`, `obv`, `vwap`, `dmi`, `ichimoku`, or `supertrend`."
+                },
+                {
+                  "disabled": false,
+                  "key": "symbol",
+                  "value": "<string>",
+                  "description": "(Required) Trading pair as `BTC/USDT` or bare symbol like `BTC`"
+                },
+                {
+                  "disabled": false,
+                  "key": "interval",
+                  "value": "1d",
+                  "description": "Candlestick interval — bucket size for each point in the indicator series: `1m`, `5m`, `15m`, `30m`, `1h`, `2h`, `4h`, `12h`, `1d`, or `1w`. This endpoint uses `interval` only; it does NOT accept `time_range`. Use `from`/`to` to bound the series."
+                },
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "binance",
+                  "description": "Exchange for price data. Can be `binance`, `bybit`, `coinbase`, or `kraken`."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of time range. When set, returns time-series instead of latest value. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End of time range. Defaults to now when from is set. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)"
+                },
+                {
+                  "disabled": false,
+                  "key": "options",
+                  "value": "<string>",
+                  "description": "Indicator-specific options as comma-separated key:value pairs. Available options by indicator: `period` — lookback period for rsi (default 14), sma (default 20), ema (default 20), bbands (default 20), adx (default 14), atr (default 14), cci (default 20), dmi (default 14), stoch (default 14), supertrend (default 10). `stddev` — standard deviation for bbands (default 2). `multiplier` — multiplier for supertrend (default 3). `fast_period` — MACD fast EMA (default 12). `slow_period` — MACD slow EMA (default 26). `signal_period` — MACD signal smoothing (default 9). Examples: `period:7`, `period:200`, `fast_period:8,slow_period:21,signal_period:5`, `period:10,stddev:1.5`."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "19399fb4-bd09-4c45-816f-39c7d946dc46",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "price-indicator"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "indicator",
+                      "value": "rsi"
+                    },
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "1d"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2024-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2024-02-01"
+                    },
+                    {
+                      "key": "options",
+                      "value": "period:7"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"name\": \"string\",\n      \"symbol\": \"string\",\n      \"interval\": \"string\",\n      \"value\": 6864.667284806697,\n      \"project_id\": \"string\",\n      \"timestamp\": 8276,\n      \"updated_at\": 1738,\n      \"values\": {\n        \"bbands_lower\": 1703.4159150069904,\n        \"bbands_middle\": 2617.2027520221795,\n        \"bbands_upper\": 8637.244430490306,\n        \"dmi_adx\": 9210.982157548773,\n        \"dmi_mdi\": 1444.7217059872864,\n        \"dmi_pdi\": 3764.4729345773576,\n        \"ichimoku_base\": 6722.411248232194,\n        \"ichimoku_conversion\": 1583.0106166007752,\n        \"ichimoku_current_span_a\": 5870.353139573013,\n        \"ichimoku_current_span_b\": 8300.315863105447,\n        \"ichimoku_lagging_span_a\": 9746.637215187351,\n        \"ichimoku_lagging_span_b\": 4438.795950868437,\n        \"ichimoku_span_a\": 6145.568686531357,\n        \"ichimoku_span_b\": 6743.070540342355,\n        \"macd_hist\": 4611.545587852998,\n        \"macd_signal\": 1505.507844668541,\n        \"macd_value\": 5039.957406041886,\n        \"stoch_d\": 4488.445516906358,\n        \"stoch_k\": 713.0608984903264,\n        \"supertrend_advice\": \"string\",\n        \"supertrend_value\": 5807.441725552428\n      }\n    },\n    {\n      \"name\": \"string\",\n      \"symbol\": \"string\",\n      \"interval\": \"string\",\n      \"value\": 9004.447728813728,\n      \"project_id\": \"string\",\n      \"timestamp\": 6352,\n      \"updated_at\": 3182,\n      \"values\": {\n        \"bbands_lower\": 5799.417464051539,\n        \"bbands_middle\": 3068.9749126383804,\n        \"bbands_upper\": 2631.560462668554,\n        \"dmi_adx\": 6834.665825613018,\n        \"dmi_mdi\": 1004.9297595589024,\n        \"dmi_pdi\": 7165.286715442333,\n        \"ichimoku_base\": 2258.517534982194,\n        \"ichimoku_conversion\": 8254.51172549468,\n        \"ichimoku_current_span_a\": 5904.291880265915,\n        \"ichimoku_current_span_b\": 2344.4934950881334,\n        \"ichimoku_lagging_span_a\": 3824.626558594617,\n        \"ichimoku_lagging_span_b\": 4844.460697308276,\n        \"ichimoku_span_a\": 6747.840944094697,\n        \"ichimoku_span_b\": 1326.0122364056792,\n        \"macd_hist\": 1824.4825230683482,\n        \"macd_signal\": 8010.316723072178,\n        \"macd_value\": 4835.6974262420845,\n        \"stoch_d\": 8186.2099551611955,\n        \"stoch_k\": 9273.803308415709,\n        \"supertrend_advice\": \"string\",\n        \"supertrend_value\": 8087.727753612801\n      }\n    }\n  ],\n  \"meta\": {\n    \"limit\": 7801,\n    \"offset\": 6250,\n    \"credits_used\": 4984,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 6300,\n    \"watermark\": 8694\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseMarketIndicatorItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ff8e360c-e8e0-4c04-9dca-15dec33b0a88",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "price-indicator"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "indicator",
+                      "value": "rsi"
+                    },
+                    {
+                      "key": "symbol",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "1d"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2024-01-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2024-02-01"
+                    },
+                    {
+                      "key": "options",
+                      "value": "period:7"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3e1b1db9-3f71-4664-b9a4-4d0cd86b9de4",
+          "name": "Public Sale / Crowdsale",
+          "request": {
+            "name": "Public Sale / Crowdsale",
+            "description": {
+              "content": "Returns public sale (IDO/ICO/IEO) information for a project.\n\nIncludes sale type, status, price, raise amount, and ROI data.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "public-sale"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Surf project UUID"
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Project name or symbol for entity resolution"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "0c8a0b3d-f62a-4403-950c-c3114c38c3ef",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "public-sale"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "bitcoin"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"allocation_of_supply\": 6138.8712092484375,\n      \"ath_roi\": 7091.738758251456,\n      \"crowdsale_end_date\": 3411,\n      \"crowdsale_price\": 8573.95916682681,\n      \"crowdsale_raise\": 5083.063212156949,\n      \"crowdsale_start_date\": 5749,\n      \"crowdsale_status\": \"string\",\n      \"crowdsale_type\": \"string\",\n      \"launchpad_name\": \"string\",\n      \"name\": \"string\",\n      \"project_id\": \"string\",\n      \"symbol\": \"string\"\n    },\n    {\n      \"allocation_of_supply\": 521.8029491355503,\n      \"ath_roi\": 5691.603329805494,\n      \"crowdsale_end_date\": 1973,\n      \"crowdsale_price\": 7767.578294707478,\n      \"crowdsale_raise\": 8788.749270084776,\n      \"crowdsale_start_date\": 7567,\n      \"crowdsale_status\": \"string\",\n      \"crowdsale_type\": \"string\",\n      \"launchpad_name\": \"string\",\n      \"name\": \"string\",\n      \"project_id\": \"string\",\n      \"symbol\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"limit\": 4861,\n    \"offset\": 6094,\n    \"credits_used\": 1331,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 3930,\n    \"watermark\": 7430\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponsePublicSaleItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f10a7496-a6a1-423a-8ce3-517ac12f0b8f",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "public-sale"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "bitcoin"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e79853d8-b513-423a-bba3-944b695e8113",
+          "name": "Token Rankings",
+          "request": {
+            "name": "Token Rankings",
+            "description": {
+              "content": "Returns a token leaderboard sorted by market cap, 24h change, or volume. Each entry includes price, market cap, FDV, supply, ATH/ATL, and 24h range. Supports category filtering (MEME, AI, L1, L2, DEFI, GAMING, etc.).\n\n**Available metrics:** `market_cap`, `top_gainers`, `top_losers`, `volume`.\n\n**Note:** `top_gainers` and `top_losers` rank by 24h price change within the top 250 coins by market cap.\n\nFor circulating supply, FDV, ATH/ATL, use `/project/detail?fields=token_info`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "ranking"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "market_cap",
+                  "description": "Field to sort by. `market_cap` sorts by total market capitalisation, `change_24h` sorts by 24-hour price change percentage (fetches top 250 by market cap then sorts client-side), `volume_24h` sorts by 24-hour trading volume."
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "desc",
+                  "description": "Sort order: `desc` (default, highest first) or `asc` (lowest first)."
+                },
+                {
+                  "disabled": false,
+                  "key": "category",
+                  "value": "<string>",
+                  "description": "Optional token category filter. When provided, results are limited to coins in that category. Supported values: MEME, AI, AI_AGENTS, L1, L2, DEFI, GAMING, STABLECOIN, RWA, DEPIN, SOL_ECO, BASE_ECO, LST."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "5a94b4e2-aa13-4229-a57d-86b18ea15a65",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "ranking"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sort_by",
+                      "value": "market_cap"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "category",
+                      "value": "MEME"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"rank\": 1870,\n      \"symbol\": \"string\",\n      \"name\": \"string\",\n      \"price_usd\": 2774.4375727609736,\n      \"change_24h_pct\": 3612.7936358262914,\n      \"market_cap_usd\": 625.9463120249565,\n      \"volume_24h_usd\": 2788.549658844931,\n      \"high_24h\": 9623.703839581813,\n      \"low_24h\": 7512.325068895432,\n      \"ath\": 7749.374066024946,\n      \"ath_date\": 4927,\n      \"atl\": 8321.371568279188,\n      \"atl_date\": 1961,\n      \"circulating_supply\": 299.2055204416244,\n      \"fdv\": 5048.707523692378,\n      \"id\": \"string\",\n      \"image\": \"string\",\n      \"max_supply\": 6073.788909475379,\n      \"slug\": \"string\",\n      \"total_supply\": 209.5556710429114\n    },\n    {\n      \"rank\": 9192,\n      \"symbol\": \"string\",\n      \"name\": \"string\",\n      \"price_usd\": 7838.1307499751665,\n      \"change_24h_pct\": 7850.807643683901,\n      \"market_cap_usd\": 6263.664743966896,\n      \"volume_24h_usd\": 9945.77271982851,\n      \"high_24h\": 227.34293350722857,\n      \"low_24h\": 9279.749137550538,\n      \"ath\": 2427.5453507688303,\n      \"ath_date\": 8443,\n      \"atl\": 1874.1050477172982,\n      \"atl_date\": 9599,\n      \"circulating_supply\": 993.15120514188,\n      \"fdv\": 322.75104371696006,\n      \"id\": \"string\",\n      \"image\": \"string\",\n      \"max_supply\": 2995.3971089484753,\n      \"slug\": \"string\",\n      \"total_supply\": 4144.040960844904\n    }\n  ],\n  \"meta\": {\n    \"limit\": 2545,\n    \"offset\": 2699,\n    \"credits_used\": 6413,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 9110,\n    \"watermark\": 5553\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseMarketTopCoinItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "81ee4602-b4b9-4521-aa81-e00fd39dc244",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "ranking"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sort_by",
+                      "value": "market_cap"
+                    },
+                    {
+                      "key": "order",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "category",
+                      "value": "MEME"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3d962e66-d9c8-4c46-bc68-8244bf0fbced",
+          "name": "Token Generation Event",
+          "request": {
+            "name": "Token Generation Event",
+            "description": {
+              "content": "Returns Token Generation Event (TGE) status for a project.\n\nIncludes current status, last event time, and listing exchanges.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "market",
+                "tge"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "Surf project UUID"
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Project name or symbol for entity resolution"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7057c416-fa66-44fc-8ecc-896188f339c3",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "tge"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "bitcoin"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"project_id\": \"string\",\n    \"current_status\": \"string\",\n    \"exchanges\": [\n      \"string\",\n      \"string\"\n    ],\n    \"last_event_time\": 7833,\n    \"project_name\": \"string\"\n  },\n  \"meta\": {\n    \"credits_used\": 25,\n    \"cached\": false,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseTGEItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fa444cb4-86a8-48e4-a0e3-db8e29c970d1",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "market",
+                    "tge"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+                    },
+                    {
+                      "key": "q",
+                      "value": "bitcoin"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "a9fd6779-b1a1-4a54-8e5c-0ff29d9b65c0",
+    "name": "Hermod DEX Market API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n\n\nContact Support:\n Name: Cyber team\n Email: backend@cybertinolab.com",
+      "type": "text/plain"
+    }
+  }
+}

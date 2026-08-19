@@ -1,0 +1,693 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Hermod DEX Market API",
+    "version": "sha-80d3407"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Market",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "ETF Flow History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/etf",
+            "params": [
+              {
+                "name": "symbol",
+                "value": "",
+                "type": "query",
+                "description": "Token symbol. Can be `BTC`, `ETH`, `XRP`, `SOL`, or `HYPE`."
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Field to sort results by"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order"
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD)"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End of time range. Accepts Unix seconds or date string (YYYY-MM-DD)"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns daily spot ETF flow history.\n\n**Included fields:** net flow (USD), token price, per-ticker breakdown.\n\nSorted by date descending. `symbol`: `BTC`, `ETH`, `XRP`, `SOL`, or `HYPE`."
+        },
+        {
+          "info": {
+            "name": "Exchange Flow Exchanges",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/exchange-flow/exchanges",
+            "params": [
+              {
+                "name": "symbol",
+                "value": "",
+                "type": "query",
+                "description": "Token ticker symbol. Can be `BTC` or `ETH`."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns Hermod's curated exchange filters for exchange-flow metrics: upstream aggregate filters plus 20 high-coverage individual exchanges.\n\nUse the returned `symbol` values as the `exchange` query parameter on `/v1/market/onchain-indicator` when `metric` is one of `exchange-flows/inflow`, `exchange-flows/outflow`, `exchange-flows/netflow`, or `exchange-flows/reserve`.\n\nThe curated list intentionally excludes long-tail upstream exchange entities that return empty data or bad-request errors for f"
+        },
+        {
+          "info": {
+            "name": "Fear & Greed Index History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/fear-greed",
+            "params": [
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD)"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End of time range. Accepts Unix seconds or date string (YYYY-MM-DD)"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns Bitcoin Fear & Greed Index history.\n\n**Included fields:** index value (0-100), classification label, BTC price at each data point.\n\nSorted newest-first. Use `from`/`to` to filter by date range."
+        },
+        {
+          "info": {
+            "name": "Futures Market Overview",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/futures",
+            "params": [
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Field to sort results by"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns futures market data across all tracked tokens in a single ranked snapshot.\n\n**Included fields:** open interest, funding rate, long/short ratio, 24h volume.\n\nSorted by `volume_24h` by default — use `sort_by` to change.\n\n**No pagination** — this endpoint returns the full list in one response. Does NOT accept `limit`, `offset`, or `symbol`; to filter to one token, look it up in the response locally."
+        },
+        {
+          "info": {
+            "name": "Liquidation Chart",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/liquidation/chart",
+            "params": [
+              {
+                "name": "symbol",
+                "value": "",
+                "type": "query",
+                "description": "Token ticker symbol like `BTC` or `ETH`"
+              },
+              {
+                "name": "interval",
+                "value": "",
+                "type": "query",
+                "description": "Candlestick interval — bucket size for each point in the liquidation chart series: `1m`, `3m`, `5m`, `15m`, `30m`, `1h`, `4h`, `6h`, `8h`, `12h`, `1d`, or `1w`. This endpoint uses `interval` only; it does NOT accept `time_range`. Use `from`/`to` to bound the series."
+              },
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Exchange name. Can be `Binance`, `OKX`, `Bybit`, `Bitget`, `Hyperliquid`, `Gate`, `HTX`, `Bitmex`, `Bitfinex`, `CoinEx`, `Aster`, or `Lighter`."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns OHLC-style aggregated liquidation data for a token on a specific exchange.\n\n**Filters:** `symbol`, `exchange`, `interval`.\n\nUseful for charting liquidation volume over time."
+        },
+        {
+          "info": {
+            "name": "Liquidation by Exchange",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/liquidation/exchange-list",
+            "params": [
+              {
+                "name": "symbol",
+                "value": "",
+                "type": "query",
+                "description": "Token ticker symbol like `BTC` or `ETH`"
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window to aggregate over for the snapshot: `1h`, `4h`, `12h`, or `24h`. Returns a single snapshot (not a time-series). This endpoint uses `time_range` only — it does NOT accept `interval`."
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Field to sort results by"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns liquidation breakdown by exchange in a single ranked snapshot.\n\n**Included fields:** total, long, and short volumes in USD.\n\n**Filters:** `symbol` and `time_range` (`1h`, `4h`, `12h`, `24h`).\n\n**No pagination and no `interval`** — this endpoint does NOT accept `limit`, `offset`, or `interval`. Returns the full exchange list in one response."
+        },
+        {
+          "info": {
+            "name": "Large Liquidation Orders",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/liquidation/order",
+            "params": [
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Exchange name. Can be `Binance`, `OKX`, `Bybit`, `Bitget`, `Hyperliquid`, `Gate`, `HTX`, `Bitmex`, `Bitfinex`, `CoinEx`, `Aster`, or `Lighter`."
+              },
+              {
+                "name": "symbol",
+                "value": "",
+                "type": "query",
+                "description": "Token ticker symbol like `BTC` or `ETH`"
+              },
+              {
+                "name": "min_amount",
+                "value": "",
+                "type": "query",
+                "description": "Minimum liquidation amount in USD"
+              },
+              {
+                "name": "side",
+                "value": "",
+                "type": "query",
+                "description": "Filter by liquidation side. Omit to return both."
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Field to sort results by"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of time range (inclusive). Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End of time range, exclusive (returns rows strictly older than `to`). Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`). To page backward, set this to the oldest returned `timestamp` + 1 and de-duplicate on `order_id`."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns individual large liquidation orders above a USD threshold (`min_amount`, default 10000).\n\n**Filters:** `exchange` and `symbol`.\n\n**Pagination:** `limit`/`offset` page within a bounded, most-recent window. To page beyond that window, shift the time range: set `to` to `oldest_returned_timestamp + 1` (Unix seconds) and repeat, de-duplicating on `order_id`. `to` is **exclusive** (returns rows strictly older than `to`), so the `+1` re-includes the boundary second; using the oldest timestamp i"
+        },
+        {
+          "info": {
+            "name": "Exchange Listing Events",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/listing",
+            "params": [
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start date (YYYY-MM-DD or ISO 8601)"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End date (defaults to now)"
+              },
+              {
+                "name": "symbol",
+                "value": "",
+                "type": "query",
+                "description": "Filter by token symbol"
+              },
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Filter by exchange name"
+              },
+              {
+                "name": "product",
+                "value": "",
+                "type": "query",
+                "description": "Filter by product type"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Event type filter"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns historical exchange listing and delisting events.\n\n**Filters:** date range, exchange, token symbol, product type, event type."
+        },
+        {
+          "info": {
+            "name": "On-Chain Indicator",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/onchain-indicator",
+            "params": [
+              {
+                "name": "symbol",
+                "value": "",
+                "type": "query",
+                "description": "Token ticker symbol. Can be `BTC` or `ETH`."
+              },
+              {
+                "name": "metric",
+                "value": "",
+                "type": "query",
+                "description": "On-chain metric name. Can be `nupl`, `sopr`, `mvrv`, `puell-multiple`, `nvm`, `nvt`, `nvt-golden-cross`, or `exchange-flows/{inflow,outflow,netflow,reserve}`."
+              },
+              {
+                "name": "granularity",
+                "value": "",
+                "type": "query",
+                "description": "Aggregation granularity."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD). Defaults to 90 days ago when omitted. Maximum range is 365 days. Responses are capped at about 100 data points; when meta.has_more is true, split from/to into smaller windows (about 90 days for daily data)."
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End of time range. Accepts Unix seconds or date string (YYYY-MM-DD). Defaults to today when omitted. Maximum range is 365 days. Responses are capped at about 100 data points; when meta.has_more is true, split from/to into smaller windows (about 90 days for daily data)."
+              },
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Curated exchange filter for exchange-flow metrics. Use /v1/market/exchange-flow/exchanges to list labels."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns on-chain indicator time-series for BTC or ETH.\n\n**Available metrics:** `nupl`, `sopr`, `mvrv`, `puell-multiple`, `nvm`, `nvt`, `nvt-golden-cross`, `exchange-flows` (inflow/outflow/netflow/reserve).\n\n**Long ranges:** each response is capped at about 100 data points. When `meta.has_more=true`, split `from`/`to` into smaller windows (about 90 days for daily data) and merge by timestamp client-side. For exchange-flow metrics, `all_exchange`, `spot_exchange`, and `derivative_exchange` are agg"
+        },
+        {
+          "info": {
+            "name": "Options Market Data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/options",
+            "params": [
+              {
+                "name": "symbol",
+                "value": "",
+                "type": "query",
+                "description": "Token symbol. Can be `BTC`, `ETH`, `SOL`, `XRP`, `BNB`, `DOGE`, `ADA`, or `AVAX`."
+              },
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Field to sort results by"
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns options market data for a `symbol`.\n\n**Included fields:** open interest, volume, put/call ratio, max pain price."
+        },
+        {
+          "info": {
+            "name": "Token Price History",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/price",
+            "params": [
+              {
+                "name": "symbol",
+                "value": "",
+                "type": "query",
+                "description": "Single token ticker symbol like `BTC`, `ETH`, or `SOL` (multi-symbol not supported)"
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window of historical data to return: `1d`, `7d`, `14d`, `30d`, `90d`, `180d`, `365d`, or `max`. Ignored when `from`/`to` are set. This endpoint uses `time_range` only — it does NOT accept `interval`; bucket granularity is chosen server-side based on the window size."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of custom date range (Unix timestamp or YYYY-MM-DD). Must be used together with `to`. Overrides `time_range` when set."
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End of custom date range (Unix timestamp or YYYY-MM-DD). Must be used together with `from`. Overrides `time_range` when set."
+              },
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Quote currency like `usd`, `eur`, or `btc`"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns historical price data points for a token over a specified time range.\n\n**Time range options:**\n- Predefined: `1d`, `7d`, `14d`, `30d`, `90d`, `180d`, `365d`, `max`\n- Custom: use `from` / `to` (Unix seconds or `YYYY-MM-DD`)\n\n**Granularity** is automatic based on range:\n- `1d` → 5-minute intervals\n- `7d`–`90d` → hourly\n- `180d`+ → daily"
+        },
+        {
+          "info": {
+            "name": "Technical Indicator",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/price-indicator",
+            "params": [
+              {
+                "name": "indicator",
+                "value": "",
+                "type": "query",
+                "description": "Technical indicator name. Can be `rsi`, `macd`, `ema`, `sma`, `bbands`, `stoch`, `adx`, `atr`, `cci`, `obv`, `vwap`, `dmi`, `ichimoku`, or `supertrend`."
+              },
+              {
+                "name": "symbol",
+                "value": "",
+                "type": "query",
+                "description": "Trading pair as `BTC/USDT` or bare symbol like `BTC`"
+              },
+              {
+                "name": "interval",
+                "value": "",
+                "type": "query",
+                "description": "Candlestick interval — bucket size for each point in the indicator series: `1m`, `5m`, `15m`, `30m`, `1h`, `2h`, `4h`, `12h`, `1d`, or `1w`. This endpoint uses `interval` only; it does NOT accept `time_range`. Use `from`/`to` to bound the series."
+              },
+              {
+                "name": "exchange",
+                "value": "",
+                "type": "query",
+                "description": "Exchange for price data. Can be `binance`, `bybit`, `coinbase`, or `kraken`."
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query",
+                "description": "Start of time range. When set, returns time-series instead of latest value. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query",
+                "description": "End of time range. Defaults to now when from is set. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)"
+              },
+              {
+                "name": "options",
+                "value": "",
+                "type": "query",
+                "description": "Indicator-specific options as comma-separated key:value pairs. Available options by indicator: `period` — lookback period for rsi (default 14), sma (default 20), ema (default 20), bbands (default 20), adx (default 14), atr (default 14), cci (default 20), dmi (default 14), stoch (default 14), supertrend (default 10). `stddev` — standard deviation for bbands (default 2). `multiplier` — multiplier for supertrend (default 3). `fast_period` — MACD fast EMA (default 12). `slow_period` — MACD slow EMA (default 26). `signal_period` — MACD signal smoothing (default 9). Examples: `period:7`, `period:200`, `fast_period:8,slow_period:21,signal_period:5`, `period:10,stddev:1.5`."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a technical indicator for a trading pair on a given exchange and interval.\n\n**Modes:**\n- Set `from`/`to` for time-series\n- Omit for latest value only\n\n**Indicator-specific tuning** via `options` (e.g. `period:7`, `fast_period:8,slow_period:21,signal_period:5`, `period:10,stddev:1.5`).\n\n**Available indicators:** `rsi`, `macd`, `ema`, `sma`, `bbands`, `stoch`, `adx`, `atr`, `cci`, `obv`, `vwap`, `dmi`, `ichimoku`, `supertrend`."
+        },
+        {
+          "info": {
+            "name": "Public Sale / Crowdsale",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/public-sale",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Surf project UUID"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Project name or symbol for entity resolution"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns public sale (IDO/ICO/IEO) information for a project.\n\nIncludes sale type, status, price, raise amount, and ROI data."
+        },
+        {
+          "info": {
+            "name": "Token Rankings",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/ranking",
+            "params": [
+              {
+                "name": "sort_by",
+                "value": "",
+                "type": "query",
+                "description": "Field to sort by. `market_cap` sorts by total market capitalisation, `change_24h` sorts by 24-hour price change percentage (fetches top 250 by market cap then sorts client-side), `volume_24h` sorts by 24-hour trading volume."
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Sort order: `desc` (default, highest first) or `asc` (lowest first)."
+              },
+              {
+                "name": "category",
+                "value": "",
+                "type": "query",
+                "description": "Optional token category filter. When provided, results are limited to coins in that category. Supported values: MEME, AI, AI_AGENTS, L1, L2, DEFI, GAMING, STABLECOIN, RWA, DEPIN, SOL_ECO, BASE_ECO, LST."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a token leaderboard sorted by market cap, 24h change, or volume. Each entry includes price, market cap, FDV, supply, ATH/ATL, and 24h range. Supports category filtering (MEME, AI, L1, L2, DEFI, GAMING, etc.).\n\n**Available metrics:** `market_cap`, `top_gainers`, `top_losers`, `volume`.\n\n**Note:** `top_gainers` and `top_losers` rank by 24h price change within the top 250 coins by market cap.\n\nFor circulating supply, FDV, ATH/ATL, use `/project/detail?fields=token_info`."
+        },
+        {
+          "info": {
+            "name": "Token Generation Event",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/market/tge",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Surf project UUID"
+              },
+              {
+                "name": "q",
+                "value": "",
+                "type": "query",
+                "description": "Project name or symbol for entity resolution"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns Token Generation Event (TGE) status for a project.\n\nIncludes current status, last event time, and listing exchanges."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

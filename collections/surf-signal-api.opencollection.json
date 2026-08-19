@@ -1,0 +1,146 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Hermod DEX Signal API",
+    "version": "sha-80d3407"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Signal",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Signal Detail",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/heatscore/detail",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "query",
+                "description": "Surf token UUID. Pass exactly one of id or project_slug."
+              },
+              {
+                "name": "project_slug",
+                "value": "",
+                "type": "query",
+                "description": "Project slug. Pass exactly one of id or project_slug."
+              },
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window to compute signal score over: 24h or 7d."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns one project signal card.\n\n**Lookup:** pass exactly one of `id` (Surf token UUID) or `project_slug`. Use `time_range` (`24h` or `7d`) to select the score window."
+        },
+        {
+          "info": {
+            "name": "Signal Projects",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/heatscore/projects",
+            "params": [
+              {
+                "name": "time_range",
+                "value": "",
+                "type": "query",
+                "description": "Window to compute signal scores over: 24h or 7d. Returns a ranked snapshot, not a time-series."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a paginated ranked snapshot of project signal cards.\n\n**Included fields:** project identity, score, latest price, price-change percentages, core state, dimension scores, compact token signals, AI summaries, and supporting market metrics.\n\n**Filters:** `time_range` (`24h` or `7d`). Supports `limit`/`offset` pagination."
+        },
+        {
+          "info": {
+            "name": "Signal Token Of The Day",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/heatscore/token-of-the-day",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns the token-of-the-day project signal cards with latest price, price-change percentages, dimension scores, compact signals, and AI summaries. Supports `limit`/`offset` pagination."
+        },
+        {
+          "info": {
+            "name": "Signal Token Of The Week",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/heatscore/token-of-week",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Results per page"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns the token-of-week project signal cards with latest price, price-change percentages, dimension scores, compact signals, and AI summaries. Supports `limit`/`offset` pagination."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

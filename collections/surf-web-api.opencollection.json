@@ -1,0 +1,65 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Hermod DEX Web API",
+    "version": "sha-80d3407"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Web",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Web Page Fetch",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "/gateway/v1/web/fetch",
+            "params": [
+              {
+                "name": "url",
+                "value": "",
+                "type": "query",
+                "description": "URL to fetch and parse"
+              },
+              {
+                "name": "target_selector",
+                "value": "",
+                "type": "query",
+                "description": "CSS selector to extract specific content"
+              },
+              {
+                "name": "remove_selector",
+                "value": "",
+                "type": "query",
+                "description": "CSS selector to remove unwanted elements"
+              },
+              {
+                "name": "wait_for_selector",
+                "value": "",
+                "type": "query",
+                "description": "CSS selector to wait for before extracting"
+              },
+              {
+                "name": "timeout",
+                "value": "",
+                "type": "query",
+                "description": "Request timeout in milliseconds"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Fetches a web page and converts it to clean, LLM-friendly markdown.\n\n**Options:**\n- `target_selector` — extract specific page sections\n- `remove_selector` — strip unwanted elements\n\nReturns 400 if the URL is invalid or unreachable."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

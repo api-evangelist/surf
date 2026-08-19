@@ -1,0 +1,1987 @@
+{
+  "item": [
+    {
+      "id": "7c0a2142-b599-460a-8f1b-24cf438f33e9",
+      "name": "Exchange",
+      "description": {
+        "content": "Access real-time trading data from major exchanges including Binance, OKX, Bybit, and more. Query live ticker prices, order book depth, OHLCV candlestick charts, and perpetual contract data such as funding rates, open interest, and long/short ratios.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "aa4d8e80-3d20-43ce-897b-2b1064f59c32",
+          "name": "Exchange Historical Candles",
+          "request": {
+            "name": "Exchange Historical Candles",
+            "description": {
+              "content": "Returns persisted OHLCV candles for a covered spot market.\n\n**Intervals:** `5m`, `4h`, and `1w`. bitFlyer is currently reliable for weekly (`1w`) OHLCV only.\n\n**Pagination:** use `from`/`to` to bound the time range and `limit` to cap returned candles. Results are ordered newest first.\n\n**Synthetic candles:** `include_synthetic=true` by default, so carry-forward candles for no-trade intervals are included for continuous charts. Set `include_synthetic=false` for raw exchange-only candles.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "exchange",
+                "candles"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "<string>",
+                  "description": "(Required) Exchange identifier"
+                },
+                {
+                  "disabled": false,
+                  "key": "pair",
+                  "value": "<string>",
+                  "description": "(Required) Trading pair in base/quote form, e.g. BTC/KRW"
+                },
+                {
+                  "disabled": false,
+                  "key": "interval",
+                  "value": "5m",
+                  "description": "Candle interval"
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of time range. Accepts Unix seconds or date string"
+                },
+                {
+                  "disabled": false,
+                  "key": "to",
+                  "value": "<string>",
+                  "description": "End of time range. Accepts Unix seconds or date string"
+                },
+                {
+                  "disabled": false,
+                  "key": "include_synthetic",
+                  "value": "true",
+                  "description": "Whether to include carry-forward candles for no-trade intervals. Defaults to true for continuous charts; set false for raw exchange-only candles."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Max number of candles to return. Weekly candles allow up to 300 rows for a 5-year chart; intraday intervals are capped at 100."
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "3e508678-a924-4984-9cca-3fcad0711dc6",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "candles"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "exchange",
+                      "value": "bithumb"
+                    },
+                    {
+                      "key": "pair",
+                      "value": "BTC/KRW"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "5m"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-06-24T09:00:00Z"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-06-24T10:00:00Z"
+                    },
+                    {
+                      "key": "include_synthetic",
+                      "value": "true"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"exchange\": \"string\",\n      \"region\": \"string\",\n      \"pair\": \"string\",\n      \"interval\": \"string\",\n      \"timestamp\": 8077,\n      \"close_time\": 7032,\n      \"open\": 8357.28079868399,\n      \"high\": 7535.70124931694,\n      \"low\": 7832.013971881464,\n      \"close\": 8410.092331967158,\n      \"is_synthetic\": true,\n      \"trade_count\": 3030,\n      \"volume_base\": 1527.2810414024818,\n      \"volume_quote\": 7018.281338165252\n    },\n    {\n      \"exchange\": \"string\",\n      \"region\": \"string\",\n      \"pair\": \"string\",\n      \"interval\": \"string\",\n      \"timestamp\": 9005,\n      \"close_time\": 6719,\n      \"open\": 7037.525616594762,\n      \"high\": 766.2043187898981,\n      \"low\": 1174.4045604370424,\n      \"close\": 1139.3398071675742,\n      \"is_synthetic\": false,\n      \"trade_count\": 8011,\n      \"volume_base\": 6128.871272585135,\n      \"volume_quote\": 9962.370406218204\n    }\n  ],\n  \"meta\": {\n    \"limit\": 7890,\n    \"offset\": 4481,\n    \"credits_used\": 1311,\n    \"cached\": true,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 278,\n    \"watermark\": 7649\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseExchangeCandleItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fb150c3b-1fad-4077-8678-62e4055614ad",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "candles"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "exchange",
+                      "value": "bithumb"
+                    },
+                    {
+                      "key": "pair",
+                      "value": "BTC/KRW"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "5m"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-06-24T09:00:00Z"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-06-24T10:00:00Z"
+                    },
+                    {
+                      "key": "include_synthetic",
+                      "value": "true"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "641ff1e4-cac2-48d0-85e4-f5d5d6b01edb",
+          "name": "Exchange Market Coverage",
+          "request": {
+            "name": "Exchange Market Coverage",
+            "description": {
+              "content": "Returns covered spot markets with latest ticker metrics, candle availability, technical score, and data status.\n\n**Ticker fields:** latest price, 24h open/high/low, previous close, signed 24h price and percent change, and 24h base/quote volume when the exchange provides them.\n\nUse this endpoint to discover which Asian exchange markets have persisted market data. Use the returned `pair` values with `/exchange/candles` for historical OHLCV.\n\n**bitFlyer note:** bitFlyer coverage is currently strongest for weekly (`1w`) OHLCV; latest ticker and shorter candle intervals may be unavailable.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "exchange",
+                "coverage"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "<string>",
+                  "description": "Exchange identifier. When omitted, returns all supported exchanges."
+                },
+                {
+                  "disabled": false,
+                  "key": "q",
+                  "value": "<string>",
+                  "description": "Free-text search over pair, base currency, or quote currency"
+                },
+                {
+                  "disabled": false,
+                  "key": "quote",
+                  "value": "<string>",
+                  "description": "Quote currency filter"
+                },
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "spot",
+                  "description": "Market type"
+                },
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>",
+                  "description": "Market status filter"
+                },
+                {
+                  "disabled": false,
+                  "key": "data_status",
+                  "value": "<string>",
+                  "description": "Market data coverage status filter"
+                },
+                {
+                  "disabled": false,
+                  "key": "sort_by",
+                  "value": "pair",
+                  "description": "Sort field"
+                },
+                {
+                  "disabled": false,
+                  "key": "order",
+                  "value": "asc",
+                  "description": "Sort order"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "c579e536-cc42-4655-8d17-e3310fe40782",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "coverage"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "exchange",
+                      "value": "bithumb"
+                    },
+                    {
+                      "key": "q",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "quote",
+                      "value": "KRW"
+                    },
+                    {
+                      "key": "type",
+                      "value": "spot"
+                    },
+                    {
+                      "key": "status",
+                      "value": "active"
+                    },
+                    {
+                      "key": "data_status",
+                      "value": "covered"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "pair"
+                    },
+                    {
+                      "key": "order",
+                      "value": "asc"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"exchange\": \"string\",\n      \"region\": \"string\",\n      \"pair\": \"string\",\n      \"base\": \"string\",\n      \"quote\": \"string\",\n      \"type\": \"string\",\n      \"status\": \"string\",\n      \"active\": true,\n      \"change_24h_abs\": 8045.956020418446,\n      \"change_24h_pct\": 9465.654689346213,\n      \"data_actionability\": \"string\",\n      \"data_status\": \"string\",\n      \"high_24h\": 2534.428803064176,\n      \"latest_4h_candle_at\": 4113,\n      \"latest_5m_candle_at\": 9164,\n      \"latest_candle_at\": 9010,\n      \"latest_price\": 1021.6958639177532,\n      \"latest_ticker_at\": 2685,\n      \"latest_weekly_candle_at\": 4673,\n      \"listing_date\": 5588,\n      \"low_24h\": 9478.712114871172,\n      \"open_24h\": 4774.877357297624,\n      \"prev_close\": 7010.330881200094,\n      \"technical_score\": 845.3426373745265,\n      \"technical_score_at\": 1741,\n      \"technical_score_label\": \"string\",\n      \"volume_24h_base\": 8385.538139710754,\n      \"volume_24h_quote\": 1947.033537986661\n    },\n    {\n      \"exchange\": \"string\",\n      \"region\": \"string\",\n      \"pair\": \"string\",\n      \"base\": \"string\",\n      \"quote\": \"string\",\n      \"type\": \"string\",\n      \"status\": \"string\",\n      \"active\": false,\n      \"change_24h_abs\": 2578.4356130352494,\n      \"change_24h_pct\": 9712.099521297467,\n      \"data_actionability\": \"string\",\n      \"data_status\": \"string\",\n      \"high_24h\": 5576.656455978126,\n      \"latest_4h_candle_at\": 1439,\n      \"latest_5m_candle_at\": 1188,\n      \"latest_candle_at\": 422,\n      \"latest_price\": 5356.372559629844,\n      \"latest_ticker_at\": 2857,\n      \"latest_weekly_candle_at\": 8831,\n      \"listing_date\": 6289,\n      \"low_24h\": 373.7702710025714,\n      \"open_24h\": 111.5185083343373,\n      \"prev_close\": 675.4597396621831,\n      \"technical_score\": 6860.914657875373,\n      \"technical_score_at\": 4788,\n      \"technical_score_label\": \"string\",\n      \"volume_24h_base\": 582.1720476324599,\n      \"volume_24h_quote\": 9383.389678660586\n    }\n  ],\n  \"meta\": {\n    \"limit\": 8687,\n    \"offset\": 4370,\n    \"credits_used\": 4217,\n    \"cached\": false,\n    \"empty_reason\": \"string\",\n    \"has_more\": false,\n    \"total\": 1879,\n    \"watermark\": 783\n  },\n  \"$schema\": \"https://example.com/schemas/DataResponseExchangeCoverageItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "67f7ae62-5992-4e0c-a8c5-0d39b7e5dee2",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "coverage"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "exchange",
+                      "value": "bithumb"
+                    },
+                    {
+                      "key": "q",
+                      "value": "BTC"
+                    },
+                    {
+                      "key": "quote",
+                      "value": "KRW"
+                    },
+                    {
+                      "key": "type",
+                      "value": "spot"
+                    },
+                    {
+                      "key": "status",
+                      "value": "active"
+                    },
+                    {
+                      "key": "data_status",
+                      "value": "covered"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "pair"
+                    },
+                    {
+                      "key": "order",
+                      "value": "asc"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7f230d63-737c-4cc5-b283-b9bb44f0a12b",
+          "name": "Exchange Order Book Depth",
+          "request": {
+            "name": "Exchange Order Book Depth",
+            "description": {
+              "content": "Returns order book bid/ask levels with computed stats.\n\n**Included fields:** spread, spread percentage, mid-price, and total bid/ask depth.\n\nUse `limit` to control the number of price levels (1–100, default 20). Set `type=swap` to query perpetual contract order books instead of spot.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "exchange",
+                "depth"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "pair",
+                  "value": "<string>",
+                  "description": "(Required) Trading pair (e.g. BTC/USDT)"
+                },
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "spot",
+                  "description": "Market type: spot for spot trading, swap/perpetual/perp for perpetual contracts"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Number of price levels (1-100)"
+                },
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "binance",
+                  "description": "Exchange identifier. Note: hyperliquid uses USDC-settled perps (e.g. BTC/USDC:USDC); pass USDC-quoted pairs when querying hyperliquid."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "8eb5bb78-216d-4624-b1bc-dd3fa20cd3dc",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "depth"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pair",
+                      "value": "BTC/USDT"
+                    },
+                    {
+                      "key": "type",
+                      "value": "spot"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"bids\": [\n        {\n          \"price\": 8952.543286035485,\n          \"amount\": 2051.1273296156983\n        },\n        {\n          \"price\": 5283.3597432252955,\n          \"amount\": 9268.27390905008\n        }\n      ],\n      \"asks\": [\n        {\n          \"price\": 1622.706768615083,\n          \"amount\": 3962.8446537725827\n        },\n        {\n          \"price\": 7825.918257183537,\n          \"amount\": 1465.440799019163\n        }\n      ],\n      \"spread\": 183.03563928338428,\n      \"spread_pct\": 5521.7893176111,\n      \"bid_depth\": 5949.470065517199,\n      \"ask_depth\": 3464.9088516995585,\n      \"mid_price\": 8104.6387347491855\n    },\n    {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"bids\": [\n        {\n          \"price\": 924.654078297148,\n          \"amount\": 4585.508269566441\n        },\n        {\n          \"price\": 1443.0747532468413,\n          \"amount\": 1195.5895705550424\n        }\n      ],\n      \"asks\": [\n        {\n          \"price\": 4689.299380190007,\n          \"amount\": 8204.306444341777\n        },\n        {\n          \"price\": 4419.2544695675615,\n          \"amount\": 6345.155411134144\n        }\n      ],\n      \"spread\": 6925.254398122332,\n      \"spread_pct\": 2579.520830649894,\n      \"bid_depth\": 485.8025785156417,\n      \"ask_depth\": 6071.703846729299,\n      \"mid_price\": 5786.929775010138\n    }\n  ],\n  \"meta\": {\n    \"credits_used\": 2951,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/SimpleListResponseExchangeDepthItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cebeae05-3174-462a-a0f1-979718b3dc15",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "depth"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pair",
+                      "value": "BTC/USDT"
+                    },
+                    {
+                      "key": "type",
+                      "value": "spot"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "880deda7-dd17-4d28-8d49-db38a4b2c4e3",
+          "name": "Exchange Funding Rate History",
+          "request": {
+            "name": "Exchange Funding Rate History",
+            "description": {
+              "content": "Returns historical funding rate records for a perpetual contract.\n\n**Pagination:** use `from` to set the start time and `limit` to control result count. For longer history, pass the last returned timestamp as the next `from` value.\n\n**Note:** not all exchanges support historical queries via `from`; some only return recent data regardless.\n\nFor the latest funding rate snapshot, see `/exchange/perp?fields=funding`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "exchange",
+                "funding-history"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "pair",
+                  "value": "<string>",
+                  "description": "(Required) Trading pair (e.g. BTC/USDT)"
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD, ISO8601). Not all exchanges support historical queries; some only return recent data regardless of this value."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Max number of records. For longer history, paginate using the last returned timestamp as the next from value."
+                },
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "binance",
+                  "description": "Exchange identifier. Note: hyperliquid uses USDC-settled perps (e.g. BTC/USDC:USDC); pass USDC-quoted pairs when querying hyperliquid."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "fe8d40b3-3b09-4e8c-b8c1-128745cf45b4",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "funding-history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pair",
+                      "value": "BTC/USDT"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"funding_rate\": 694.9647228372579,\n      \"timestamp\": 2441,\n      \"funding_interval_hours\": 4111,\n      \"funding_rate_1h\": 8531.813133907881,\n      \"funding_rate_8h\": 1556.439141484911,\n      \"funding_rate_annualized\": 1532.5617590088525,\n      \"funding_rate_raw\": 5790.803439386255\n    },\n    {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"funding_rate\": 7618.079555368221,\n      \"timestamp\": 8417,\n      \"funding_interval_hours\": 1857,\n      \"funding_rate_1h\": 9708.638761218634,\n      \"funding_rate_8h\": 5800.8446167866,\n      \"funding_rate_annualized\": 6058.996169671615,\n      \"funding_rate_raw\": 5797.9643739789735\n    }\n  ],\n  \"meta\": {\n    \"credits_used\": 5421,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/SimpleListResponseExchangeFundingHistoryItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8eaeaa3c-332f-4603-a17a-f51ac65f80c9",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "funding-history"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pair",
+                      "value": "BTC/USDT"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c7b490f9-7eb9-4e93-ae9a-8d006df4265c",
+          "name": "Exchange OHLCV Candlesticks",
+          "request": {
+            "name": "Exchange OHLCV Candlesticks",
+            "description": {
+              "content": "Returns OHLCV candlestick data with period summary stats (high, low, total volume).\n\n**Intervals:** 15 options from `1m` to `1M`.\n\n**Pagination:** use `from` to set the start time and `limit` to control candle count. For longer ranges, pass the last returned candle's timestamp as the next `from` value. Exchange-side limits vary (200–1000 per request).\n\nSet `type=swap` to query perpetual contract candles instead of spot.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "exchange",
+                "klines"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "pair",
+                  "value": "<string>",
+                  "description": "(Required) Trading pair (e.g. BTC/USDT)"
+                },
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "spot",
+                  "description": "Market type: spot for spot trading, swap/perpetual/perp for perpetual contracts"
+                },
+                {
+                  "disabled": false,
+                  "key": "interval",
+                  "value": "1h",
+                  "description": "Candle size — bucket duration for each returned OHLCV row. This endpoint uses `interval` only; it does NOT accept `time_range`. Use `from` + `limit` to control the window."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD, ISO8601)"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Max number of candles to return. Exchange may cap lower (e.g. 200-1000). For longer ranges, paginate using the last returned timestamp as the next from value."
+                },
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "binance",
+                  "description": "Exchange identifier. Note: hyperliquid uses USDC-settled perps (e.g. BTC/USDC:USDC); pass USDC-quoted pairs when querying hyperliquid."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "fa0cf6e6-775a-4a59-bf78-0a1741616e9b",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "klines"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pair",
+                      "value": "BTC/USDT"
+                    },
+                    {
+                      "key": "type",
+                      "value": "spot"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "1h"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"interval\": \"string\",\n      \"candles\": [\n        {\n          \"timestamp\": 8507,\n          \"open\": 2140.7456950776027,\n          \"high\": 1008.7846319153571,\n          \"low\": 7145.9545372553275,\n          \"close\": 6963.141035022071,\n          \"volume\": 499.8183977138793\n        },\n        {\n          \"timestamp\": 6791,\n          \"open\": 4919.848338283878,\n          \"high\": 5126.117911637117,\n          \"low\": 9318.643850986058,\n          \"close\": 7876.752617009234,\n          \"volume\": 8613.591395571382\n        }\n      ],\n      \"count\": 3105,\n      \"period_high\": 2485.2539685810216,\n      \"period_low\": 827.0066399002129,\n      \"period_volume\": 6034.703712840705,\n      \"period_start\": \"string\",\n      \"period_end\": \"string\"\n    },\n    {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"interval\": \"string\",\n      \"candles\": [\n        {\n          \"timestamp\": 5638,\n          \"open\": 8429.933328512936,\n          \"high\": 6706.66482586017,\n          \"low\": 1382.7751456903136,\n          \"close\": 9149.598679081888,\n          \"volume\": 9678.832822742535\n        },\n        {\n          \"timestamp\": 2792,\n          \"open\": 3358.187009512711,\n          \"high\": 5838.676926627838,\n          \"low\": 2097.7386283385026,\n          \"close\": 8597.848385891932,\n          \"volume\": 9759.544608836573\n        }\n      ],\n      \"count\": 994,\n      \"period_high\": 1154.621897130217,\n      \"period_low\": 9633.842430848237,\n      \"period_volume\": 4776.126820821134,\n      \"period_start\": \"string\",\n      \"period_end\": \"string\"\n    }\n  ],\n  \"meta\": {\n    \"credits_used\": 3771,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/SimpleListResponseExchangeKlineResponse.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ec12852a-32d4-4c5b-95cf-3d5676b2e615",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "klines"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pair",
+                      "value": "BTC/USDT"
+                    },
+                    {
+                      "key": "type",
+                      "value": "spot"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "1h"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5d048ab8-5975-44e9-8363-83fc203fd3e7",
+          "name": "Exchange Long/Short Ratio History",
+          "request": {
+            "name": "Exchange Long/Short Ratio History",
+            "description": {
+              "content": "Returns historical long/short ratio for a perpetual contract.\n\n**Included fields:** ratio value, long account percentage, short account percentage.\n\n**Granularity:** `interval` supports `1h`, `4h`, `1d`.\n\n**Pagination:** use `from` for start time and `limit` for result count. For longer history, pass the last returned timestamp as the next `from` value.\n\n**Note:** not all exchanges support historical queries via `from`; some only return recent data regardless.\n\nJust pass the base pair (e.g. `pair=BTC/USDT`). For aggregated cross-exchange long/short ratio, see `/market/futures`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "exchange",
+                "long-short-ratio"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "pair",
+                  "value": "<string>",
+                  "description": "(Required) Trading pair (e.g. BTC/USDT)"
+                },
+                {
+                  "disabled": false,
+                  "key": "interval",
+                  "value": "1h",
+                  "description": "Bucket size for each point in the series: `1h`, `4h`, or `1d`. This endpoint uses `interval` only; it does NOT accept `time_range`. Use `from` + `limit` to control the window."
+                },
+                {
+                  "disabled": false,
+                  "key": "from",
+                  "value": "<string>",
+                  "description": "Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD, ISO8601). Binance only retains the last 30 days of data; other exchanges may have different limits."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Max number of records. For longer history, paginate using the last returned timestamp as the next from value."
+                },
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "binance",
+                  "description": "Exchange identifier"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "61cd8827-d68c-4a52-88f1-1b511e8d50a5",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "long-short-ratio"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pair",
+                      "value": "BTC/USDT"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "1h"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"long_short_ratio\": 9198.778021032505,\n      \"timestamp\": 7874\n    },\n    {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"long_short_ratio\": 7305.958068292124,\n      \"timestamp\": 1753\n    }\n  ],\n  \"meta\": {\n    \"credits_used\": 8872,\n    \"cached\": false,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/SimpleListResponseExchangeLongShortRatioItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "06250caa-cbba-4dcb-8ac6-3bcf0c27d787",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "long-short-ratio"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pair",
+                      "value": "BTC/USDT"
+                    },
+                    {
+                      "key": "interval",
+                      "value": "1h"
+                    },
+                    {
+                      "key": "from",
+                      "value": "2026-03-01"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "64c23fb8-fa84-413b-8c34-d99a1052137c",
+          "name": "Exchange Trading Pairs",
+          "request": {
+            "name": "Exchange Trading Pairs",
+            "description": {
+              "content": "Returns trading pairs available on an exchange.\n\n**Filters:** `type` (`spot`, `swap`, `future`, `option`) or free-text `search`.\n\n**Included fields:** pair name, base/quote currencies, market type, active status, and default fee rates.\n\nUse the returned `pair` values as the `pair` parameter in other exchange endpoints.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "exchange",
+                "markets"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "<string>",
+                  "description": "Exchange identifier. When omitted, searches across all supported exchanges."
+                },
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "<string>",
+                  "description": "Market type filter. Use perpetual or perp for perpetual contracts (alias for swap)."
+                },
+                {
+                  "disabled": false,
+                  "key": "base",
+                  "value": "<string>",
+                  "description": "Filter by base currency"
+                },
+                {
+                  "disabled": false,
+                  "key": "quote",
+                  "value": "<string>",
+                  "description": "Filter by quote currency"
+                },
+                {
+                  "disabled": false,
+                  "key": "search",
+                  "value": "<string>",
+                  "description": "Fuzzy search in pair/base/quote"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Max results"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "666441e6-fe53-4cfb-a042-fb473596d741",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "markets"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    },
+                    {
+                      "key": "type",
+                      "value": "spot"
+                    },
+                    {
+                      "key": "base",
+                      "value": "ETH"
+                    },
+                    {
+                      "key": "quote",
+                      "value": "USDT"
+                    },
+                    {
+                      "key": "search",
+                      "value": "ETH"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"base\": \"string\",\n      \"quote\": \"string\",\n      \"type\": \"string\",\n      \"active\": true,\n      \"maker_fee\": 5566.645322075335,\n      \"taker_fee\": 9052.930512628343\n    },\n    {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"base\": \"string\",\n      \"quote\": \"string\",\n      \"type\": \"string\",\n      \"active\": true,\n      \"maker_fee\": 5906.260999115769,\n      \"taker_fee\": 1686.1861248042565\n    }\n  ],\n  \"meta\": {\n    \"credits_used\": 15,\n    \"cached\": false,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/SimpleListResponseExchangeMarketItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b6cafcda-82f8-44c5-bc23-b7a3166b0ad6",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "markets"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    },
+                    {
+                      "key": "type",
+                      "value": "spot"
+                    },
+                    {
+                      "key": "base",
+                      "value": "ETH"
+                    },
+                    {
+                      "key": "quote",
+                      "value": "USDT"
+                    },
+                    {
+                      "key": "search",
+                      "value": "ETH"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d85cf668-e648-4ed0-8831-2a0260971588",
+          "name": "Exchange Perpetual Contract Snapshot",
+          "request": {
+            "name": "Exchange Perpetual Contract Snapshot",
+            "description": {
+              "content": "Returns a perpetual futures snapshot for a trading pair: funding rate, open interest, mark/index price.\n\n**Available fields** (via `fields`):\n- `funding` — current funding rate, next settlement, mark/index price\n- `oi` — open interest in contracts and USD\n\nJust pass the base pair (e.g. `pair=BTC/USDT`). The swap settle suffix is added automatically from the quote currency, e.g. `BTC/USDT:USDT` or `BTC/USDC:USDC`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "exchange",
+                "perp"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "pair",
+                  "value": "<string>",
+                  "description": "(Required) Trading pair (e.g. BTC/USDT). The swap settle suffix is added automatically from the quote currency, e.g. BTC/USDT:USDT or BTC/USDC:USDC."
+                },
+                {
+                  "disabled": false,
+                  "key": "fields",
+                  "value": "funding,oi",
+                  "description": "Comma-separated fields to include: 'funding' (current funding rate), 'oi' (open interest). Defaults to all fields."
+                },
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "binance",
+                  "description": "Exchange identifier. Hyperliquid uses USDC-settled perps (e.g. BTC/USDC:USDC)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "b6adf166-1850-4554-8547-458e71409b61",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "perp"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pair",
+                      "value": "BTC/USDT"
+                    },
+                    {
+                      "key": "fields",
+                      "value": "funding,oi"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"exchange\": \"string\",\n    \"pair\": \"string\",\n    \"funding\": {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"funding_rate\": 5668.183258481478,\n      \"next_funding\": \"string\",\n      \"mark_price\": 1919.3034575829993,\n      \"index_price\": 351.0187546604193,\n      \"interval\": \"string\",\n      \"funding_interval_hours\": 3249,\n      \"funding_rate_1h\": 5168.055186578557,\n      \"funding_rate_8h\": 4314.219115194953,\n      \"funding_rate_annualized\": 8758.748430824966,\n      \"funding_rate_raw\": 2224.44519108796\n    },\n    \"open_interest\": {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"open_interest_amount\": 5905.573436980371,\n      \"open_interest_usd\": 3766.9086303018685,\n      \"timestamp\": 7610\n    }\n  },\n  \"meta\": {\n    \"credits_used\": 7946,\n    \"cached\": true,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataObjectResponseExchangePerpResponse.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "34fb42dd-53e9-4d1a-9c15-226f1d8ec4ee",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "perp"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pair",
+                      "value": "BTC/USDT"
+                    },
+                    {
+                      "key": "fields",
+                      "value": "funding,oi"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6c3f49f4-8cce-487d-9d76-a4e27acfe3d8",
+          "name": "Exchange Ticker Price",
+          "request": {
+            "name": "Exchange Ticker Price",
+            "description": {
+              "content": "Returns the real-time ticker for a trading pair.\n\n**Included fields:** last price, bid/ask, 24h high/low, 24h volume, 24h price change.\n\nSet `type=swap` to query perpetual contract prices instead of spot. For historical price trends, use `/market/price`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "gateway",
+                "v1",
+                "exchange",
+                "price"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "pair",
+                  "value": "<string>",
+                  "description": "(Required) Trading pair (e.g. BTC/USDT)"
+                },
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "spot",
+                  "description": "Market type: spot for spot trading, swap/perpetual/perp for perpetual contracts"
+                },
+                {
+                  "disabled": false,
+                  "key": "exchange",
+                  "value": "binance",
+                  "description": "Exchange identifier. Note: hyperliquid uses USDC-settled perps (e.g. BTC/USDC:USDC); pass USDC-quoted pairs when querying hyperliquid."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "a0d973a3-1b4a-485a-bacd-ebcf56a52121",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "price"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pair",
+                      "value": "BTC/USDT"
+                    },
+                    {
+                      "key": "type",
+                      "value": "spot"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"last\": 7906.103550792001,\n      \"bid\": 100.72553355849001,\n      \"ask\": 6849.211247043108,\n      \"high_24h\": 4571.418857766449,\n      \"low_24h\": 5279.799898656439,\n      \"volume_24h_base\": 5572.3167315162445,\n      \"change_24h_pct\": 4621.376687208039,\n      \"timestamp\": 3226\n    },\n    {\n      \"exchange\": \"string\",\n      \"pair\": \"string\",\n      \"last\": 4510.15162542885,\n      \"bid\": 4168.916787567385,\n      \"ask\": 583.7663721296971,\n      \"high_24h\": 6102.882601712758,\n      \"low_24h\": 6962.495919447756,\n      \"volume_24h_base\": 8616.233106439393,\n      \"change_24h_pct\": 2336.3252904410615,\n      \"timestamp\": 6209\n    }\n  ],\n  \"meta\": {\n    \"credits_used\": 2058,\n    \"cached\": false,\n    \"empty_reason\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/SimpleListResponseExchangePriceItem.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2b4f28c3-aaac-4d31-82a3-3a9d2ecb4de3",
+              "name": "Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "gateway",
+                    "v1",
+                    "exchange",
+                    "price"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pair",
+                      "value": "BTC/USDT"
+                    },
+                    {
+                      "key": "type",
+                      "value": "spot"
+                    },
+                    {
+                      "key": "exchange",
+                      "value": "binance"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"string\",\n    \"message\": \"string\"\n  },\n  \"$schema\": \"https://example.com/schemas/DataAPIError.json\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "/",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "0433f8a3-0018-452a-b4cf-f62346787234",
+    "name": "Hermod DEX Exchange API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n\n\nContact Support:\n Name: Cyber team\n Email: backend@cybertinolab.com",
+      "type": "text/plain"
+    }
+  }
+}
