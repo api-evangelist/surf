@@ -170,20 +170,6 @@ apis:
     url: openapi/surf-news-api-openapi.yml
   - type: Documentation
     url: https://agents.asksurf.ai/docs/data-api/overview
-- aid: surf:surf-onchain-api
-  name: Surf Onchain API
-  description: >-
-    Query blockchain data directly. Look up transaction details by hash, check gas prices, and run structured
-    or raw SQL queries against indexed blockchain datasets spanning Ethereum, Base, Solana, and more.
-  humanURL: https://agents.asksurf.ai/docs/data-api/overview
-  baseURL: https://api.asksurf.ai/gateway/v1
-  tags:
-  - Onchain
-  properties:
-  - type: OpenAPI
-    url: openapi/surf-onchain-api-openapi.yml
-  - type: Documentation
-    url: https://agents.asksurf.ai/docs/data-api/overview
 - aid: surf:surf-prediction-market-api
   name: Surf Prediction Market API
   description: >-
@@ -302,6 +288,20 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/surf-web-api-openapi.yml
+  - type: Documentation
+    url: https://agents.asksurf.ai/docs/data-api/overview
+- aid: surf:surf-on-chain-api
+  name: Surf On Chain API
+  description: >-
+    Query blockchain data directly. Look up transaction details by hash, check gas prices, and run structured
+    or raw SQL queries against indexed blockchain datasets spanning Ethereum, Base, Solana, and more.
+  humanURL: https://agents.asksurf.ai/docs/chat/overview
+  baseURL: https://api.asksurf.ai/gateway/v1
+  tags:
+  - On Chain
+  properties:
+  - type: OpenAPI
+    url: openapi/surf-on-chain-api-openapi.yml
   - type: Documentation
     url: https://agents.asksurf.ai/docs/data-api/overview
 maintainers:
