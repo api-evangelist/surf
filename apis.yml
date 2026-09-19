@@ -150,6 +150,8 @@ apis:
   humanURL: https://agents.asksurf.ai/docs/data-api/overview
   baseURL: https://api.asksurf.ai/gateway/v1
   tags:
+  - Markets
+  tags_raw:
   - Market
   properties:
   - type: OpenAPI
@@ -253,6 +255,8 @@ apis:
   humanURL: https://agents.asksurf.ai/docs/data-api/overview
   baseURL: https://api.asksurf.ai/gateway/v1
   tags:
+  - Tokens
+  tags_raw:
   - Token
   properties:
   - type: OpenAPI
@@ -298,6 +302,8 @@ apis:
   humanURL: https://agents.asksurf.ai/docs/chat/overview
   baseURL: https://api.asksurf.ai/gateway/v1
   tags:
+  - Onchain
+  tags_raw:
   - On Chain
   properties:
   - type: OpenAPI
