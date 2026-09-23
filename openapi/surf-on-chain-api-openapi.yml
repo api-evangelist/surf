@@ -1,16 +1,16 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   contact:
     email: backend@cybertinolab.com
     name: Cyber team
-  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
-  title: Hermod DEX Onchain API
+  description: Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more.
+  title: Hermod Onchain API
   version: sha-80d3407
 servers:
 - url: /
 tags:
 - description: Query blockchain data directly. Look up transaction details by hash, check gas prices, and run structured or raw SQL queries against indexed blockchain datasets spanning Ethereum, Base, Solana, and more.
-  name: Onchain
+  name: On Chain
 paths:
   /gateway/v1/onchain/bridge/ranking:
     get:
@@ -76,7 +76,7 @@ paths:
       - AccessToken: []
       summary: Bridge Protocol Ranking
       tags:
-      - Onchain
+      - On Chain
   /gateway/v1/onchain/dex/activity:
     get:
       description: 'Active traders, trade count, and USD volume for a DEX **protocol** (or a specific router contract), as a single aggregate or a daily series (`group_by=day`).
@@ -184,7 +184,7 @@ paths:
       - AccessToken: []
       summary: DEX Protocol Activity
       tags:
-      - Onchain
+      - On Chain
   /gateway/v1/onchain/gas-price:
     get:
       description: 'Look up the current gas price for one EVM chain. Example: `chain=ethereum`.
@@ -234,10 +234,59 @@ paths:
       - AccessToken: []
       summary: Current Gas Price
       tags:
-      - Onchain
+      - On Chain
   /gateway/v1/onchain/query:
     post:
-      description: "Send a JSON object describing the query. Example: `{\"source\":\"agent.ethereum_dex_trades\",\"fields\":[\"block_time\"],\"filters\":[{\"field\":\"block_date\",\"op\":\"gte\",\"value\":\"2025-03-01\"}],\"limit\":1}`.\n\nUse this endpoint when you want structured filtering without writing raw SQL. Discover tables and columns first with `GET /v1/onchain/schema`.\n\nKey rules:\n- Source format: `agent.<table_name>`\n- Max 10,000 rows (default 20), 30s timeout\n- Always filter on `block_date` for large tables\n- **Never filter by** `symbol` — it is unindexed (full scan). To resolve a ticker to a contract address, use `GET /v1/search/token?q={symbol}&chain={chain}` and filter by `contract_address` instead\n- For transfer tables, `amount` is decimal-adjusted display units; `amount_raw` is the original base-unit value\n\nData refresh: ~24 hours.\n\nExample\n\n```json\n{\n  \"source\": \"agent.ethereum_dex_trades\",\n  \"fields\": [\"block_time\", \"project\", \"token_pair\", \"amount_usd\", \"taker\"],\n  \"filters\": [\n    {\"field\": \"block_date\", \"op\": \"gte\", \"value\": \"2025-03-01\"},\n    {\"field\": \"project\", \"op\": \"eq\", \"value\": \"uniswap\"},\n    {\"field\": \"amount_usd\", \"op\": \"gte\", \"value\": 100000}\n  ],\n  \"sort\": [{\"field\": \"amount_usd\", \"order\": \"desc\"}],\n  \"limit\": 20\n}\n```"
+      description: 'Send a JSON object describing the query. Example: `{"source":"agent.ethereum_dex_trades","fields":["block_time"],"filters":[{"field":"block_date","op":"gte","value":"2025-03-01"}],"limit":1}`.
+
+
+        Use this endpoint when you want structured filtering without writing raw SQL. Discover tables and columns first with `GET /v1/onchain/schema`.
+
+
+        Key rules:
+
+        - Source format: `agent.`
+
+        - Max 10,000 rows (default 20), 30s timeout
+
+        - Always filter on `block_date` for large tables
+
+        - **Never filter by** `symbol` — it is unindexed (full scan). To resolve a ticker to a contract address, use `GET /v1/search/token?q={symbol}&chain={chain}` and filter by `contract_address` instead
+
+        - For transfer tables, `amount` is decimal-adjusted display units; `amount_raw` is the original base-unit value
+
+
+        Data refresh: ~24 hours.
+
+
+        Example
+
+
+        ```json
+
+        {
+
+        "source": "agent.ethereum_dex_trades",
+
+        "fields": ["block_time", "project", "token_pair", "amount_usd", "taker"],
+
+        "filters": [
+
+        {"field": "block_date", "op": "gte", "value": "2025-03-01"},
+
+        {"field": "project", "op": "eq", "value": "uniswap"},
+
+        {"field": "amount_usd", "op": "gte", "value": 100000}
+
+        ],
+
+        "sort": [{"field": "amount_usd", "order": "desc"}],
+
+        "limit": 20
+
+        }
+
+        ```'
       operationId: onchain-structured-query
       requestBody:
         content:
@@ -262,7 +311,7 @@ paths:
       - AccessToken: []
       summary: Blockchain Structured Query
       tags:
-      - Onchain
+      - On Chain
   /gateway/v1/onchain/schema:
     get:
       description: 'Discover tables and columns before writing SQL or structured queries. Example: call this endpoint first, then use `agent.ethereum_dex_trades` in `/v1/onchain/query` or `/v1/onchain/sql`.
@@ -290,10 +339,54 @@ paths:
       - AccessToken: []
       summary: On-Chain Table Schema
       tags:
-      - Onchain
+      - On Chain
   /gateway/v1/onchain/sql:
     post:
-      description: "Run a raw ClickHouse `SELECT` query against blockchain data.\n\nAll tables live in the **agent** database. Discover tables and columns first with `GET /v1/onchain/schema`.\n\nSend a JSON object, not raw SQL text. Example: `{\"sql\":\"SELECT ...\",\"max_rows\":1000}`.\n\nRules\n- Only SELECT/WITH statements allowed (read-only)\n- All table references must be database-qualified: `agent.<table_name>`\n- Max 10,000 rows (default 1,000), 30s timeout\n- **Always filter on block_date or block_number** — partition key, without it queries will timeout\n- **Never resolve token symbols here** — `symbol` columns are unindexed (full scan) and symbol matches surface scam clones. Use `GET /v1/search/token?q={symbol}&chain={chain}` to get the contract address, then filter by `contract_address`\n- For transfer tables, `amount` is decimal-adjusted display units; `amount_raw` is the original base-unit value\n- Avoid `SELECT *` on large tables — specify only the columns you need\n- Use single quotes for ClickHouse strings. Example: `toDate('2026-04-07')`.\n\nData refresh: ~24 hours.\n\nExample\n\n```json\n{\n  \"sql\": \"SELECT block_time, token_pair, amount_usd, taker, tx_hash FROM agent.ethereum_dex_trades WHERE block_date >= today() - 7 AND project = 'uniswap' AND amount_usd > 100000 ORDER BY amount_usd DESC LIMIT 20\",\n  \"max_rows\": 1000\n}\n```"
+      description: 'Run a raw ClickHouse `SELECT` query against blockchain data.
+
+
+        All tables live in the **agent** database. Discover tables and columns first with `GET /v1/onchain/schema`.
+
+
+        Send a JSON object, not raw SQL text. Example: `{"sql":"SELECT ...","max_rows":1000}`.
+
+
+        Rules
+
+        - Only SELECT/WITH statements allowed (read-only)
+
+        - All table references must be database-qualified: `agent.`
+
+        - Max 10,000 rows (default 1,000), 30s timeout
+
+        - **Always filter on block_date or block_number** — partition key, without it queries will timeout
+
+        - **Never resolve token symbols here** — `symbol` columns are unindexed (full scan) and symbol matches surface scam clones. Use `GET /v1/search/token?q={symbol}&chain={chain}` to get the contract address, then filter by `contract_address`
+
+        - For transfer tables, `amount` is decimal-adjusted display units; `amount_raw` is the original base-unit value
+
+        - Avoid `SELECT *` on large tables — specify only the columns you need
+
+        - Use single quotes for ClickHouse strings. Example: `toDate(''2026-04-07'')`.
+
+
+        Data refresh: ~24 hours.
+
+
+        Example
+
+
+        ```json
+
+        {
+
+        "sql": "SELECT block_time, token_pair, amount_usd, taker, tx_hash FROM agent.ethereum_dex_trades WHERE block_date >= today() - 7 AND project = ''uniswap'' AND amount_usd > 100000 ORDER BY amount_usd DESC LIMIT 20",
+
+        "max_rows": 1000
+
+        }
+
+        ```'
       operationId: onchain-sql
       requestBody:
         content:
@@ -318,7 +411,7 @@ paths:
       - AccessToken: []
       summary: Blockchain SQL Query
       tags:
-      - Onchain
+      - On Chain
   /gateway/v1/onchain/tx:
     get:
       description: 'Look up one transaction by hash. Example: `chain=ethereum` with a 0x-prefixed 64-character hash.
@@ -387,7 +480,7 @@ paths:
       - AccessToken: []
       summary: Transaction Details by Hash
       tags:
-      - Onchain
+      - On Chain
   /gateway/v1/onchain/yield/ranking:
     get:
       description: 'List individual DeFi yield pools ranked by APY or TVL. Example: filter by protocol like `lido` or `aave` for pool-level yield data.'
@@ -470,135 +563,9 @@ paths:
       - AccessToken: []
       summary: Yield Pool Ranking
       tags:
-      - Onchain
+      - On Chain
 components:
   schemas:
-    OffsetMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-        has_more:
-          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
-          type: boolean
-        limit:
-          description: Maximum number of items returned in this response
-          format: int64
-          type: integer
-        offset:
-          description: Number of items skipped (pagination offset)
-          format: int64
-          type: integer
-        total:
-          description: Total number of matching items (before pagination). Omitted when total is unknown.
-          format: int64
-          type: integer
-        watermark:
-          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
-          format: int64
-          type: integer
-      required:
-      - limit
-      - offset
-      - credits_used
-      - cached
-      type: object
-    OnchainSchemaCol:
-      additionalProperties: false
-      properties:
-        comment:
-          description: Column comment or description
-          type: string
-        name:
-          description: Column name
-          type: string
-        type:
-          description: Column data type like `UInt64`, `String`, or `DateTime`
-          type: string
-      required:
-      - name
-      - type
-      type: object
-    DataAPIError:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
-          type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
-      required:
-      - error
-      type: object
-    DataObjectResponseOnchainGasPriceItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataObjectResponseOnchainGasPriceItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          $ref: '#/components/schemas/OnchainGasPriceItem'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    ObjectResponseMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-      required:
-      - credits_used
-      - cached
-      type: object
-    DataResponseBridgeRankingItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseBridgeRankingItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/BridgeRankingItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
     StructuredSort:
       additionalProperties: false
       properties:
@@ -615,95 +582,62 @@ components:
       required:
       - field
       type: object
-    HumaOnchainSQLInputBody:
+    BridgeRankingItem:
       additionalProperties: false
       properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/HumaOnchainSQLInputBody.json
-          format: uri
-          readOnly: true
+        project:
+          description: Bridge protocol name
           type: string
-        max_rows:
-          default: 1000
-          description: Maximum number of rows to return
-          examples:
-          - 1000
+        tx_count:
+          description: Total number of bridge transfers
           format: int64
-          maximum: 10000
-          minimum: 1
           type: integer
-        sql:
-          description: 'Send a JSON object with the sql field. Example: {"sql":"SELECT 1"}. Use GET /v1/onchain/schema for tables and columns. Transfer table amount is decimal-adjusted; amount_raw is the original base-unit value. Use single quotes for ClickHouse strings. Example: toDate(''2026-04-07'').'
-          examples:
-          - SELECT block_date, project, symbol, apy, tvl_usd FROM agent.ethereum_yields_daily WHERE block_date >= today() - 7 ORDER BY apy DESC LIMIT 10
-          type: string
-      required:
-      - sql
-      type: object
-    DataResponseOnchainSchemaTable:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseOnchainSchemaTable.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/OnchainSchemaTable'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    OnchainGasPriceItem:
-      additionalProperties: false
-      properties:
-        chain:
-          description: Canonical chain name
-          type: string
-        gas_price:
-          description: Gas price in wei
-          type: string
-        gas_price_gwei:
-          description: Gas price in Gwei
+        volume_usd:
+          description: Total USD volume in the time range
           format: double
           type: number
       required:
-      - chain
-      - gas_price
-      - gas_price_gwei
+      - project
+      - volume_usd
+      - tx_count
       type: object
-    WalletLabelItem:
+    DataAPIErrorDetail:
       additionalProperties: false
       properties:
-        address:
-          description: Wallet address
+        code:
           type: string
-        entity_name:
-          description: Name of the associated entity like `Binance` or `Aave`
+        message:
           type: string
-        entity_type:
-          description: Type of entity like `exchange`, `fund`, or `whale`
-          type: string
-        labels:
-          description: List of labels assigned to this address
-          items:
-            $ref: '#/components/schemas/WalletLabelInfo'
-          type:
-          - array
-          - 'null'
       required:
-      - address
-      - labels
+      - code
+      - message
+      type: object
+    DexActivityItem:
+      additionalProperties: false
+      properties:
+        active_traders:
+          description: Distinct swap initiators — uniq(taker), ~1% error.
+          format: int64
+          type: integer
+        enriched_ratio:
+          description: Fraction of trades that are USD-priced (0..1) — lets the caller judge volume_usd completeness. Absent when there are no trades in the window.
+          format: double
+          type: number
+        timestamp:
+          description: Start-of-day Unix seconds; present only when group_by=day.
+          format: int64
+          type: integer
+        trades:
+          description: Trade count.
+          format: int64
+          type: integer
+        volume_usd:
+          description: USD volume. Absent when no trades in the window are USD-priced; undercounts recent days (USD pricing lags ~3 days).
+          format: double
+          type: number
+      required:
+      - active_traders
+      - trades
       type: object
     DataResponseOnchainRow:
       additionalProperties: false
@@ -741,52 +675,99 @@ components:
       required:
       - label
       type: object
-    StructuredFilter:
+    DataResponseOnchainSchemaTable:
       additionalProperties: false
       properties:
-        field:
-          description: Column name to filter on like `block_number` or `from_address`
+        $schema:
+          description: A URL to the JSON Schema for this object.
           examples:
-          - block_number
+          - https://example.com/schemas/DataResponseOnchainSchemaTable.json
+          format: uri
+          readOnly: true
           type: string
-        op:
-          description: 'Comparison operator: eq, neq, gt, gte, lt, lte, like, in, not_in. For `in`/`not_in`, value must be a JSON array'
-          examples:
-          - eq
-          type: string
-        value:
-          description: Comparison value. Use a JSON array for `in`/`not_in` operators like `[21000000, 21000001]`
+        data:
+          items:
+            $ref: '#/components/schemas/OnchainSchemaTable'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
       required:
-      - field
-      - op
-      - value
+      - data
+      - meta
       type: object
-    DexActivityItem:
+    OnchainSchemaCol:
       additionalProperties: false
       properties:
-        active_traders:
-          description: Distinct swap initiators — uniq(taker), ~1% error.
-          format: int64
-          type: integer
-        enriched_ratio:
-          description: Fraction of trades that are USD-priced (0..1) — lets the caller judge volume_usd completeness. Absent when there are no trades in the window.
-          format: double
-          type: number
-        timestamp:
-          description: Start-of-day Unix seconds; present only when group_by=day.
-          format: int64
-          type: integer
-        trades:
-          description: Trade count.
-          format: int64
-          type: integer
-        volume_usd:
-          description: USD volume. Absent when no trades in the window are USD-priced; undercounts recent days (USD pricing lags ~3 days).
-          format: double
-          type: number
+        comment:
+          description: Column comment or description
+          type: string
+        name:
+          description: Column name
+          type: string
+        type:
+          description: Column data type like `UInt64`, `String`, or `DateTime`
+          type: string
       required:
-      - active_traders
-      - trades
+      - name
+      - type
+      type: object
+    StructuredQuery:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/StructuredQuery.json
+          format: uri
+          readOnly: true
+          type: string
+        fields:
+          description: Columns to return. Omit to return all columns.
+          examples:
+          - - project
+            - symbol
+            - apy
+            - tvl_usd
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        filters:
+          description: WHERE conditions (ANDed together)
+          items:
+            $ref: '#/components/schemas/StructuredFilter'
+          type:
+          - array
+          - 'null'
+        limit:
+          description: Max rows to return. Default 20, max 10000
+          examples:
+          - 20
+          format: int64
+          type: integer
+        offset:
+          description: Rows to skip for pagination. Default 0
+          examples:
+          - 0
+          format: int64
+          type: integer
+        sort:
+          description: ORDER BY clauses
+          items:
+            $ref: '#/components/schemas/StructuredSort'
+          type:
+          - array
+          - 'null'
+        source:
+          description: Fully-qualified table name like `agent.ethereum_yields_daily`. Use GET /v1/onchain/schema for available tables.
+          examples:
+          - agent.ethereum_yields_daily
+          type: string
+      required:
+      - source
       type: object
     DataResponseOnchainTxItem:
       additionalProperties: false
@@ -809,6 +790,21 @@ components:
       required:
       - data
       - meta
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
       type: object
     OnchainTxItem:
       additionalProperties: false
@@ -918,114 +914,6 @@ components:
       - s
       - accessList
       type: object
-    DataResponseDexActivityItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseDexActivityItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/DexActivityItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    StructuredQuery:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/StructuredQuery.json
-          format: uri
-          readOnly: true
-          type: string
-        fields:
-          description: Columns to return. Omit to return all columns.
-          examples:
-          - - project
-            - symbol
-            - apy
-            - tvl_usd
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        filters:
-          description: WHERE conditions (ANDed together)
-          items:
-            $ref: '#/components/schemas/StructuredFilter'
-          type:
-          - array
-          - 'null'
-        limit:
-          description: Max rows to return. Default 20, max 10000
-          examples:
-          - 20
-          format: int64
-          type: integer
-        offset:
-          description: Rows to skip for pagination. Default 0
-          examples:
-          - 0
-          format: int64
-          type: integer
-        sort:
-          description: ORDER BY clauses
-          items:
-            $ref: '#/components/schemas/StructuredSort'
-          type:
-          - array
-          - 'null'
-        source:
-          description: Fully-qualified table name like `agent.ethereum_yields_daily`. Use GET /v1/onchain/schema for available tables.
-          examples:
-          - agent.ethereum_yields_daily
-          type: string
-      required:
-      - source
-      type: object
-    DataAPIErrorDetail:
-      additionalProperties: false
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
-      type: object
-    BridgeRankingItem:
-      additionalProperties: false
-      properties:
-        project:
-          description: Bridge protocol name
-          type: string
-        tx_count:
-          description: Total number of bridge transfers
-          format: int64
-          type: integer
-        volume_usd:
-          description: Total USD volume in the time range
-          format: double
-          type: number
-      required:
-      - project
-      - volume_usd
-      - tx_count
-      type: object
     AccessListEntry:
       additionalProperties: false
       properties:
@@ -1088,6 +976,89 @@ components:
       - apy_reward
       - tvl_usd
       type: object
+    DataResponseBridgeRankingItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseBridgeRankingItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/BridgeRankingItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    StructuredFilter:
+      additionalProperties: false
+      properties:
+        field:
+          description: Column name to filter on like `block_number` or `from_address`
+          examples:
+          - block_number
+          type: string
+        op:
+          description: 'Comparison operator: eq, neq, gt, gte, lt, lte, like, in, not_in. For `in`/`not_in`, value must be a JSON array'
+          examples:
+          - eq
+          type: string
+        value:
+          description: Comparison value. Use a JSON array for `in`/`not_in` operators like `[21000000, 21000001]`
+      required:
+      - field
+      - op
+      - value
+      type: object
+    DataObjectResponseOnchainGasPriceItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseOnchainGasPriceItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/OnchainGasPriceItem'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    WalletLabelItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address
+          type: string
+        entity_name:
+          description: Name of the associated entity like `Binance` or `Aave`
+          type: string
+        entity_type:
+          description: Type of entity like `exchange`, `fund`, or `whale`
+          type: string
+        labels:
+          description: List of labels assigned to this address
+          items:
+            $ref: '#/components/schemas/WalletLabelInfo'
+          type:
+          - array
+          - 'null'
+      required:
+      - address
+      - labels
+      type: object
     OnchainSchemaTable:
       additionalProperties: false
       properties:
@@ -1109,6 +1080,61 @@ components:
       - table
       - columns
       type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
     DataResponseYieldRankingItem:
       additionalProperties: false
       properties:
@@ -1122,6 +1148,73 @@ components:
         data:
           items:
             $ref: '#/components/schemas/YieldRankingItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    OnchainGasPriceItem:
+      additionalProperties: false
+      properties:
+        chain:
+          description: Canonical chain name
+          type: string
+        gas_price:
+          description: Gas price in wei
+          type: string
+        gas_price_gwei:
+          description: Gas price in Gwei
+          format: double
+          type: number
+      required:
+      - chain
+      - gas_price
+      - gas_price_gwei
+      type: object
+    HumaOnchainSQLInputBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/HumaOnchainSQLInputBody.json
+          format: uri
+          readOnly: true
+          type: string
+        max_rows:
+          default: 1000
+          description: Maximum number of rows to return
+          examples:
+          - 1000
+          format: int64
+          maximum: 10000
+          minimum: 1
+          type: integer
+        sql:
+          description: 'Send a JSON object with the sql field. Example: {"sql":"SELECT 1"}. Use GET /v1/onchain/schema for tables and columns. Transfer table amount is decimal-adjusted; amount_raw is the original base-unit value. Use single quotes for ClickHouse strings. Example: toDate(''2026-04-07'').'
+          examples:
+          - SELECT block_date, project, symbol, apy, tvl_usd FROM agent.ethereum_yields_daily WHERE block_date >= today() - 7 ORDER BY apy DESC LIMIT 10
+          type: string
+      required:
+      - sql
+      type: object
+    DataResponseDexActivityItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseDexActivityItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/DexActivityItem'
           type:
           - array
           - 'null'

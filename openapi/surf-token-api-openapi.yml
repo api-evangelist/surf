@@ -1,10 +1,10 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   contact:
     email: backend@cybertinolab.com
     name: Cyber team
-  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
-  title: Hermod DEX Token API
+  description: Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more.
+  title: Hermod Token API
   version: sha-80d3407
 servers:
 - url: /
@@ -598,7 +598,7 @@ paths:
       - Token
 components:
   schemas:
-    OffsetMeta:
+    TransferStatsMeta:
       additionalProperties: false
       properties:
         cached:
@@ -609,91 +609,15 @@ components:
           format: int64
           type: integer
         empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
+          description: Hint explaining why the data object is empty, when applicable
           type: string
-        has_more:
-          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
-          type: boolean
-        limit:
-          description: Maximum number of items returned in this response
-          format: int64
-          type: integer
-        offset:
-          description: Number of items skipped (pagination offset)
-          format: int64
-          type: integer
-        total:
-          description: Total number of matching items (before pagination). Omitted when total is unknown.
-          format: int64
-          type: integer
-        watermark:
-          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
-          format: int64
-          type: integer
+        enriched_ratio:
+          description: Fraction of transfers with a USD price (0..1). Low/zero means USD-value fields are partial.
+          format: double
+          type: number
       required:
-      - limit
-      - offset
       - credits_used
       - cached
-      type: object
-    DataResponseDexTradeItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseDexTradeItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/DexTradeItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataAPIError:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
-          type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
-      required:
-      - error
-      type: object
-    DataResponseTokenTransferItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseTokenTransferItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/TokenTransferItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
       type: object
     DexTradeItem:
       additionalProperties: false
@@ -757,107 +681,51 @@ components:
       - taker
       - tx_hash
       type: object
-    WalletLabelItem:
+    DataAPIErrorDetail:
       additionalProperties: false
       properties:
-        address:
-          description: Wallet address
+        code:
           type: string
-        entity_name:
-          description: Name of the associated entity like `Binance` or `Aave`
+        message:
           type: string
-        entity_type:
-          description: Type of entity like `exchange`, `fund`, or `whale`
-          type: string
-        labels:
-          description: List of labels assigned to this address
-          items:
-            $ref: '#/components/schemas/WalletLabelInfo'
-          type:
-          - array
-          - 'null'
       required:
-      - address
-      - labels
+      - code
+      - message
       type: object
-    TransferStatsResponse:
+    DataResponseTransferCounterpartyItem:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/TransferStatsResponse.json
+          - https://example.com/schemas/DataResponseTransferCounterpartyItem.json
           format: uri
           readOnly: true
           type: string
         data:
-          $ref: '#/components/schemas/TransferStatsBody'
+          items:
+            $ref: '#/components/schemas/TransferCounterpartyItem'
+          type:
+          - array
+          - 'null'
         meta:
-          $ref: '#/components/schemas/TransferStatsMeta'
+          $ref: '#/components/schemas/OffsetMeta'
       required:
       - data
       - meta
       type: object
-    TransferCounterpartyItem:
+    WalletLabelInfo:
       additionalProperties: false
       properties:
-        amount:
-          description: Decimal-adjusted token amount transferred (summed).
-          type: string
-        amount_usd:
-          description: Summed USD value. Absent when no transfers in the window are USD-priced.
+        confidence:
+          description: Confidence score 0.0-1.0
           format: double
           type: number
-        counterparty_address:
-          description: Receiver (direction=to) or sender (direction=from) address.
-          type: string
-        first_transfer_at:
-          description: Unix seconds of the first transfer seen in the window.
-          format: int64
-          type: integer
         label:
-          $ref: '#/components/schemas/WalletLabelItem'
-          description: Entity label for this counterparty. Only present when include=labels.
-        last_transfer_at:
-          description: Unix seconds of the last transfer seen in the window.
-          format: int64
-          type: integer
-        transfer_count:
-          description: Number of transfers in the window.
-          format: int64
-          type: integer
+          description: Human-readable label for this address like `Binance Hot Wallet`
+          type: string
       required:
-      - counterparty_address
-      - transfer_count
-      - amount
-      - first_transfer_at
-      - last_transfer_at
-      type: object
-    TokenHolderItem:
-      additionalProperties: false
-      properties:
-        address:
-          description: Wallet address of the token holder
-          type: string
-        balance:
-          description: Token balance (decimal-adjusted, human-readable)
-          type: string
-        entity_name:
-          description: Name of the associated entity like `Binance` or `Aave`
-          type: string
-        entity_type:
-          description: Type of entity like `exchange`, `fund`, or `whale`
-          type: string
-        label:
-          $ref: '#/components/schemas/WalletLabelItem'
-          description: Full entity label record for this address. Only present when the request sets `include=labels`.
-        percentage:
-          description: Share of total supply held as a percentage (5.2 means 5.2%)
-          format: double
-          type: number
-      required:
-      - address
-      - balance
+      - label
       type: object
     TokenUnlockPoint:
       additionalProperties: false
@@ -894,32 +762,56 @@ components:
       - unlock_amount
       - cumulative_unlocked_amount
       type: object
-    WalletLabelInfo:
-      additionalProperties: false
-      properties:
-        confidence:
-          description: Confidence score 0.0-1.0
-          format: double
-          type: number
-        label:
-          description: Human-readable label for this address like `Binance Hot Wallet`
-          type: string
-      required:
-      - label
-      type: object
-    DataResponseTransferCounterpartyItem:
+    DataAPIError:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/DataResponseTransferCounterpartyItem.json
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    DataResponseTokenHolderItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseTokenHolderItem.json
           format: uri
           readOnly: true
           type: string
         data:
           items:
-            $ref: '#/components/schemas/TransferCounterpartyItem'
+            $ref: '#/components/schemas/TokenHolderItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseTokenTransferItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseTokenTransferItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/TokenTransferItem'
           type:
           - array
           - 'null'
@@ -951,16 +843,59 @@ components:
       - data
       - meta
       type: object
-    DataAPIErrorDetail:
+    TokenUnlockAllocationItem:
       additionalProperties: false
       properties:
-        code:
-          type: string
-        message:
+        amount:
+          description: Decimal-adjusted allocation amount
+          format: double
+          type: number
+        name:
+          description: Allocation name
           type: string
       required:
-      - code
-      - message
+      - name
+      - amount
+      type: object
+    TransferStatsResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/TransferStatsResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/TransferStatsBody'
+        meta:
+          $ref: '#/components/schemas/TransferStatsMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseDexTradeItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseDexTradeItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/DexTradeItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
       type: object
     TransferSeriesPoint:
       additionalProperties: false
@@ -989,7 +924,30 @@ components:
       - transfer_count
       - amount
       type: object
-    TransferStatsMeta:
+    WalletLabelItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address
+          type: string
+        entity_name:
+          description: Name of the associated entity like `Binance` or `Aave`
+          type: string
+        entity_type:
+          description: Type of entity like `exchange`, `fund`, or `whale`
+          type: string
+        labels:
+          description: List of labels assigned to this address
+          items:
+            $ref: '#/components/schemas/WalletLabelInfo'
+          type:
+          - array
+          - 'null'
+      required:
+      - address
+      - labels
+      type: object
+    OffsetMeta:
       additionalProperties: false
       properties:
         cached:
@@ -1000,13 +958,30 @@ components:
           format: int64
           type: integer
         empty_reason:
-          description: Hint explaining why the data object is empty, when applicable
+          description: Hint explaining why the data array is empty, when applicable
           type: string
-        enriched_ratio:
-          description: Fraction of transfers with a USD price (0..1). Low/zero means USD-value fields are partial.
-          format: double
-          type: number
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
       required:
+      - limit
+      - offset
       - credits_used
       - cached
       type: object
@@ -1059,27 +1034,40 @@ components:
       - first_transfer_at
       - last_transfer_at
       type: object
-    DataResponseTokenHolderItem:
+    TransferCounterpartyItem:
       additionalProperties: false
       properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseTokenHolderItem.json
-          format: uri
-          readOnly: true
+        amount:
+          description: Decimal-adjusted token amount transferred (summed).
           type: string
-        data:
-          items:
-            $ref: '#/components/schemas/TokenHolderItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
+        amount_usd:
+          description: Summed USD value. Absent when no transfers in the window are USD-priced.
+          format: double
+          type: number
+        counterparty_address:
+          description: Receiver (direction=to) or sender (direction=from) address.
+          type: string
+        first_transfer_at:
+          description: Unix seconds of the first transfer seen in the window.
+          format: int64
+          type: integer
+        label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity label for this counterparty. Only present when include=labels.
+        last_transfer_at:
+          description: Unix seconds of the last transfer seen in the window.
+          format: int64
+          type: integer
+        transfer_count:
+          description: Number of transfers in the window.
+          format: int64
+          type: integer
       required:
-      - data
-      - meta
+      - counterparty_address
+      - transfer_count
+      - amount
+      - first_transfer_at
+      - last_transfer_at
       type: object
     TokenTransferItem:
       additionalProperties: false
@@ -1125,19 +1113,31 @@ components:
       - timestamp
       - block_number
       type: object
-    TokenUnlockAllocationItem:
+    TokenHolderItem:
       additionalProperties: false
       properties:
-        amount:
-          description: Decimal-adjusted allocation amount
+        address:
+          description: Wallet address of the token holder
+          type: string
+        balance:
+          description: Token balance (decimal-adjusted, human-readable)
+          type: string
+        entity_name:
+          description: Name of the associated entity like `Binance` or `Aave`
+          type: string
+        entity_type:
+          description: Type of entity like `exchange`, `fund`, or `whale`
+          type: string
+        label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Full entity label record for this address. Only present when the request sets `include=labels`.
+        percentage:
+          description: Share of total supply held as a percentage (5.2 means 5.2%)
           format: double
           type: number
-        name:
-          description: Allocation name
-          type: string
       required:
-      - name
-      - amount
+      - address
+      - balance
       type: object
   securitySchemes:
     AccessToken:

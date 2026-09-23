@@ -1,10 +1,10 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   contact:
     email: backend@cybertinolab.com
     name: Cyber team
-  description: "Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more. All endpoints use credit-based billing with per-request rate limiting.\n\n## Parameter Naming Conventions\n\nAll endpoints follow a standardized naming scheme. Use these canonical names when calling the API.\n\n### Asset Identification\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `symbol` | string | Uppercase ticker symbol(s), comma-separated | `BTC`, `ETH,SOL` |\n| `q` | string | Free-text search keyword | `bitcoin` |\n| `id` | string | Surf entity UUID for direct lookup | `550e8400-...` |\n| `address` | string | On-chain contract or wallet address. Also accepts ENS names (e.g. `vitalik.eth`) which resolve automatically. | `0xdead...`, `vitalik.eth` |\n\n### Time & Aggregation\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `time_range` | string or int | Lookback window | `7d`, `30d`, `365d`, `max` |\n| `interval` | string | Candlestick / indicator interval | `1h`, `1d`, `1w` |\n| `granularity` | string | Data aggregation granularity | `day`, `block`, `hour` |\n\n### Filtering & Sorting\n\n| Param | Type | Description | Example |\n|-------|------|-------------|---------|\n| `chain` | string | Blockchain name (canonical long-form only) | `ethereum`, `solana`, `base` |\n| `currency` | string | Quote currency | `usd`, `eur`, `btc` |\n| `metric` | string | Metric name (endpoint-specific enum) | `nupl`, `tvl` |\n| `type` | string | Category selector (endpoint-specific enum) | `us-btc-spot` |\n| `sort` | string | Sort direction | `asc`, `desc` |\n\n### Pagination\n\nAll list endpoints support:\n- `limit` (int, default: 20, max: 100) — results per page\n- `offset` (int, default: 0) — pagination offset\n\n### Supported Chains\n\nUse canonical long-form names only. Short aliases (eth, sol, matic, etc.) are **not accepted**.\n\n| Chain | Value |\n|-------|-------|\n| Ethereum | `ethereum` |\n| Polygon | `polygon` |\n| BNB Chain | `bsc` |\n| Solana | `solana` |\n| Avalanche | `avalanche` |\n| Arbitrum | `arbitrum` |\n| Optimism | `optimism` |\n| Fantom | `fantom` |\n| Base | `base` |\n| Linea | `linea` |\n| Cyber | `cyber` |\n\nNot all chains are available on every endpoint. Check each endpoint's `chain` enum for supported values.\n\n## Authentication\n\nAll data endpoints require a Bearer token in the `Authorization` header:\n\n```\nAuthorization: Bearer <API_KEY>\n```\n\n## Error Responses\n\nAll endpoints return errors in a consistent format:\n\n```json\n{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"insufficient credits\"\n  }\n}\n```\n\n| HTTP Status | Meaning |\n|-------------|---------|\n| `400` | Bad request — invalid or missing parameters |\n| `401` | Unauthorized — missing or invalid API key |\n| `404` | Not found — the requested entity does not exist |\n| `422` | Validation error — parameter value is out of range or invalid |\n| `429` | Rate limited — too many requests, retry after the indicated interval |\n| `502` | Upstream error — a data source is temporarily unavailable |\n\n## Credits\n\nEach API call costs a certain number of credits. The cost is returned in every response under `meta.credits_used`. Check your remaining balance via `GET /v1/me/credit-balance`.\n"
-  title: Hermod DEX Signal API
+  description: Surf data API gateway providing typed endpoints for crypto market data, project analytics, social signals, on-chain queries, and more.
+  title: Hermod Signal API
   version: sha-80d3407
 servers:
 - url: /
@@ -234,6 +234,65 @@ paths:
       - Signal
 components:
   schemas:
+    SignalPriceChange:
+      additionalProperties: false
+      properties:
+        1h:
+          description: 1 hour price change percent
+          format: double
+          type: number
+        24h:
+          description: 24 hour price change percent
+          format: double
+          type: number
+        7d:
+          description: 7 day price change percent
+          format: double
+          type: number
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
     OffsetMeta:
       additionalProperties: false
       properties:
@@ -272,6 +331,73 @@ components:
       - credits_used
       - cached
       type: object
+    DataObjectResponseSignalProject:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseSignalProject.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/SignalProject'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    SignalDimensions:
+      additionalProperties: false
+      properties:
+        derivative:
+          description: Derivative dimension score
+          format: double
+          type: number
+        derivative_components:
+          description: Derivative sub-component scores
+          items:
+            $ref: '#/components/schemas/SignalDerivativeComponent'
+          type:
+          - array
+          - 'null'
+        flow:
+          description: Flow dimension score
+          format: double
+          type: number
+        movement:
+          description: Movement dimension score
+          format: double
+          type: number
+        social:
+          description: Social dimension score
+          format: double
+          type: number
+      type: object
+    DataResponseSignalProject:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseSignalProject.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/SignalProject'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
     SignalCoreState:
       additionalProperties: false
       properties:
@@ -295,22 +421,25 @@ components:
           description: Directional state strength
           type: string
       type: object
-    ObjectResponseMeta:
+    SignalDerivativeComponent:
       additionalProperties: false
       properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
+        metric:
+          description: Derivative component metric
           type: string
+        score:
+          description: Component score
+          format: double
+          type: number
+        used:
+          description: Whether the component contributed to the derivative score
+          type: boolean
+        weight:
+          description: Component weight
+          format: double
+          type: number
       required:
-      - credits_used
-      - cached
+      - used
       type: object
     SignalProject:
       additionalProperties: false
@@ -467,135 +596,6 @@ components:
       - price_change_percent
       - core_state
       - heat_dimensions
-      type: object
-    DataAPIError:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
-          type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
-      required:
-      - error
-      type: object
-    SignalDerivativeComponent:
-      additionalProperties: false
-      properties:
-        metric:
-          description: Derivative component metric
-          type: string
-        score:
-          description: Component score
-          format: double
-          type: number
-        used:
-          description: Whether the component contributed to the derivative score
-          type: boolean
-        weight:
-          description: Component weight
-          format: double
-          type: number
-      required:
-      - used
-      type: object
-    SignalDimensions:
-      additionalProperties: false
-      properties:
-        derivative:
-          description: Derivative dimension score
-          format: double
-          type: number
-        derivative_components:
-          description: Derivative sub-component scores
-          items:
-            $ref: '#/components/schemas/SignalDerivativeComponent'
-          type:
-          - array
-          - 'null'
-        flow:
-          description: Flow dimension score
-          format: double
-          type: number
-        movement:
-          description: Movement dimension score
-          format: double
-          type: number
-        social:
-          description: Social dimension score
-          format: double
-          type: number
-      type: object
-    DataAPIErrorDetail:
-      additionalProperties: false
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
-      type: object
-    SignalPriceChange:
-      additionalProperties: false
-      properties:
-        1h:
-          description: 1 hour price change percent
-          format: double
-          type: number
-        24h:
-          description: 24 hour price change percent
-          format: double
-          type: number
-        7d:
-          description: 7 day price change percent
-          format: double
-          type: number
-      type: object
-    DataObjectResponseSignalProject:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataObjectResponseSignalProject.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          $ref: '#/components/schemas/SignalProject'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataResponseSignalProject:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseSignalProject.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/SignalProject'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
       type: object
   securitySchemes:
     AccessToken:

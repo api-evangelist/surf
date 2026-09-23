@@ -1,21 +1,7 @@
 {
   "provider": "surf",
   "sources": [
-    "surf-dex-api-openapi.yml",
-    "surf-exchange-api-openapi.yml",
-    "surf-fund-api-openapi.yml",
-    "surf-hyperliquid-api-openapi.yml",
-    "surf-market-api-openapi.yml",
-    "surf-news-api-openapi.yml",
-    "surf-onchain-api-openapi.yml",
-    "surf-prediction-market-api-openapi.yml",
-    "surf-project-api-openapi.yml",
-    "surf-search-api-openapi.yml",
-    "surf-signal-api-openapi.yml",
-    "surf-social-api-openapi.yml",
-    "surf-token-api-openapi.yml",
-    "surf-wallet-api-openapi.yml",
-    "surf-web-api-openapi.yml"
+    "_original/surf-openapi-original.json"
   ],
   "outputs": [
     "surf-dex-api-openapi.yml",
@@ -34,9 +20,34 @@
     "surf-wallet-api-openapi.yml",
     "surf-web-api-openapi.yml"
   ],
-  "archived": [],
+  "archived": [
+    "deleted 1 superseded output(s) from the previous generation"
+  ],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "surf-openapi-original.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0; renamed 1 component key(s) illegal in 3.x (e.g. DataResponseInterface {})",
+    "surf-openapi-original.json: declared missing tag: DEX",
+    "surf-openapi-original.json: declared missing tag: Hyperliquid",
+    "superseded outputs removed: surf-on-chain-api-openapi.yml",
+    "apis.yml register: written (+1 apis, 16 total)"
+  ],
+  "skipped": [
+    "surf-dex-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-exchange-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-fund-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-hyperliquid-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-market-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-news-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-on-chain-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-prediction-market-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-project-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-search-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-signal-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-social-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-token-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-wallet-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "surf-web-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
