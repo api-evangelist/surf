@@ -97,37 +97,6 @@ paths:
       - Web
 components:
   schemas:
-    WebFetchResultItem:
-      additionalProperties: false
-      properties:
-        content:
-          description: Full page content converted to clean markdown text
-          type: string
-        title:
-          description: Page title extracted from the HTML
-          type: string
-        url:
-          description: The URL that was fetched
-          type: string
-      required:
-      - url
-      - content
-      type: object
-    DataAPIError:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
-          type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
-      required:
-      - error
-      type: object
     DataAPIErrorDetail:
       additionalProperties: false
       properties:
@@ -138,23 +107,6 @@ components:
       required:
       - code
       - message
-      type: object
-    ObjectResponseMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-      required:
-      - credits_used
-      - cached
       type: object
     DataObjectResponseWebFetchResultItem:
       additionalProperties: false
@@ -173,6 +125,54 @@ components:
       required:
       - data
       - meta
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    WebFetchResultItem:
+      additionalProperties: false
+      properties:
+        content:
+          description: Full page content converted to clean markdown text
+          type: string
+        title:
+          description: Page title extracted from the HTML
+          type: string
+        url:
+          description: The URL that was fetched
+          type: string
+      required:
+      - url
+      - content
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
       type: object
   securitySchemes:
     AccessToken:

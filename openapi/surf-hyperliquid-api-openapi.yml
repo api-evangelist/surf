@@ -713,94 +713,209 @@ paths:
       - Hyperliquid
 components:
   schemas:
-    DataObjectResponseHyperliquidAccount:
+    HyperliquidTrader:
       additionalProperties: false
       properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataObjectResponseHyperliquidAccount.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          $ref: '#/components/schemas/HyperliquidAccount'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    HyperliquidSpot:
-      additionalProperties: false
-      properties:
-        balances:
-          description: Spot token balances, sorted by symbol
-          items:
-            $ref: '#/components/schemas/HyperliquidSpotBalance'
-          type:
-          - array
-          - 'null'
-      required:
-      - balances
-      type: object
-    DataAPIErrorDetail:
-      additionalProperties: false
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
-      type: object
-    HyperliquidStaking:
-      additionalProperties: false
-      properties:
-        delegated_hype:
-          description: HYPE staked
-          format: double
-          type: number
-        pending_withdrawal_count:
-          description: Pending withdrawals
+        account_age_days:
+          description: Account age in days (lifetime). Omitted when the trader has no fills on record.
           format: int64
           type: integer
-        total_pending_withdrawal_hype:
-          description: HYPE currently unstaking
+        address:
+          description: Trader's wallet address (0x)
+          type: string
+        days_active:
+          description: Distinct active days within the selected window
+          format: int64
+          type: integer
+        human_score:
+          description: Human-likeness, 0-100
+          format: int64
+          type: integer
+        rank:
+          description: 1-based position within this response's window/sort/filter set, offset-adjusted (rank = offset + row index + 1). NOT a stable global id — it shifts as the leaderboard moves.
+          format: int64
+          type: integer
+        total_fees:
+          description: Net fees, USD (positive = paid, negative = rebate)
           format: double
           type: number
-        undelegated_hype:
-          description: HYPE not delegated
+        total_funding:
+          description: Net funding, USD (positive = received)
+          format: double
+          type: number
+        total_pnl:
+          description: Net PnL over the window, USD (after fees + funding)
+          format: double
+          type: number
+        total_trades:
+          description: Trades in the window
+          format: int64
+          type: integer
+        traded_pairs:
+          description: Markets the trader has ever filled (lifetime — NOT limited to the selected window, unlike the metrics above), e.g. BTC, kPEPE, xyz:SILVER
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        volume_traded:
+          description: Notional volume, USD
+          format: double
+          type: number
+        win_rate:
+          description: Share of profitable trades (0-1)
           format: double
           type: number
       required:
-      - delegated_hype
-      - undelegated_hype
-      - total_pending_withdrawal_hype
-      - pending_withdrawal_count
+      - rank
+      - address
+      - total_pnl
+      - win_rate
+      - total_trades
+      - volume_traded
+      - total_fees
+      - total_funding
+      - days_active
+      - traded_pairs
+      - human_score
       type: object
-    CursorDataResponseHyperliquidEpisode:
+    HyperliquidPositions:
+      additionalProperties: false
+      properties:
+        account_value:
+          description: Perp clearinghouse equity, USD (cross-margin summary). NOT total portfolio — for total equity incl. spot/vault/staking use /hyperliquid/account (total_value_usd).
+          format: double
+          type: number
+        address:
+          description: Wallet address
+          type: string
+        cross_maintenance_margin_used:
+          description: Maintenance margin, USD
+          format: double
+          type: number
+        margin_ratio:
+          description: Maintenance margin / account equity (0-1); the account is liquidated as this approaches 1.0. Use it as the account-level liquidation-proximity signal when a position's liquidation_price is null.
+          format: double
+          type: number
+        positions:
+          description: Open positions, sorted by position value (largest first)
+          items:
+            $ref: '#/components/schemas/HyperliquidPosition'
+          type:
+          - array
+          - 'null'
+        timestamp:
+          description: When this was captured (Unix seconds)
+          format: int64
+          type: integer
+        total_margin_used:
+          description: Margin currently in use, USD
+          format: double
+          type: number
+        total_notional_pos:
+          description: Total size of all positions, USD
+          format: double
+          type: number
+        total_raw_usd:
+          description: Raw USD balance
+          format: double
+          type: number
+        withdrawable:
+          description: Available to withdraw, USD
+          format: double
+          type: number
+      required:
+      - address
+      - account_value
+      - total_notional_pos
+      - total_raw_usd
+      - total_margin_used
+      - cross_maintenance_margin_used
+      - margin_ratio
+      - withdrawable
+      - timestamp
+      - positions
+      type: object
+    HyperliquidTraderStats:
+      additionalProperties: false
+      properties:
+        account_age_days:
+          description: Account age in days (lifetime). Omitted when the trader has no fills on record.
+          format: int64
+          type: integer
+        address:
+          description: Wallet address
+          type: string
+        days_active:
+          description: Distinct active days in the window (lifetime when from/to are omitted)
+          format: int64
+          type: integer
+        human_score:
+          description: Human-likeness, 0-100
+          format: int64
+          type: integer
+        loss_rate:
+          description: Share of losing trades (0-1)
+          format: double
+          type: number
+        total_fees:
+          description: Net fees, USD (positive = paid, negative = rebate)
+          format: double
+          type: number
+        total_funding:
+          description: Net funding, USD (positive = received)
+          format: double
+          type: number
+        total_pnl:
+          description: Net PnL over the window, USD (after fees + funding)
+          format: double
+          type: number
+        total_trades:
+          description: Trades in the window
+          format: int64
+          type: integer
+        traded_pairs:
+          description: Markets the trader has ever filled (lifetime — NOT limited to the from/to window, unlike the metrics above)
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        volume_traded:
+          description: Notional volume, USD
+          format: double
+          type: number
+        win_rate:
+          description: Share of profitable trades (0-1)
+          format: double
+          type: number
+      required:
+      - address
+      - total_pnl
+      - win_rate
+      - loss_rate
+      - total_trades
+      - volume_traded
+      - total_fees
+      - total_funding
+      - days_active
+      - traded_pairs
+      - human_score
+      type: object
+    DataAPIError:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/CursorDataResponseHyperliquidEpisode.json
+          - https://example.com/schemas/DataAPIError.json
           format: uri
           readOnly: true
           type: string
-        data:
-          items:
-            $ref: '#/components/schemas/HyperliquidEpisode'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/CursorMeta'
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
       required:
-      - data
-      - meta
+      - error
       type: object
     CursorMeta:
       additionalProperties: false
@@ -835,23 +950,159 @@ components:
       - credits_used
       - cached
       type: object
-    DataObjectResponseHyperliquidPerformanceView:
+    HyperliquidAccount:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address
+          type: string
+        as_of:
+          description: When the account sections were fetched upstream (Unix seconds) — for a cached response this predates the response time by up to the cache TTL
+          format: int64
+          type: integer
+        errors:
+          description: Sections whose fetch failed; omitted when everything succeeded
+          items:
+            $ref: '#/components/schemas/HyperliquidSectionError'
+          type:
+          - array
+          - 'null'
+        perp:
+          $ref: '#/components/schemas/HyperliquidPerpSummary'
+          description: Perps summary; omitted if the fetch failed (see errors[])
+        spot:
+          $ref: '#/components/schemas/HyperliquidSpot'
+          description: Spot balances; omitted if the fetch failed (see errors[])
+        staking:
+          $ref: '#/components/schemas/HyperliquidStaking'
+          description: HYPE staking; omitted if the fetch failed (see errors[])
+        total_value_usd:
+          description: 'Best-effort total account value, USD: perp equity + vault equity + staked HYPE + spot holdings that have a market price (USDC, stablecoins, and HYPE). Excludes spot tokens with no market price (counted in unpriced_token_count) — so when unpriced_token_count is 0 this is the complete account value, otherwise a lower bound. Omitted when any account section (perp, spot, vaults, staking) failed to load, or when HYPE is held but its price could not be fetched (see errors[]) — so a present value always covers every section.'
+          format: double
+          type: number
+        unpriced_token_count:
+          description: Number of held spot tokens that have no market price and are therefore excluded from total_value_usd. 0 means total_value_usd is complete; greater than 0 means it is a lower bound (the excluded tokens are typically small, illiquid spot tokens).
+          format: int64
+          type: integer
+        vaults:
+          $ref: '#/components/schemas/HyperliquidVaults'
+          description: Vault equity; omitted if the fetch failed (see errors[])
+      required:
+      - as_of
+      - unpriced_token_count
+      - address
+      type: object
+    HyperliquidFill:
+      additionalProperties: false
+      properties:
+        closed_pnl:
+          description: Realized profit/loss, USD. 0 on fills that only open or increase a position (see direction) — realized PnL is booked on closing or reducing fills.
+          format: double
+          type: number
+        crossed:
+          description: true = taker (this fill took liquidity); false = maker (provided liquidity / rebate)
+          type: boolean
+        direction:
+          description: e.g. Open Long, Close Short
+          type: string
+        fee:
+          description: Fee paid, USD (negative = rebate)
+          format: double
+          type: number
+        fee_token:
+          description: Fee token (e.g. USDC)
+          type: string
+        fill_id:
+          description: Stable unique identifier for this fill. Pass the oldest fill's value back as to_fill_id (alongside its time_ms as to_ms) to page losslessly, and use it to de-duplicate fills across pages — time and hash are NOT unique (many fills can share a second and an on-chain hash).
+          type: string
+        hash:
+          description: On-chain transaction hash (the zero hash when is_internal is true). NOT unique per fill — one transaction can settle many fills.
+          type: string
+        is_internal:
+          description: true for fills not tied to a standard on-chain order (zero transaction hash)
+          type: boolean
+        price:
+          description: Fill price
+          format: double
+          type: number
+        side:
+          description: buy or sell
+          type: string
+        size:
+          description: Amount filled
+          format: double
+          type: number
+        start_position:
+          description: Position size before this fill
+          format: double
+          type: number
+        symbol:
+          description: Market id
+          type: string
+        time:
+          description: When it filled (Unix seconds). Second-granular; use time_ms for precise ordering and for paging via to_ms.
+          format: int64
+          type: integer
+        time_ms:
+          description: When it filled (Unix milliseconds). Use for precise ordering/dedup; pass the oldest value back as to_ms (paired with its fill_id as to_fill_id) to page to the next page without losing fills.
+          format: int64
+          type: integer
+        tx_index:
+          description: Position of the fill's transaction within its block. (time_ms, tx_index) is unique per fill and is the key cursor paging advances on; 0 is a valid value (first transaction in the block).
+          format: int64
+          type: integer
+      required:
+      - symbol
+      - side
+      - direction
+      - price
+      - size
+      - start_position
+      - closed_pnl
+      - fee
+      - fee_token
+      - crossed
+      - is_internal
+      - time
+      - time_ms
+      - fill_id
+      - tx_index
+      - hash
+      type: object
+    DataResponseHyperliquidTradeGroup:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/DataObjectResponseHyperliquidPerformanceView.json
+          - https://example.com/schemas/DataResponseHyperliquidTradeGroup.json
           format: uri
           readOnly: true
           type: string
         data:
-          $ref: '#/components/schemas/HyperliquidPerformanceView'
+          items:
+            $ref: '#/components/schemas/HyperliquidTradeGroup'
+          type:
+          - array
+          - 'null'
         meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
+          $ref: '#/components/schemas/OffsetMeta'
       required:
       - data
       - meta
+      type: object
+    HyperliquidSpot:
+      additionalProperties: false
+      properties:
+        balances:
+          description: Spot token balances, sorted by symbol
+          items:
+            $ref: '#/components/schemas/HyperliquidSpotBalance'
+          type:
+          - array
+          - 'null'
+      required:
+      - balances
       type: object
     HyperliquidTradeGroup:
       additionalProperties: false
@@ -905,76 +1156,65 @@ components:
       - win_rate
       - volume_usd
       type: object
-    HyperliquidSpotBalance:
+    ObjectResponseMeta:
       additionalProperties: false
       properties:
-        available:
-          description: Free balance not locked in open orders = total - hold (token units). Not the cross-margin withdrawable.
-          format: double
-          type: number
-        entry_notional:
-          description: Cost basis, USD
-          format: double
-          type: number
-        hold:
-          description: Amount locked in open orders (token units)
-          format: double
-          type: number
-        symbol:
-          description: Token (USDC, HYPE)
-          type: string
-        token_id:
-          description: Token index
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
           format: int64
           type: integer
-        total:
-          description: Token balance (token units)
-          format: double
-          type: number
-        withdrawable:
-          description: Maintenance-adjusted amount actually withdrawable for this token; differs from available for collateral tokens like USDC (token units). Omitted when not available for this token.
-          format: double
-          type: number
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
       required:
-      - symbol
-      - token_id
-      - total
-      - hold
-      - available
-      - entry_notional
+      - credits_used
+      - cached
       type: object
-    DataObjectResponseHyperliquidPositions:
+    HyperliquidStaking:
       additionalProperties: false
       properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataObjectResponseHyperliquidPositions.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          $ref: '#/components/schemas/HyperliquidPositions'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
+        delegated_hype:
+          description: HYPE staked
+          format: double
+          type: number
+        pending_withdrawal_count:
+          description: Pending withdrawals
+          format: int64
+          type: integer
+        total_pending_withdrawal_hype:
+          description: HYPE currently unstaking
+          format: double
+          type: number
+        undelegated_hype:
+          description: HYPE not delegated
+          format: double
+          type: number
       required:
-      - data
-      - meta
+      - delegated_hype
+      - undelegated_hype
+      - total_pending_withdrawal_hype
+      - pending_withdrawal_count
       type: object
-    DataAPIError:
+    HyperliquidVaults:
       additionalProperties: false
       properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
-          type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
+        positions:
+          description: Per-vault positions, sorted by vault address
+          items:
+            $ref: '#/components/schemas/HyperliquidVaultPosition'
+          type:
+          - array
+          - 'null'
+        total_equity:
+          description: Total held in vaults, USD
+          format: double
+          type: number
       required:
-      - error
+      - total_equity
+      - positions
       type: object
     HyperliquidEpisode:
       additionalProperties: false
@@ -1055,116 +1295,6 @@ components:
       - source
       - notional_usd
       type: object
-    CursorDataResponseHyperliquidFill:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/CursorDataResponseHyperliquidFill.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/HyperliquidFill'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/CursorMeta'
-      required:
-      - data
-      - meta
-      type: object
-    HyperliquidTrader:
-      additionalProperties: false
-      properties:
-        account_age_days:
-          description: Account age in days (lifetime). Omitted when the trader has no fills on record.
-          format: int64
-          type: integer
-        address:
-          description: Trader's wallet address (0x)
-          type: string
-        days_active:
-          description: Distinct active days within the selected window
-          format: int64
-          type: integer
-        human_score:
-          description: Human-likeness, 0-100
-          format: int64
-          type: integer
-        rank:
-          description: 1-based position within this response's window/sort/filter set, offset-adjusted (rank = offset + row index + 1). NOT a stable global id — it shifts as the leaderboard moves.
-          format: int64
-          type: integer
-        total_fees:
-          description: Net fees, USD (positive = paid, negative = rebate)
-          format: double
-          type: number
-        total_funding:
-          description: Net funding, USD (positive = received)
-          format: double
-          type: number
-        total_pnl:
-          description: Net PnL over the window, USD (after fees + funding)
-          format: double
-          type: number
-        total_trades:
-          description: Trades in the window
-          format: int64
-          type: integer
-        traded_pairs:
-          description: Markets the trader has ever filled (lifetime — NOT limited to the selected window, unlike the metrics above), e.g. BTC, kPEPE, xyz:SILVER
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        volume_traded:
-          description: Notional volume, USD
-          format: double
-          type: number
-        win_rate:
-          description: Share of profitable trades (0-1)
-          format: double
-          type: number
-      required:
-      - rank
-      - address
-      - total_pnl
-      - win_rate
-      - total_trades
-      - volume_traded
-      - total_fees
-      - total_funding
-      - days_active
-      - traded_pairs
-      - human_score
-      type: object
-    DataResponseHyperliquidTrader:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseHyperliquidTrader.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/HyperliquidTrader'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
     HyperliquidHistoricalOrder:
       additionalProperties: false
       properties:
@@ -1241,6 +1371,384 @@ components:
       - is_position_tpsl
       - reduce_only
       type: object
+    DataObjectResponseHyperliquidTraderStats:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseHyperliquidTraderStats.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/HyperliquidTraderStats'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    HyperliquidSpotBalance:
+      additionalProperties: false
+      properties:
+        available:
+          description: Free balance not locked in open orders = total - hold (token units). Not the cross-margin withdrawable.
+          format: double
+          type: number
+        entry_notional:
+          description: Cost basis, USD
+          format: double
+          type: number
+        hold:
+          description: Amount locked in open orders (token units)
+          format: double
+          type: number
+        symbol:
+          description: Token (USDC, HYPE)
+          type: string
+        token_id:
+          description: Token index
+          format: int64
+          type: integer
+        total:
+          description: Token balance (token units)
+          format: double
+          type: number
+        withdrawable:
+          description: Maintenance-adjusted amount actually withdrawable for this token; differs from available for collateral tokens like USDC (token units). Omitted when not available for this token.
+          format: double
+          type: number
+      required:
+      - symbol
+      - token_id
+      - total
+      - hold
+      - available
+      - entry_notional
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    DataObjectResponseHyperliquidAccount:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseHyperliquidAccount.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/HyperliquidAccount'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    HyperliquidPerpSummary:
+      additionalProperties: false
+      properties:
+        account_value:
+          description: Perps equity, USD
+          format: double
+          type: number
+        open_position_count:
+          description: Number of open positions
+          format: int64
+          type: integer
+        total_margin_used:
+          description: Margin in use, USD
+          format: double
+          type: number
+        withdrawable:
+          description: Withdrawable from perps, USD
+          format: double
+          type: number
+      required:
+      - account_value
+      - withdrawable
+      - total_margin_used
+      - open_position_count
+      type: object
+    HyperliquidOpenOrder:
+      additionalProperties: false
+      properties:
+        is_position_tpsl:
+          description: true when this is a position-level TP/SL
+          type: boolean
+        is_trigger:
+          description: true for stop / take-profit (trigger) orders
+          type: boolean
+        limit_price:
+          description: Limit price, USD
+          format: double
+          type: number
+        market_type:
+          description: perp or spot. Spot orders carry @index symbols and belong to the spot book, not the perp surfaces.
+          type: string
+        order_id:
+          description: Order id (oid)
+          format: int64
+          type: integer
+        order_type:
+          description: Order type (Limit, Stop Market, …)
+          type: string
+        original_size:
+          description: Original size when placed (token units)
+          format: double
+          type: number
+        reduce_only:
+          description: true when the order can only reduce the position
+          type: boolean
+        side:
+          description: buy or sell
+          type: string
+        size:
+          description: Remaining size (token units)
+          format: double
+          type: number
+        symbol:
+          description: Market id. Perp orders use the coin name (BTC, xyz:GOLD); SPOT orders use a raw spot-pair index (@107) that does not join to /positions, /trades, or /fills — see market_type.
+          type: string
+        timestamp:
+          description: When the order was placed (Unix seconds)
+          format: int64
+          type: integer
+        trigger_condition:
+          description: Human-readable trigger condition (empty for plain limit orders)
+          type: string
+        trigger_price:
+          description: Trigger price for stop/take-profit orders, USD (0 when not a trigger)
+          format: double
+          type: number
+      required:
+      - symbol
+      - market_type
+      - order_id
+      - side
+      - limit_price
+      - size
+      - original_size
+      - order_type
+      - timestamp
+      - trigger_condition
+      - trigger_price
+      - is_trigger
+      - is_position_tpsl
+      - reduce_only
+      type: object
+    DataObjectResponseHyperliquidPositions:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseHyperliquidPositions.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/HyperliquidPositions'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    HyperliquidSectionError:
+      additionalProperties: false
+      properties:
+        reason:
+          description: Short reason for the failure
+          type: string
+        section:
+          description: 'Section that failed: perp, spot, vaults, staking, or pricing (the HYPE-mark lookup that values total_value_usd)'
+          type: string
+      required:
+      - section
+      - reason
+      type: object
+    CursorDataResponseHyperliquidEpisode:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/CursorDataResponseHyperliquidEpisode.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/HyperliquidEpisode'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/CursorMeta'
+      required:
+      - data
+      - meta
+      type: object
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    HyperliquidCumFunding:
+      additionalProperties: false
+      properties:
+        all_time:
+          description: Funding since the account opened, USD
+          format: double
+          type: number
+        since_change:
+          description: Funding since this position last changed, USD
+          format: double
+          type: number
+        since_open:
+          description: Funding since this position was opened, USD
+          format: double
+          type: number
+      required:
+      - all_time
+      - since_open
+      - since_change
+      type: object
+    DataObjectResponseHyperliquidPerformanceView:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseHyperliquidPerformanceView.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/HyperliquidPerformanceView'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    HyperliquidWalletPerf:
+      additionalProperties: false
+      properties:
+        avg_loss:
+          description: Average net_pnl of losing trades, USD (negative); omitted when there are no losses
+          format: double
+          type: number
+        avg_win:
+          description: Average net_pnl of winning trades, USD; omitted when there are no wins
+          format: double
+          type: number
+        fees:
+          description: Sum of episode fees, USD
+          format: double
+          type: number
+        first_trade:
+          description: Earliest episode close (Unix seconds); 0 when no trades
+          format: int64
+          type: integer
+        gross_pnl:
+          description: Sum of episode gross_pnl, USD
+          format: double
+          type: number
+        last_trade:
+          description: Latest episode close (Unix seconds); 0 when no trades
+          format: int64
+          type: integer
+        losses:
+          description: Episodes with net_pnl < 0
+          format: int64
+          type: integer
+        net_pnl:
+          description: Sum of episode net_pnl, USD (funding excluded)
+          format: double
+          type: number
+        profit_factor:
+          description: Total win PnL / total loss PnL; omitted when there are no losses
+          format: double
+          type: number
+        scratches:
+          description: Episodes with net_pnl == 0
+          format: int64
+          type: integer
+        trades:
+          description: Closed episodes (trades)
+          format: int64
+          type: integer
+        volume_usd:
+          description: Notional volume traded, USD
+          format: double
+          type: number
+        win_rate:
+          description: wins / trades (0-1)
+          format: double
+          type: number
+        wins:
+          description: Episodes with net_pnl > 0
+          format: int64
+          type: integer
+      required:
+      - trades
+      - wins
+      - losses
+      - scratches
+      - win_rate
+      - gross_pnl
+      - fees
+      - net_pnl
+      - volume_usd
+      - first_trade
+      - last_trade
+      type: object
     HyperliquidPosition:
       additionalProperties: false
       properties:
@@ -1315,6 +1823,75 @@ components:
       - margin_used
       - cum_funding
       type: object
+    HyperliquidOrders:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address (lowercased)
+          type: string
+        as_of:
+          description: When the order sections were fetched upstream (Unix seconds) — the data's age, which for a cached response predates the response time by up to the cache TTL
+          format: int64
+          type: integer
+        errors:
+          description: Sections whose fetch failed (open, historical); omitted when everything succeeded
+          items:
+            $ref: '#/components/schemas/HyperliquidSectionError'
+          type:
+          - array
+          - 'null'
+        historical:
+          description: Recent terminal orders (filled / canceled / rejected, newest status first), truncated to historical_limit
+          items:
+            $ref: '#/components/schemas/HyperliquidHistoricalOrder'
+          type:
+          - array
+          - 'null'
+        historical_total:
+          description: Total terminal orders before historical_limit truncation — greater than len(historical) means the list was cut
+          format: int64
+          type: integer
+        open:
+          description: Live resting orders (stops / take-profits / limits), truncated to open_limit
+          items:
+            $ref: '#/components/schemas/HyperliquidOpenOrder'
+          type:
+          - array
+          - 'null'
+        open_total:
+          description: Total open orders before open_limit truncation — greater than len(open) means the list was cut
+          format: int64
+          type: integer
+      required:
+      - address
+      - as_of
+      - open
+      - open_total
+      - historical
+      - historical_total
+      type: object
+    DataResponseHyperliquidTrader:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseHyperliquidTrader.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/HyperliquidTrader'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
     DataObjectResponseHyperliquidOrders:
       additionalProperties: false
       properties:
@@ -1333,201 +1910,23 @@ components:
       - data
       - meta
       type: object
-    HyperliquidPositions:
+    HyperliquidVaultPosition:
       additionalProperties: false
       properties:
-        account_value:
-          description: Perp clearinghouse equity, USD (cross-margin summary). NOT total portfolio — for total equity incl. spot/vault/staking use /hyperliquid/account (total_value_usd).
+        equity:
+          description: Equity in this vault, USD
           format: double
           type: number
-        address:
-          description: Wallet address
+        locked_until:
+          description: Lock expiry, Unix seconds. Compare against the current time — a past value means the lock has expired. Omitted when this vault has no lock.
+          format: int64
+          type: integer
+        vault_address:
+          description: Vault address
           type: string
-        cross_maintenance_margin_used:
-          description: Maintenance margin, USD
-          format: double
-          type: number
-        margin_ratio:
-          description: Maintenance margin / account equity (0-1); the account is liquidated as this approaches 1.0. Use it as the account-level liquidation-proximity signal when a position's liquidation_price is null.
-          format: double
-          type: number
-        positions:
-          description: Open positions, sorted by position value (largest first)
-          items:
-            $ref: '#/components/schemas/HyperliquidPosition'
-          type:
-          - array
-          - 'null'
-        timestamp:
-          description: When this was captured (Unix seconds)
-          format: int64
-          type: integer
-        total_margin_used:
-          description: Margin currently in use, USD
-          format: double
-          type: number
-        total_notional_pos:
-          description: Total size of all positions, USD
-          format: double
-          type: number
-        total_raw_usd:
-          description: Raw USD balance
-          format: double
-          type: number
-        withdrawable:
-          description: Available to withdraw, USD
-          format: double
-          type: number
       required:
-      - address
-      - account_value
-      - total_notional_pos
-      - total_raw_usd
-      - total_margin_used
-      - cross_maintenance_margin_used
-      - margin_ratio
-      - withdrawable
-      - timestamp
-      - positions
-      type: object
-    DataResponseHyperliquidTradeGroup:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseHyperliquidTradeGroup.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/HyperliquidTradeGroup'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    HyperliquidCumFunding:
-      additionalProperties: false
-      properties:
-        all_time:
-          description: Funding since the account opened, USD
-          format: double
-          type: number
-        since_change:
-          description: Funding since this position last changed, USD
-          format: double
-          type: number
-        since_open:
-          description: Funding since this position was opened, USD
-          format: double
-          type: number
-      required:
-      - all_time
-      - since_open
-      - since_change
-      type: object
-    HyperliquidPerpSummary:
-      additionalProperties: false
-      properties:
-        account_value:
-          description: Perps equity, USD
-          format: double
-          type: number
-        open_position_count:
-          description: Number of open positions
-          format: int64
-          type: integer
-        total_margin_used:
-          description: Margin in use, USD
-          format: double
-          type: number
-        withdrawable:
-          description: Withdrawable from perps, USD
-          format: double
-          type: number
-      required:
-      - account_value
-      - withdrawable
-      - total_margin_used
-      - open_position_count
-      type: object
-    HyperliquidWalletPerf:
-      additionalProperties: false
-      properties:
-        avg_loss:
-          description: Average net_pnl of losing trades, USD (negative); omitted when there are no losses
-          format: double
-          type: number
-        avg_win:
-          description: Average net_pnl of winning trades, USD; omitted when there are no wins
-          format: double
-          type: number
-        fees:
-          description: Sum of episode fees, USD
-          format: double
-          type: number
-        first_trade:
-          description: Earliest episode close (Unix seconds); 0 when no trades
-          format: int64
-          type: integer
-        gross_pnl:
-          description: Sum of episode gross_pnl, USD
-          format: double
-          type: number
-        last_trade:
-          description: Latest episode close (Unix seconds); 0 when no trades
-          format: int64
-          type: integer
-        losses:
-          description: Episodes with net_pnl < 0
-          format: int64
-          type: integer
-        net_pnl:
-          description: Sum of episode net_pnl, USD (funding excluded)
-          format: double
-          type: number
-        profit_factor:
-          description: Total win PnL / total loss PnL; omitted when there are no losses
-          format: double
-          type: number
-        scratches:
-          description: Episodes with net_pnl == 0
-          format: int64
-          type: integer
-        trades:
-          description: Closed episodes (trades)
-          format: int64
-          type: integer
-        volume_usd:
-          description: Notional volume traded, USD
-          format: double
-          type: number
-        win_rate:
-          description: wins / trades (0-1)
-          format: double
-          type: number
-        wins:
-          description: Episodes with net_pnl > 0
-          format: int64
-          type: integer
-      required:
-      - trades
-      - wins
-      - losses
-      - scratches
-      - win_rate
-      - gross_pnl
-      - fees
-      - net_pnl
-      - volume_usd
-      - first_trade
-      - last_trade
+      - vault_address
+      - equity
       type: object
     HyperliquidPerformanceView:
       additionalProperties: false
@@ -1578,426 +1977,27 @@ components:
       - watermark
       - partial
       type: object
-    HyperliquidFill:
-      additionalProperties: false
-      properties:
-        closed_pnl:
-          description: Realized profit/loss, USD. 0 on fills that only open or increase a position (see direction) — realized PnL is booked on closing or reducing fills.
-          format: double
-          type: number
-        crossed:
-          description: true = taker (this fill took liquidity); false = maker (provided liquidity / rebate)
-          type: boolean
-        direction:
-          description: e.g. Open Long, Close Short
-          type: string
-        fee:
-          description: Fee paid, USD (negative = rebate)
-          format: double
-          type: number
-        fee_token:
-          description: Fee token (e.g. USDC)
-          type: string
-        fill_id:
-          description: Stable unique identifier for this fill. Pass the oldest fill's value back as to_fill_id (alongside its time_ms as to_ms) to page losslessly, and use it to de-duplicate fills across pages — time and hash are NOT unique (many fills can share a second and an on-chain hash).
-          type: string
-        hash:
-          description: On-chain transaction hash (the zero hash when is_internal is true). NOT unique per fill — one transaction can settle many fills.
-          type: string
-        is_internal:
-          description: true for fills not tied to a standard on-chain order (zero transaction hash)
-          type: boolean
-        price:
-          description: Fill price
-          format: double
-          type: number
-        side:
-          description: buy or sell
-          type: string
-        size:
-          description: Amount filled
-          format: double
-          type: number
-        start_position:
-          description: Position size before this fill
-          format: double
-          type: number
-        symbol:
-          description: Market id
-          type: string
-        time:
-          description: When it filled (Unix seconds). Second-granular; use time_ms for precise ordering and for paging via to_ms.
-          format: int64
-          type: integer
-        time_ms:
-          description: When it filled (Unix milliseconds). Use for precise ordering/dedup; pass the oldest value back as to_ms (paired with its fill_id as to_fill_id) to page to the next page without losing fills.
-          format: int64
-          type: integer
-        tx_index:
-          description: Position of the fill's transaction within its block. (time_ms, tx_index) is unique per fill and is the key cursor paging advances on; 0 is a valid value (first transaction in the block).
-          format: int64
-          type: integer
-      required:
-      - symbol
-      - side
-      - direction
-      - price
-      - size
-      - start_position
-      - closed_pnl
-      - fee
-      - fee_token
-      - crossed
-      - is_internal
-      - time
-      - time_ms
-      - fill_id
-      - tx_index
-      - hash
-      type: object
-    HyperliquidOpenOrder:
-      additionalProperties: false
-      properties:
-        is_position_tpsl:
-          description: true when this is a position-level TP/SL
-          type: boolean
-        is_trigger:
-          description: true for stop / take-profit (trigger) orders
-          type: boolean
-        limit_price:
-          description: Limit price, USD
-          format: double
-          type: number
-        market_type:
-          description: perp or spot. Spot orders carry @index symbols and belong to the spot book, not the perp surfaces.
-          type: string
-        order_id:
-          description: Order id (oid)
-          format: int64
-          type: integer
-        order_type:
-          description: Order type (Limit, Stop Market, …)
-          type: string
-        original_size:
-          description: Original size when placed (token units)
-          format: double
-          type: number
-        reduce_only:
-          description: true when the order can only reduce the position
-          type: boolean
-        side:
-          description: buy or sell
-          type: string
-        size:
-          description: Remaining size (token units)
-          format: double
-          type: number
-        symbol:
-          description: Market id. Perp orders use the coin name (BTC, xyz:GOLD); SPOT orders use a raw spot-pair index (@107) that does not join to /positions, /trades, or /fills — see market_type.
-          type: string
-        timestamp:
-          description: When the order was placed (Unix seconds)
-          format: int64
-          type: integer
-        trigger_condition:
-          description: Human-readable trigger condition (empty for plain limit orders)
-          type: string
-        trigger_price:
-          description: Trigger price for stop/take-profit orders, USD (0 when not a trigger)
-          format: double
-          type: number
-      required:
-      - symbol
-      - market_type
-      - order_id
-      - side
-      - limit_price
-      - size
-      - original_size
-      - order_type
-      - timestamp
-      - trigger_condition
-      - trigger_price
-      - is_trigger
-      - is_position_tpsl
-      - reduce_only
-      type: object
-    HyperliquidSectionError:
-      additionalProperties: false
-      properties:
-        reason:
-          description: Short reason for the failure
-          type: string
-        section:
-          description: 'Section that failed: perp, spot, vaults, staking, or pricing (the HYPE-mark lookup that values total_value_usd)'
-          type: string
-      required:
-      - section
-      - reason
-      type: object
-    HyperliquidTraderStats:
-      additionalProperties: false
-      properties:
-        account_age_days:
-          description: Account age in days (lifetime). Omitted when the trader has no fills on record.
-          format: int64
-          type: integer
-        address:
-          description: Wallet address
-          type: string
-        days_active:
-          description: Distinct active days in the window (lifetime when from/to are omitted)
-          format: int64
-          type: integer
-        human_score:
-          description: Human-likeness, 0-100
-          format: int64
-          type: integer
-        loss_rate:
-          description: Share of losing trades (0-1)
-          format: double
-          type: number
-        total_fees:
-          description: Net fees, USD (positive = paid, negative = rebate)
-          format: double
-          type: number
-        total_funding:
-          description: Net funding, USD (positive = received)
-          format: double
-          type: number
-        total_pnl:
-          description: Net PnL over the window, USD (after fees + funding)
-          format: double
-          type: number
-        total_trades:
-          description: Trades in the window
-          format: int64
-          type: integer
-        traded_pairs:
-          description: Markets the trader has ever filled (lifetime — NOT limited to the from/to window, unlike the metrics above)
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        volume_traded:
-          description: Notional volume, USD
-          format: double
-          type: number
-        win_rate:
-          description: Share of profitable trades (0-1)
-          format: double
-          type: number
-      required:
-      - address
-      - total_pnl
-      - win_rate
-      - loss_rate
-      - total_trades
-      - volume_traded
-      - total_fees
-      - total_funding
-      - days_active
-      - traded_pairs
-      - human_score
-      type: object
-    DataObjectResponseHyperliquidTraderStats:
+    CursorDataResponseHyperliquidFill:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/DataObjectResponseHyperliquidTraderStats.json
+          - https://example.com/schemas/CursorDataResponseHyperliquidFill.json
           format: uri
           readOnly: true
           type: string
         data:
-          $ref: '#/components/schemas/HyperliquidTraderStats'
+          items:
+            $ref: '#/components/schemas/HyperliquidFill'
+          type:
+          - array
+          - 'null'
         meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
+          $ref: '#/components/schemas/CursorMeta'
       required:
       - data
       - meta
-      type: object
-    HyperliquidVaults:
-      additionalProperties: false
-      properties:
-        positions:
-          description: Per-vault positions, sorted by vault address
-          items:
-            $ref: '#/components/schemas/HyperliquidVaultPosition'
-          type:
-          - array
-          - 'null'
-        total_equity:
-          description: Total held in vaults, USD
-          format: double
-          type: number
-      required:
-      - total_equity
-      - positions
-      type: object
-    HyperliquidOrders:
-      additionalProperties: false
-      properties:
-        address:
-          description: Wallet address (lowercased)
-          type: string
-        as_of:
-          description: When the order sections were fetched upstream (Unix seconds) — the data's age, which for a cached response predates the response time by up to the cache TTL
-          format: int64
-          type: integer
-        errors:
-          description: Sections whose fetch failed (open, historical); omitted when everything succeeded
-          items:
-            $ref: '#/components/schemas/HyperliquidSectionError'
-          type:
-          - array
-          - 'null'
-        historical:
-          description: Recent terminal orders (filled / canceled / rejected, newest status first), truncated to historical_limit
-          items:
-            $ref: '#/components/schemas/HyperliquidHistoricalOrder'
-          type:
-          - array
-          - 'null'
-        historical_total:
-          description: Total terminal orders before historical_limit truncation — greater than len(historical) means the list was cut
-          format: int64
-          type: integer
-        open:
-          description: Live resting orders (stops / take-profits / limits), truncated to open_limit
-          items:
-            $ref: '#/components/schemas/HyperliquidOpenOrder'
-          type:
-          - array
-          - 'null'
-        open_total:
-          description: Total open orders before open_limit truncation — greater than len(open) means the list was cut
-          format: int64
-          type: integer
-      required:
-      - address
-      - as_of
-      - open
-      - open_total
-      - historical
-      - historical_total
-      type: object
-    ObjectResponseMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-      required:
-      - credits_used
-      - cached
-      type: object
-    OffsetMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-        has_more:
-          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
-          type: boolean
-        limit:
-          description: Maximum number of items returned in this response
-          format: int64
-          type: integer
-        offset:
-          description: Number of items skipped (pagination offset)
-          format: int64
-          type: integer
-        total:
-          description: Total number of matching items (before pagination). Omitted when total is unknown.
-          format: int64
-          type: integer
-        watermark:
-          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
-          format: int64
-          type: integer
-      required:
-      - limit
-      - offset
-      - credits_used
-      - cached
-      type: object
-    HyperliquidAccount:
-      additionalProperties: false
-      properties:
-        address:
-          description: Wallet address
-          type: string
-        as_of:
-          description: When the account sections were fetched upstream (Unix seconds) — for a cached response this predates the response time by up to the cache TTL
-          format: int64
-          type: integer
-        errors:
-          description: Sections whose fetch failed; omitted when everything succeeded
-          items:
-            $ref: '#/components/schemas/HyperliquidSectionError'
-          type:
-          - array
-          - 'null'
-        perp:
-          $ref: '#/components/schemas/HyperliquidPerpSummary'
-          description: Perps summary; omitted if the fetch failed (see errors[])
-        spot:
-          $ref: '#/components/schemas/HyperliquidSpot'
-          description: Spot balances; omitted if the fetch failed (see errors[])
-        staking:
-          $ref: '#/components/schemas/HyperliquidStaking'
-          description: HYPE staking; omitted if the fetch failed (see errors[])
-        total_value_usd:
-          description: 'Best-effort total account value, USD: perp equity + vault equity + staked HYPE + spot holdings that have a market price (USDC, stablecoins, and HYPE). Excludes spot tokens with no market price (counted in unpriced_token_count) — so when unpriced_token_count is 0 this is the complete account value, otherwise a lower bound. Omitted when any account section (perp, spot, vaults, staking) failed to load, or when HYPE is held but its price could not be fetched (see errors[]) — so a present value always covers every section.'
-          format: double
-          type: number
-        unpriced_token_count:
-          description: Number of held spot tokens that have no market price and are therefore excluded from total_value_usd. 0 means total_value_usd is complete; greater than 0 means it is a lower bound (the excluded tokens are typically small, illiquid spot tokens).
-          format: int64
-          type: integer
-        vaults:
-          $ref: '#/components/schemas/HyperliquidVaults'
-          description: Vault equity; omitted if the fetch failed (see errors[])
-      required:
-      - as_of
-      - unpriced_token_count
-      - address
-      type: object
-    HyperliquidVaultPosition:
-      additionalProperties: false
-      properties:
-        equity:
-          description: Equity in this vault, USD
-          format: double
-          type: number
-        locked_until:
-          description: Lock expiry, Unix seconds. Compare against the current time — a past value means the lock has expired. Omitted when this vault has no lock.
-          format: int64
-          type: integer
-        vault_address:
-          description: Vault address
-          type: string
-      required:
-      - vault_address
-      - equity
       type: object
   securitySchemes:
     AccessToken:

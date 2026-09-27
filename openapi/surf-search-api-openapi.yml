@@ -1400,19 +1400,19 @@ paths:
             type: array
 components:
   schemas:
-    DataResponseFundraisingSearchItem:
+    DataResponseProjectSearchItem:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/DataResponseFundraisingSearchItem.json
+          - https://example.com/schemas/DataResponseProjectSearchItem.json
           format: uri
           readOnly: true
           type: string
         data:
           items:
-            $ref: '#/components/schemas/FundraisingSearchItem'
+            $ref: '#/components/schemas/ProjectSearchItem'
           type:
           - array
           - 'null'
@@ -1422,122 +1422,153 @@ components:
       - data
       - meta
       type: object
-    XStats:
+    FundraisingSearchItem:
       additionalProperties: false
       properties:
-        likes:
-          description: Number of likes (hearts)
+        event_at:
+          description: Effective event time as Unix seconds
           format: int64
           type: integer
-        replies:
-          description: Number of replies
-          format: int64
-          type: integer
-        reposts:
-          description: Number of retweets/reposts
-          format: int64
-          type: integer
-        views:
-          description: Total view count
-          format: int64
-          type: integer
-      required:
-      - views
-      - likes
-      - reposts
-      - replies
-      type: object
-    DataAPIErrorDetail:
-      additionalProperties: false
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
-      type: object
-    FundPortfolioItem:
-      additionalProperties: false
-      properties:
-        invested_at:
-          description: Investment date (Unix seconds)
-          format: int64
-          type: integer
-        is_lead:
-          description: Whether this fund was the lead investor
-          type: boolean
-        project_id:
-          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup. Prefer over 'q' (fuzzy name search).
-          type: string
-        project_logo:
-          description: Project logo URL
-          type: string
-        project_name:
-          description: Project name
-          type: string
-        project_slug:
-          description: Project slug
-          type: string
-        recent_raise:
-          description: Most recent funding round amount in USD
-          format: double
-          type: number
-        total_raise:
-          description: Total amount raised by the project in USD
-          format: double
-          type: number
-      required:
-      - project_id
-      - project_name
-      - is_lead
-      type: object
-    ProjectSearchItem:
-      additionalProperties: false
-      properties:
-        chains:
-          description: Chains the project operates on
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        description:
-          description: Short description of the project
-          type: string
         id:
-          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup. Prefer over 'q' (fuzzy name search).
+          description: Fundraising event UUID
+          type: string
+        importance:
+          description: Importance score from 1 to 5; omitted when unscored
+          format: int64
+          maximum: 5
+          minimum: 1
+          type: integer
+        published_at:
+          description: Source publication time as Unix seconds
+          format: int64
+          type: integer
+        source:
+          $ref: '#/components/schemas/FundraisingSearchSource'
+          description: Primary source information
+        source_count:
+          description: Number of sources consolidated into this event
+          format: int64
+          type: integer
+        summary:
+          description: Localized event summary with field-level English fallback
+          type: string
+        title:
+          description: Localized event title with field-level English fallback
+          type: string
+      required:
+      - id
+      - title
+      - summary
+      - source
+      - event_at
+      - published_at
+      - source_count
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    ProjectEventItem:
+      additionalProperties: false
+      properties:
+        date:
+          description: Event date in ISO 8601 format
+          type: string
+        description:
+          description: Detailed event description
           type: string
         logo_url:
           description: Project logo image URL
           type: string
-        name:
-          description: Project name
+        title:
+          description: Short event title
           type: string
-        slug:
-          description: Project slug for URL construction
+        type:
+          description: 'Event type — one of: launch, upgrade, partnership, news, airdrop, listing, twitter'
           type: string
-        symbol:
-          description: Primary token symbol like `BTC` or `ETH`
-          type: string
-        tags:
-          description: Project category tags
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        tokens:
-          description: Associated tokens
-          items:
-            $ref: '#/components/schemas/TokenSearchItem'
-          type:
-          - array
-          - 'null'
       required:
-      - id
-      - name
+      - type
+      - title
+      type: object
+    KalshiMarketItem:
+      additionalProperties: false
+      properties:
+        category:
+          description: Surf curated market category
+          type: string
+        close_time:
+          description: Market close time (Unix seconds)
+          format: int64
+          type: integer
+        end_time:
+          description: Market end time (Unix seconds)
+          format: int64
+          type: integer
+        event_ticker:
+          description: Parent event ticker
+          type: string
+        event_title:
+          description: Event title
+          type: string
+        last_day_open_interest:
+          description: Previous day open interest from daily report
+          format: double
+          type: number
+        market_ticker:
+          description: Unique market ticker identifier
+          type: string
+        notional_volume_usd:
+          description: Last day notional trading volume in USD (each contract = $1)
+          format: double
+          type: number
+        open_interest:
+          description: Open interest (contracts)
+          format: double
+          type: number
+        payout_type:
+          description: Payout type
+          type: string
+        result:
+          description: Market result if resolved
+          type: string
+        start_time:
+          description: Market start time (Unix seconds)
+          format: int64
+          type: integer
+        status:
+          description: Market status
+          type: string
+        subcategory:
+          description: Surf curated market subcategory
+          type: string
+        title:
+          description: Market title
+          type: string
+        total_volume:
+          description: Total trading volume (contracts)
+          format: int64
+          type: integer
+      required:
+      - market_ticker
+      - event_ticker
+      - title
+      - status
+      - payout_type
+      - total_volume
+      - notional_volume_usd
+      - open_interest
+      - last_day_open_interest
       type: object
     CursorMeta:
       additionalProperties: false
@@ -1571,6 +1602,121 @@ components:
       - limit
       - credits_used
       - cached
+      type: object
+    KalshiEvent:
+      additionalProperties: false
+      properties:
+        event_subtitle:
+          description: Event subtitle
+          type: string
+        event_ticker:
+          description: Unique event ticker identifier
+          type: string
+        event_title:
+          description: Event title
+          type: string
+        market_count:
+          description: Number of markets in this event
+          format: int64
+          type: integer
+        markets:
+          description: Markets within this event
+          items:
+            $ref: '#/components/schemas/KalshiMarketItem'
+          type:
+          - array
+          - 'null'
+      required:
+      - event_ticker
+      - event_title
+      - market_count
+      - markets
+      type: object
+    NewsArticleItem:
+      additionalProperties: false
+      properties:
+        highlights:
+          additionalProperties:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          description: Search highlight fragments with <em> tags around matching terms. Only present in search results.
+          type: object
+        id:
+          description: Article ID. Use with the detail endpoint to fetch full content.
+          type: string
+        project_id:
+          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup
+          type: string
+        project_name:
+          description: Primary crypto project referenced in the article
+          type: string
+        published_at:
+          description: Unix timestamp in seconds when the article was published
+          format: int64
+          type: integer
+        source:
+          description: Publisher name (e.g. COINDESK, COINTELEGRAPH)
+          type: string
+        summary:
+          description: Short summary of the article
+          type: string
+        title:
+          description: Article headline
+          type: string
+        url:
+          description: Direct URL to the original article
+          type: string
+      required:
+      - id
+      - title
+      - published_at
+      type: object
+    DataResponseSearchTokenItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseSearchTokenItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/SearchTokenItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    CursorDataResponseXTweet:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/CursorDataResponseXTweet.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/XTweet'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/CursorMeta'
+      required:
+      - data
+      - meta
       type: object
     AirdropActivityItem:
       additionalProperties: false
@@ -1623,48 +1769,112 @@ components:
       - created_at
       - updated_at
       type: object
-    KalshiEvent:
-      additionalProperties: false
-      properties:
-        event_subtitle:
-          description: Event subtitle
-          type: string
-        event_ticker:
-          description: Unique event ticker identifier
-          type: string
-        event_title:
-          description: Event title
-          type: string
-        market_count:
-          description: Number of markets in this event
-          format: int64
-          type: integer
-        markets:
-          description: Markets within this event
-          items:
-            $ref: '#/components/schemas/KalshiMarketItem'
-          type:
-          - array
-          - 'null'
-      required:
-      - event_ticker
-      - event_title
-      - market_count
-      - markets
-      type: object
-    CursorDataResponseXTweet:
+    DataResponseFundraisingSearchItem:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/CursorDataResponseXTweet.json
+          - https://example.com/schemas/DataResponseFundraisingSearchItem.json
           format: uri
           readOnly: true
           type: string
         data:
           items:
-            $ref: '#/components/schemas/XTweet'
+            $ref: '#/components/schemas/FundraisingSearchItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    XTweet:
+      additionalProperties: false
+      properties:
+        author:
+          $ref: '#/components/schemas/XAuthor'
+          description: Author of the tweet
+        cover_image_url:
+          description: Article cover image URL; present only when type is 'article'
+          type: string
+        created_at:
+          description: Unix timestamp (seconds) when the tweet was posted
+          format: int64
+          type: integer
+        lang:
+          description: Tweet language code when available
+          type: string
+        media:
+          description: Attached media items (photos, videos, GIFs)
+          items:
+            $ref: '#/components/schemas/XMedia'
+          type:
+          - array
+          - 'null'
+        stats:
+          $ref: '#/components/schemas/XStats'
+          description: Engagement statistics (likes, reposts, replies, views)
+        text:
+          description: Full text content of the tweet
+          type: string
+        title:
+          description: Article title; present only when type is 'article'
+          type: string
+        tweet_id:
+          description: Numeric tweet ID as a string (e.g. '1234567890123456789')
+          type: string
+        type:
+          description: Tweet type when available (e.g. 'article' for long-form posts)
+          type: string
+        url:
+          description: Permanent link to the tweet on X/Twitter
+          type: string
+      required:
+      - tweet_id
+      - text
+      - url
+      - created_at
+      - author
+      - stats
+      type: object
+    DataResponsePolymarketEvent:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponsePolymarketEvent.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/PolymarketEvent'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    CursorDataResponseXUser:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/CursorDataResponseXUser.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/XUser'
           type:
           - array
           - 'null'
@@ -1674,140 +1884,26 @@ components:
       - data
       - meta
       type: object
-    AirdropTaskItem:
+    WebSearchResultItem:
       additionalProperties: false
       properties:
-        blockchains:
-          description: Supported blockchain names
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        close_date:
-          description: Task close date as Unix seconds (0 if unknown)
-          format: int64
-          type: integer
-        cost:
-          description: Participation cost in USD (0 = free)
-          format: int32
-          type: integer
-        external_link:
-          description: Public participation URL
+        content:
+          description: Relevant content snippet from the page
           type: string
-        is_exclusive:
-          description: Whether task is exclusive
-          type: boolean
-        open_date:
-          description: Task open date as Unix seconds (0 if unknown)
-          format: int64
-          type: integer
-        status:
-          description: 'Task status: OPEN, CLOSED, UPCOMING'
-          type: string
-        time_minutes:
-          description: Estimated time in minutes
-          format: int32
-          type: integer
-        title:
-          description: Task title
-          type: string
-        type:
-          description: 'Task type: social, testnet, mainnet, staking, trading, etc.'
-          type: string
-      required:
-      - title
-      - type
-      - status
-      - is_exclusive
-      - cost
-      - time_minutes
-      - open_date
-      - close_date
-      type: object
-    NewsArticleItem:
-      additionalProperties: false
-      properties:
-        highlights:
-          additionalProperties:
-            items:
-              type: string
-            type:
-            - array
-            - 'null'
-          description: Search highlight fragments with <em> tags around matching terms. Only present in search results.
-          type: object
-        id:
-          description: Article ID. Use with the detail endpoint to fetch full content.
-          type: string
-        project_id:
-          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup
-          type: string
-        project_name:
-          description: Primary crypto project referenced in the article
-          type: string
-        published_at:
-          description: Unix timestamp in seconds when the article was published
-          format: int64
-          type: integer
-        source:
-          description: Publisher name (e.g. COINDESK, COINTELEGRAPH)
-          type: string
-        summary:
-          description: Short summary of the article
+        description:
+          description: Short description or meta description of the page
           type: string
         title:
-          description: Article headline
+          description: Page title from the search result
           type: string
         url:
-          description: Direct URL to the original article
+          description: Full URL of the search result page
           type: string
       required:
-      - id
       - title
-      - published_at
-      type: object
-    FundraisingSearchItem:
-      additionalProperties: false
-      properties:
-        event_at:
-          description: Effective event time as Unix seconds
-          format: int64
-          type: integer
-        id:
-          description: Fundraising event UUID
-          type: string
-        importance:
-          description: Importance score from 1 to 5; omitted when unscored
-          format: int64
-          maximum: 5
-          minimum: 1
-          type: integer
-        published_at:
-          description: Source publication time as Unix seconds
-          format: int64
-          type: integer
-        source:
-          $ref: '#/components/schemas/FundraisingSearchSource'
-          description: Primary source information
-        source_count:
-          description: Number of sources consolidated into this event
-          format: int64
-          type: integer
-        summary:
-          description: Localized event summary with field-level English fallback
-          type: string
-        title:
-          description: Localized event title with field-level English fallback
-          type: string
-      required:
-      - id
-      - title
-      - summary
-      - source
-      - event_at
-      - published_at
-      - source_count
+      - url
+      - description
+      - content
       type: object
     DataResponseFundSearchItem:
       additionalProperties: false
@@ -1830,6 +1926,88 @@ components:
       required:
       - data
       - meta
+      type: object
+    XStats:
+      additionalProperties: false
+      properties:
+        likes:
+          description: Number of likes (hearts)
+          format: int64
+          type: integer
+        replies:
+          description: Number of replies
+          format: int64
+          type: integer
+        reposts:
+          description: Number of retweets/reposts
+          format: int64
+          type: integer
+        views:
+          description: Total view count
+          format: int64
+          type: integer
+      required:
+      - views
+      - likes
+      - reposts
+      - replies
+      type: object
+    DataResponseProjectEventItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseProjectEventItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ProjectEventItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    FundPortfolioItem:
+      additionalProperties: false
+      properties:
+        invested_at:
+          description: Investment date (Unix seconds)
+          format: int64
+          type: integer
+        is_lead:
+          description: Whether this fund was the lead investor
+          type: boolean
+        project_id:
+          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup. Prefer over 'q' (fuzzy name search).
+          type: string
+        project_logo:
+          description: Project logo URL
+          type: string
+        project_name:
+          description: Project name
+          type: string
+        project_slug:
+          description: Project slug
+          type: string
+        recent_raise:
+          description: Most recent funding round amount in USD
+          format: double
+          type: number
+        total_raise:
+          description: Total amount raised by the project in USD
+          format: double
+          type: number
+      required:
+      - project_id
+      - project_name
+      - is_lead
       type: object
     PolymarketMarketItem:
       additionalProperties: false
@@ -1932,19 +2110,32 @@ components:
       - volume_total
       - status
       type: object
-    DataResponseSearchTokenItem:
+    WalletSearchAddress:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address
+          type: string
+        chain:
+          description: Chain name like ethereum, arbitrum_one
+          type: string
+      required:
+      - address
+      - chain
+      type: object
+    DataResponseAirdropSearchItem:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/DataResponseSearchTokenItem.json
+          - https://example.com/schemas/DataResponseAirdropSearchItem.json
           format: uri
           readOnly: true
           type: string
         data:
           items:
-            $ref: '#/components/schemas/SearchTokenItem'
+            $ref: '#/components/schemas/AirdropSearchItem'
           type:
           - array
           - 'null'
@@ -1954,350 +2145,73 @@ components:
       - data
       - meta
       type: object
-    CursorDataResponseXUser:
+    ProjectSearchItem:
       additionalProperties: false
       properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/CursorDataResponseXUser.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/XUser'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/CursorMeta'
-      required:
-      - data
-      - meta
-      type: object
-    XTweet:
-      additionalProperties: false
-      properties:
-        author:
-          $ref: '#/components/schemas/XAuthor'
-          description: Author of the tweet
-        cover_image_url:
-          description: Article cover image URL; present only when type is 'article'
-          type: string
-        created_at:
-          description: Unix timestamp (seconds) when the tweet was posted
-          format: int64
-          type: integer
-        lang:
-          description: Tweet language code when available
-          type: string
-        media:
-          description: Attached media items (photos, videos, GIFs)
-          items:
-            $ref: '#/components/schemas/XMedia'
-          type:
-          - array
-          - 'null'
-        stats:
-          $ref: '#/components/schemas/XStats'
-          description: Engagement statistics (likes, reposts, replies, views)
-        text:
-          description: Full text content of the tweet
-          type: string
-        title:
-          description: Article title; present only when type is 'article'
-          type: string
-        tweet_id:
-          description: Numeric tweet ID as a string (e.g. '1234567890123456789')
-          type: string
-        type:
-          description: Tweet type when available (e.g. 'article' for long-form posts)
-          type: string
-        url:
-          description: Permanent link to the tweet on X/Twitter
-          type: string
-      required:
-      - tweet_id
-      - text
-      - url
-      - created_at
-      - author
-      - stats
-      type: object
-    FundSearchItem:
-      additionalProperties: false
-      properties:
-        id:
-          description: Surf fund UUID — pass as 'id' parameter to /fund/detail or /fund/portfolio for exact lookup
-          type: string
-        image:
-          description: Fund logo URL
-          type: string
-        invested_projects_count:
-          description: Total number of unique invested projects (a project with multiple funding rounds counts once)
-          format: int64
-          type: integer
-        name:
-          description: Fund name
-          type: string
-        tier:
-          description: Fund tier ranking (lower is better)
-          format: int64
-          type: integer
-        top_projects:
-          description: Top invested projects (up to 5)
-          items:
-            $ref: '#/components/schemas/FundPortfolioItem'
-          type:
-          - array
-          - 'null'
-        type:
-          description: Fund type
-          type: string
-      required:
-      - id
-      - name
-      - tier
-      - invested_projects_count
-      - top_projects
-      type: object
-    DataResponseProjectEventItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseProjectEventItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/ProjectEventItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataAPIError:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
-          type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
-      required:
-      - error
-      type: object
-    ProjectEventItem:
-      additionalProperties: false
-      properties:
-        date:
-          description: Event date in ISO 8601 format
-          type: string
-        description:
-          description: Detailed event description
-          type: string
-        logo_url:
-          description: Project logo image URL
-          type: string
-        title:
-          description: Short event title
-          type: string
-        type:
-          description: 'Event type — one of: launch, upgrade, partnership, news, airdrop, listing, twitter'
-          type: string
-      required:
-      - type
-      - title
-      type: object
-    FundraisingSearchSource:
-      additionalProperties: false
-      properties:
-        name:
-          description: Source account or publication name
-          type: string
-        type:
-          description: 'Public source type: social or news'
-          enum:
-          - social
-          - news
-          type: string
-        url:
-          description: Primary source URL
-          type: string
-      required:
-      - type
-      type: object
-    AirdropTaskSummary:
-      additionalProperties: false
-      properties:
-        open:
-          description: Number of currently open tasks
-          format: int32
-          type: integer
-        total:
-          description: Total number of tasks
-          format: int32
-          type: integer
-        types:
-          description: Distinct task types
+        chains:
+          description: Chains the project operates on
           items:
             type: string
           type:
           - array
           - 'null'
-      required:
-      - total
-      - open
-      - types
-      type: object
-    PolymarketMarketSide:
-      additionalProperties: false
-      properties:
+        description:
+          description: Short description of the project
+          type: string
         id:
-          description: Token identifier for this outcome
+          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup. Prefer over 'q' (fuzzy name search).
           type: string
-        label:
-          description: Outcome label
-          type: string
-      required:
-      - id
-      - label
-      type: object
-    DataResponseKalshiEvent:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseKalshiEvent.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/KalshiEvent'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    TokenSearchItem:
-      additionalProperties: false
-      properties:
-        id:
-          description: Token identifier
-          type: string
-        image:
-          description: Token logo image URL
-          type: string
-        name:
-          description: Token name
-          type: string
-        symbol:
-          description: Token symbol
-          type: string
-      required:
-      - id
-      - name
-      - symbol
-      type: object
-    DataResponsePolymarketEvent:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponsePolymarketEvent.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/PolymarketEvent'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    AirdropSearchItem:
-      additionalProperties: false
-      properties:
-        coin_symbol:
-          description: Token ticker symbol
-          type: string
-        followers_count:
-          description: X/Twitter follower count (0 if unknown)
-          format: int64
-          type: integer
-        last_status_update:
-          description: Last status change as Unix seconds
-          format: int64
-          type: integer
         logo_url:
           description: Project logo image URL
           type: string
-        project_id:
-          description: Surf project UUID if linked
+        name:
+          description: Project name
           type: string
-        project_name:
-          description: Project/coin name
+        slug:
+          description: Project slug for URL construction
           type: string
-        reward_date:
-          description: Expected reward date as Unix seconds (0 if unknown)
-          format: int64
-          type: integer
-        reward_type:
-          description: 'Reward type: airdrop, points, whitelist, nft, role, ambassador'
+        symbol:
+          description: Primary token symbol like `BTC` or `ETH`
           type: string
-        status:
-          description: 'Airdrop lifecycle stage: `POTENTIAL` (speculated, tasks open), `CONFIRMED` (announced, tasks open), `SNAPSHOT` (eligibility snapshot taken), `VERIFICATION` (claim window open), `REWARD_AVAILABLE` (ready to claim), `DISTRIBUTED` (sent, historical)'
-          type: string
-        task_summary:
-          $ref: '#/components/schemas/AirdropTaskSummary'
-          description: Aggregated task statistics
-        tasks:
-          description: Full task list (only with include_tasks=true)
+        tags:
+          description: Project category tags
           items:
-            $ref: '#/components/schemas/AirdropTaskItem'
+            type: string
           type:
           - array
           - 'null'
-        total_raise:
-          description: Total project fundraise in USD (0 if unknown)
-          format: int64
-          type: integer
-        xscore:
-          description: CryptoRank social score (0 if unknown)
-          format: int64
-          type: integer
+        tokens:
+          description: Associated tokens
+          items:
+            $ref: '#/components/schemas/TokenSearchItem'
+          type:
+          - array
+          - 'null'
       required:
-      - project_name
-      - status
-      - total_raise
-      - xscore
-      - followers_count
-      - reward_date
-      - last_status_update
+      - id
+      - name
+      type: object
+    DataResponseWalletSearchItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseWalletSearchItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/WalletSearchItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
       type: object
     WalletSearchItem:
       additionalProperties: false
@@ -2332,18 +2246,48 @@ components:
           description: Associated X (Twitter) handle
           type: string
       type: object
-    WalletSearchAddress:
+    XAuthor:
       additionalProperties: false
       properties:
-        address:
-          description: Wallet address
+        avatar:
+          description: Profile picture URL
           type: string
-        chain:
-          description: Chain name like ethereum, arbitrum_one
+        handle:
+          description: X/Twitter handle without the @ prefix (e.g. 'cz_binance')
+          type: string
+        name:
+          description: Display name on X/Twitter
+          type: string
+        user_id:
+          description: Numeric X/Twitter user ID as a string
           type: string
       required:
-      - address
-      - chain
+      - user_id
+      - handle
+      - name
+      type: object
+    AirdropTaskSummary:
+      additionalProperties: false
+      properties:
+        open:
+          description: Number of currently open tasks
+          format: int32
+          type: integer
+        total:
+          description: Total number of tasks
+          format: int32
+          type: integer
+        types:
+          description: Distinct task types
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      required:
+      - total
+      - open
+      - types
       type: object
     SearchTokenItem:
       additionalProperties: false
@@ -2372,277 +2316,16 @@ components:
       - decimals
       - volume_usd
       type: object
-    XUser:
+    DataAPIErrorDetail:
       additionalProperties: false
       properties:
-        avatar:
-          description: Profile picture URL
+        code:
           type: string
-        bio:
-          description: Profile biography text
-          type: string
-        followers_count:
-          description: Number of followers
-          format: int64
-          type: integer
-        following_count:
-          description: Number of accounts this user follows
-          format: int64
-          type: integer
-        handle:
-          description: X/Twitter handle without the @ prefix
-          type: string
-        name:
-          description: Display name on X/Twitter
-          type: string
-        user_id:
-          description: Numeric X/Twitter user ID as a string
+        message:
           type: string
       required:
-      - user_id
-      - handle
-      - name
-      - followers_count
-      - following_count
-      type: object
-    DataResponseWalletSearchItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseWalletSearchItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/WalletSearchItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataResponseNewsArticleItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseNewsArticleItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/NewsArticleItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataResponseAirdropActivityItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseAirdropActivityItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/AirdropActivityItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataResponseDiscoverMarketItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseDiscoverMarketItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/DiscoverMarketItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataResponseProjectSearchItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseProjectSearchItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/ProjectSearchItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    KalshiMarketItem:
-      additionalProperties: false
-      properties:
-        category:
-          description: Surf curated market category
-          type: string
-        close_time:
-          description: Market close time (Unix seconds)
-          format: int64
-          type: integer
-        end_time:
-          description: Market end time (Unix seconds)
-          format: int64
-          type: integer
-        event_ticker:
-          description: Parent event ticker
-          type: string
-        event_title:
-          description: Event title
-          type: string
-        last_day_open_interest:
-          description: Previous day open interest from daily report
-          format: double
-          type: number
-        market_ticker:
-          description: Unique market ticker identifier
-          type: string
-        notional_volume_usd:
-          description: Last day notional trading volume in USD (each contract = $1)
-          format: double
-          type: number
-        open_interest:
-          description: Open interest (contracts)
-          format: double
-          type: number
-        payout_type:
-          description: Payout type
-          type: string
-        result:
-          description: Market result if resolved
-          type: string
-        start_time:
-          description: Market start time (Unix seconds)
-          format: int64
-          type: integer
-        status:
-          description: Market status
-          type: string
-        subcategory:
-          description: Surf curated market subcategory
-          type: string
-        title:
-          description: Market title
-          type: string
-        total_volume:
-          description: Total trading volume (contracts)
-          format: int64
-          type: integer
-      required:
-      - market_ticker
-      - event_ticker
-      - title
-      - status
-      - payout_type
-      - total_volume
-      - notional_volume_usd
-      - open_interest
-      - last_day_open_interest
-      type: object
-    OffsetMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-        has_more:
-          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
-          type: boolean
-        limit:
-          description: Maximum number of items returned in this response
-          format: int64
-          type: integer
-        offset:
-          description: Number of items skipped (pagination offset)
-          format: int64
-          type: integer
-        total:
-          description: Total number of matching items (before pagination). Omitted when total is unknown.
-          format: int64
-          type: integer
-        watermark:
-          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
-          format: int64
-          type: integer
-      required:
-      - limit
-      - offset
-      - credits_used
-      - cached
-      type: object
-    DataResponseWebSearchResultItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseWebSearchResultItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/WebSearchResultItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
+      - code
+      - message
       type: object
     PolymarketEvent:
       additionalProperties: false
@@ -2708,6 +2391,24 @@ components:
       - volume_total
       - market_count
       - markets
+      type: object
+    FundraisingSearchSource:
+      additionalProperties: false
+      properties:
+        name:
+          description: Source account or publication name
+          type: string
+        type:
+          description: 'Public source type: social or news'
+          enum:
+          - social
+          - news
+          type: string
+        url:
+          description: Primary source URL
+          type: string
+      required:
+      - type
       type: object
     XMedia:
       additionalProperties: false
@@ -2815,14 +2516,354 @@ components:
       - trade_count_7d
       - open_interest_usd
       type: object
-    XAuthor:
+    DataResponseDiscoverMarketItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseDiscoverMarketItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/DiscoverMarketItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    AirdropSearchItem:
+      additionalProperties: false
+      properties:
+        coin_symbol:
+          description: Token ticker symbol
+          type: string
+        followers_count:
+          description: X/Twitter follower count (0 if unknown)
+          format: int64
+          type: integer
+        last_status_update:
+          description: Last status change as Unix seconds
+          format: int64
+          type: integer
+        logo_url:
+          description: Project logo image URL
+          type: string
+        project_id:
+          description: Surf project UUID if linked
+          type: string
+        project_name:
+          description: Project/coin name
+          type: string
+        reward_date:
+          description: Expected reward date as Unix seconds (0 if unknown)
+          format: int64
+          type: integer
+        reward_type:
+          description: 'Reward type: airdrop, points, whitelist, nft, role, ambassador'
+          type: string
+        status:
+          description: 'Airdrop lifecycle stage: `POTENTIAL` (speculated, tasks open), `CONFIRMED` (announced, tasks open), `SNAPSHOT` (eligibility snapshot taken), `VERIFICATION` (claim window open), `REWARD_AVAILABLE` (ready to claim), `DISTRIBUTED` (sent, historical)'
+          type: string
+        task_summary:
+          $ref: '#/components/schemas/AirdropTaskSummary'
+          description: Aggregated task statistics
+        tasks:
+          description: Full task list (only with include_tasks=true)
+          items:
+            $ref: '#/components/schemas/AirdropTaskItem'
+          type:
+          - array
+          - 'null'
+        total_raise:
+          description: Total project fundraise in USD (0 if unknown)
+          format: int64
+          type: integer
+        xscore:
+          description: CryptoRank social score (0 if unknown)
+          format: int64
+          type: integer
+      required:
+      - project_name
+      - status
+      - total_raise
+      - xscore
+      - followers_count
+      - reward_date
+      - last_status_update
+      type: object
+    DataResponseNewsArticleItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseNewsArticleItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/NewsArticleItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    DataResponseWebSearchResultItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseWebSearchResultItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/WebSearchResultItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    FundSearchItem:
+      additionalProperties: false
+      properties:
+        id:
+          description: Surf fund UUID — pass as 'id' parameter to /fund/detail or /fund/portfolio for exact lookup
+          type: string
+        image:
+          description: Fund logo URL
+          type: string
+        invested_projects_count:
+          description: Total number of unique invested projects (a project with multiple funding rounds counts once)
+          format: int64
+          type: integer
+        name:
+          description: Fund name
+          type: string
+        tier:
+          description: Fund tier ranking (lower is better)
+          format: int64
+          type: integer
+        top_projects:
+          description: Top invested projects (up to 5)
+          items:
+            $ref: '#/components/schemas/FundPortfolioItem'
+          type:
+          - array
+          - 'null'
+        type:
+          description: Fund type
+          type: string
+      required:
+      - id
+      - name
+      - tier
+      - invested_projects_count
+      - top_projects
+      type: object
+    TokenSearchItem:
+      additionalProperties: false
+      properties:
+        id:
+          description: Token identifier
+          type: string
+        image:
+          description: Token logo image URL
+          type: string
+        name:
+          description: Token name
+          type: string
+        symbol:
+          description: Token symbol
+          type: string
+      required:
+      - id
+      - name
+      - symbol
+      type: object
+    DataResponseAirdropActivityItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseAirdropActivityItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/AirdropActivityItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseKalshiEvent:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseKalshiEvent.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/KalshiEvent'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    PolymarketMarketSide:
+      additionalProperties: false
+      properties:
+        id:
+          description: Token identifier for this outcome
+          type: string
+        label:
+          description: Outcome label
+          type: string
+      required:
+      - id
+      - label
+      type: object
+    AirdropTaskItem:
+      additionalProperties: false
+      properties:
+        blockchains:
+          description: Supported blockchain names
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        close_date:
+          description: Task close date as Unix seconds (0 if unknown)
+          format: int64
+          type: integer
+        cost:
+          description: Participation cost in USD (0 = free)
+          format: int32
+          type: integer
+        external_link:
+          description: Public participation URL
+          type: string
+        is_exclusive:
+          description: Whether task is exclusive
+          type: boolean
+        open_date:
+          description: Task open date as Unix seconds (0 if unknown)
+          format: int64
+          type: integer
+        status:
+          description: 'Task status: OPEN, CLOSED, UPCOMING'
+          type: string
+        time_minutes:
+          description: Estimated time in minutes
+          format: int32
+          type: integer
+        title:
+          description: Task title
+          type: string
+        type:
+          description: 'Task type: social, testnet, mainnet, staking, trading, etc.'
+          type: string
+      required:
+      - title
+      - type
+      - status
+      - is_exclusive
+      - cost
+      - time_minutes
+      - open_date
+      - close_date
+      type: object
+    XUser:
       additionalProperties: false
       properties:
         avatar:
           description: Profile picture URL
           type: string
+        bio:
+          description: Profile biography text
+          type: string
+        followers_count:
+          description: Number of followers
+          format: int64
+          type: integer
+        following_count:
+          description: Number of accounts this user follows
+          format: int64
+          type: integer
         handle:
-          description: X/Twitter handle without the @ prefix (e.g. 'cz_binance')
+          description: X/Twitter handle without the @ prefix
           type: string
         name:
           description: Display name on X/Twitter
@@ -2834,49 +2875,8 @@ components:
       - user_id
       - handle
       - name
-      type: object
-    WebSearchResultItem:
-      additionalProperties: false
-      properties:
-        content:
-          description: Relevant content snippet from the page
-          type: string
-        description:
-          description: Short description or meta description of the page
-          type: string
-        title:
-          description: Page title from the search result
-          type: string
-        url:
-          description: Full URL of the search result page
-          type: string
-      required:
-      - title
-      - url
-      - description
-      - content
-      type: object
-    DataResponseAirdropSearchItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseAirdropSearchItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/AirdropSearchItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
+      - followers_count
+      - following_count
       type: object
   securitySchemes:
     AccessToken:
