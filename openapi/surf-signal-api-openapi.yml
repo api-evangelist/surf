@@ -390,51 +390,45 @@ components:
       - core_state
       - heat_dimensions
       type: object
-    DataAPIErrorDetail:
+    SignalCoreState:
       additionalProperties: false
       properties:
-        code:
+        driver:
+          description: Primary state driver
           type: string
-        message:
+        priority:
+          description: State priority
+          format: int64
+          type: integer
+        reason:
+          description: Short reason behind the state
           type: string
-      required:
-      - code
-      - message
+        state:
+          description: State label
+          type: string
+        state_type:
+          description: State type
+          type: string
+        strength:
+          description: Directional state strength
+          type: string
       type: object
-    SignalDerivativeComponent:
+    ObjectResponseMeta:
       additionalProperties: false
       properties:
-        metric:
-          description: Derivative component metric
-          type: string
-        score:
-          description: Component score
-          format: double
-          type: number
-        used:
-          description: Whether the component contributed to the derivative score
+        cached:
+          description: Whether this response was served from cache
           type: boolean
-        weight:
-          description: Component weight
-          format: double
-          type: number
-      required:
-      - used
-      type: object
-    DataAPIError:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
           type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
       required:
-      - error
+      - credits_used
+      - cached
       type: object
     DataResponseSignalProject:
       additionalProperties: false
@@ -485,28 +479,51 @@ components:
           format: double
           type: number
       type: object
-    SignalCoreState:
+    DataAPIErrorDetail:
       additionalProperties: false
       properties:
-        driver:
-          description: Primary state driver
+        code:
           type: string
-        priority:
-          description: State priority
-          format: int64
-          type: integer
-        reason:
-          description: Short reason behind the state
+        message:
           type: string
-        state:
-          description: State label
+      required:
+      - code
+      - message
+      type: object
+    SignalDerivativeComponent:
+      additionalProperties: false
+      properties:
+        metric:
+          description: Derivative component metric
           type: string
-        state_type:
-          description: State type
+        score:
+          description: Component score
+          format: double
+          type: number
+        used:
+          description: Whether the component contributed to the derivative score
+          type: boolean
+        weight:
+          description: Component weight
+          format: double
+          type: number
+      required:
+      - used
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
           type: string
-        strength:
-          description: Directional state strength
-          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
       type: object
     SignalPriceChange:
       additionalProperties: false
@@ -523,6 +540,24 @@ components:
           description: 7 day price change percent
           format: double
           type: number
+      type: object
+    DataObjectResponseSignalProject:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseSignalProject.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/SignalProject'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
       type: object
     OffsetMeta:
       additionalProperties: false
@@ -559,41 +594,6 @@ components:
       required:
       - limit
       - offset
-      - credits_used
-      - cached
-      type: object
-    DataObjectResponseSignalProject:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataObjectResponseSignalProject.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          $ref: '#/components/schemas/SignalProject'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    ObjectResponseMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-      required:
       - credits_used
       - cached
       type: object

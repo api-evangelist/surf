@@ -97,16 +97,22 @@ paths:
       - Web
 components:
   schemas:
-    DataAPIErrorDetail:
+    ObjectResponseMeta:
       additionalProperties: false
       properties:
-        code:
-          type: string
-        message:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
           type: string
       required:
-      - code
-      - message
+      - credits_used
+      - cached
       type: object
     DataObjectResponseWebFetchResultItem:
       additionalProperties: false
@@ -125,6 +131,17 @@ components:
       required:
       - data
       - meta
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
       type: object
     DataAPIError:
       additionalProperties: false
@@ -156,23 +173,6 @@ components:
       required:
       - url
       - content
-      type: object
-    ObjectResponseMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-      required:
-      - credits_used
-      - cached
       type: object
   securitySchemes:
     AccessToken:

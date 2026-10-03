@@ -133,67 +133,6 @@ paths:
       - DEX
 components:
   schemas:
-    DexTokenPriceBar:
-      additionalProperties: false
-      properties:
-        close:
-          description: Closing price in USD
-          format: double
-          type: number
-        high:
-          description: Highest price during the bar in USD
-          format: double
-          type: number
-        low:
-          description: Lowest price during the bar in USD
-          format: double
-          type: number
-        open:
-          description: Opening price in USD
-          format: double
-          type: number
-        timestamp:
-          description: Unix timestamp in seconds at the bar's open
-          format: int64
-          type: integer
-        volume_usd:
-          description: USD volume traded during the bar
-          format: double
-          type: number
-      required:
-      - timestamp
-      - open
-      - high
-      - low
-      - close
-      - volume_usd
-      type: object
-    DataAPIErrorDetail:
-      additionalProperties: false
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
-      type: object
-    DataAPIError:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
-          type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
-      required:
-      - error
-      type: object
     SimpleListResponseDexTokenPriceBar:
       additionalProperties: false
       properties:
@@ -232,6 +171,67 @@ components:
       required:
       - credits_used
       - cached
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    DexTokenPriceBar:
+      additionalProperties: false
+      properties:
+        close:
+          description: Closing price in USD
+          format: double
+          type: number
+        high:
+          description: Highest price during the bar in USD
+          format: double
+          type: number
+        low:
+          description: Lowest price during the bar in USD
+          format: double
+          type: number
+        open:
+          description: Opening price in USD
+          format: double
+          type: number
+        timestamp:
+          description: Unix timestamp in seconds at the bar's open
+          format: int64
+          type: integer
+        volume_usd:
+          description: USD volume traded during the bar
+          format: double
+          type: number
+      required:
+      - timestamp
+      - open
+      - high
+      - low
+      - close
+      - volume_usd
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
       type: object
   securitySchemes:
     AccessToken:

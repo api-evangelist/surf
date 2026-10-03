@@ -171,17 +171,6 @@ paths:
       - News
 components:
   schemas:
-    DataAPIErrorDetail:
-      additionalProperties: false
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
-      type: object
     DataObjectResponseNewsArticleDetailItem:
       additionalProperties: false
       properties:
@@ -199,6 +188,23 @@ components:
       required:
       - data
       - meta
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
       type: object
     NewsArticleDetailItem:
       additionalProperties: false
@@ -236,43 +242,6 @@ components:
       - title
       - content
       - published_at
-      type: object
-    DataAPIError:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
-          type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
-      required:
-      - error
-      type: object
-    DataResponseNewsArticleItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseNewsArticleItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/NewsArticleItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
       type: object
     NewsArticleItem:
       additionalProperties: false
@@ -316,6 +285,54 @@ components:
       - title
       - published_at
       type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    DataResponseNewsArticleItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseNewsArticleItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/NewsArticleItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
     OffsetMeta:
       additionalProperties: false
       properties:
@@ -351,23 +368,6 @@ components:
       required:
       - limit
       - offset
-      - credits_used
-      - cached
-      type: object
-    ObjectResponseMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-      required:
       - credits_used
       - cached
       type: object

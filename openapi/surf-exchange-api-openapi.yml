@@ -980,33 +980,109 @@ paths:
       - Exchange
 components:
   schemas:
-    DataAPIError:
+    ExchangePriceItem:
       additionalProperties: false
       properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
+        ask:
+          description: Best ask price
+          format: double
+          type:
+          - number
+          - 'null'
+        bid:
+          description: Best bid price
+          format: double
+          type:
+          - number
+          - 'null'
+        change_24h_pct:
+          description: '24h signed price change percentage. Example: -2.68 means -2.68%'
+          format: double
+          type:
+          - number
+          - 'null'
+        exchange:
+          description: Exchange identifier like binance, okx
           type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
+        high_24h:
+          description: 24h high price
+          format: double
+          type:
+          - number
+          - 'null'
+        last:
+          description: Last traded price
+          format: double
+          type:
+          - number
+          - 'null'
+        low_24h:
+          description: 24h low price
+          format: double
+          type:
+          - number
+          - 'null'
+        pair:
+          description: Trading pair like BTC/USDT
+          type: string
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type:
+          - integer
+          - 'null'
+        volume_24h_base:
+          description: 24h trading volume in base currency units
+          format: double
+          type:
+          - number
+          - 'null'
       required:
-      - error
+      - exchange
+      - pair
+      - last
+      - bid
+      - ask
+      - high_24h
+      - low_24h
+      - volume_24h_base
+      - change_24h_pct
+      - timestamp
       type: object
-    ExchangeLongShortRatioItem:
+    ExchangeFundingHistoryItem:
       additionalProperties: false
       properties:
         exchange:
           description: Exchange identifier
           type: string
-        long_short_ratio:
-          description: 'Ratio of longs to shorts (e.g. 1.5 means 60% long / 40% short). To get percentages: long% = ratio/(ratio+1)*100, short% = 100/(ratio+1)'
+        funding_interval_hours:
+          description: Funding interval in hours when known
+          format: int64
+          type:
+          - integer
+          - 'null'
+        funding_rate:
+          description: Raw funding rate at this settlement. Use funding_rate_8h for cross-exchange comparison when present.
           format: double
           type:
           - number
           - 'null'
+        funding_rate_1h:
+          description: Funding rate normalized to a 1-hour interval
+          format: double
+          type: number
+        funding_rate_8h:
+          description: Funding rate normalized to an 8-hour interval for cross-exchange comparison
+          format: double
+          type: number
+        funding_rate_annualized:
+          description: Simple annualized funding rate derived from the 1-hour normalized rate
+          format: double
+          type: number
+        funding_rate_raw:
+          description: 'Alias of funding_rate: raw funding rate for the exchange settlement interval'
+          format: double
+          type: number
         pair:
           description: Perpetual contract pair like BTC/USDT
           type: string
@@ -1019,135 +1095,9 @@ components:
       required:
       - exchange
       - pair
-      - long_short_ratio
+      - funding_rate
       - timestamp
-      type: object
-    SimpleListResponseExchangeLongShortRatioItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/SimpleListResponseExchangeLongShortRatioItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/ExchangeLongShortRatioItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    ObjectResponseMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-      required:
-      - credits_used
-      - cached
-      type: object
-    ExchangeMarketItem:
-      additionalProperties: false
-      properties:
-        active:
-          description: Whether the market is active
-          type:
-          - boolean
-          - 'null'
-        base:
-          description: Base currency
-          type:
-          - string
-          - 'null'
-        exchange:
-          description: Exchange identifier
-          type: string
-        maker_fee:
-          description: Default maker fee rate
-          format: double
-          type:
-          - number
-          - 'null'
-        pair:
-          description: Trading pair like BTC/USDT
-          type: string
-        quote:
-          description: Quote currency
-          type:
-          - string
-          - 'null'
-        taker_fee:
-          description: Default taker fee rate
-          format: double
-          type:
-          - number
-          - 'null'
-        type:
-          description: 'Market type: spot, swap, future, option'
-          type:
-          - string
-          - 'null'
-      required:
-      - exchange
-      - pair
-      - base
-      - quote
-      - type
-      - active
-      - maker_fee
-      - taker_fee
-      type: object
-    ExchangeKlineItem:
-      additionalProperties: false
-      properties:
-        close:
-          description: Closing price
-          format: double
-          type: number
-        high:
-          description: Highest price during the interval
-          format: double
-          type: number
-        low:
-          description: Lowest price during the interval
-          format: double
-          type: number
-        open:
-          description: Opening price
-          format: double
-          type: number
-        timestamp:
-          description: Candle open time in Unix seconds
-          format: int64
-          type:
-          - integer
-          - 'null'
-        volume:
-          description: Trading volume in base currency units
-          format: double
-          type: number
-      required:
-      - timestamp
-      - open
-      - high
-      - low
-      - close
-      - volume
+      - funding_interval_hours
       type: object
     DataObjectResponseExchangePerpResponse:
       additionalProperties: false
@@ -1167,20 +1117,158 @@ components:
       - data
       - meta
       type: object
-    ExchangeDepthLevel:
+    ExchangeDepthItem:
       additionalProperties: false
       properties:
-        amount:
-          description: Amount at this level
+        ask_depth:
+          description: Total ask-side depth in base currency units
+          format: double
+          type:
+          - number
+          - 'null'
+        asks:
+          description: Sell orders, price ascending
+          items:
+            $ref: '#/components/schemas/ExchangeDepthLevel'
+          type:
+          - array
+          - 'null'
+        bid_depth:
+          description: Total bid-side depth in base currency units
+          format: double
+          type:
+          - number
+          - 'null'
+        bids:
+          description: Buy orders, price descending
+          items:
+            $ref: '#/components/schemas/ExchangeDepthLevel'
+          type:
+          - array
+          - 'null'
+        exchange:
+          description: Exchange identifier
+          type: string
+        mid_price:
+          description: (best_bid + best_ask) / 2
+          format: double
+          type:
+          - number
+          - 'null'
+        pair:
+          description: Trading pair like BTC/USDT
+          type: string
+        spread:
+          description: Best ask - best bid
+          format: double
+          type:
+          - number
+          - 'null'
+        spread_pct:
+          description: Spread as percent of mid price
+          format: double
+          type:
+          - number
+          - 'null'
+      required:
+      - exchange
+      - pair
+      - bids
+      - asks
+      - spread
+      - spread_pct
+      - bid_depth
+      - ask_depth
+      - mid_price
+      type: object
+    SimpleListResponseExchangeDepthItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseExchangeDepthItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ExchangeDepthItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    ExchangeCandleItem:
+      additionalProperties: false
+      properties:
+        close:
+          description: Closing price
           format: double
           type: number
-        price:
-          description: Price level
+        close_time:
+          description: Candle close time in Unix seconds
+          format: int64
+          type: integer
+        exchange:
+          description: Exchange identifier
+          type: string
+        high:
+          description: Highest price during the interval
+          format: double
+          type: number
+        interval:
+          description: Candle interval
+          type: string
+        is_synthetic:
+          description: Whether this candle is a carry-forward row for a no-trade interval
+          type: boolean
+        low:
+          description: Lowest price during the interval
+          format: double
+          type: number
+        open:
+          description: Opening price
+          format: double
+          type: number
+        pair:
+          description: Trading pair like BTC/KRW
+          type: string
+        region:
+          description: Exchange market region
+          type: string
+        timestamp:
+          description: Candle open time in Unix seconds
+          format: int64
+          type: integer
+        trade_count:
+          description: Number of trades in the candle
+          format: int64
+          type: integer
+        volume_base:
+          description: Trading volume in base currency units
+          format: double
+          type: number
+        volume_quote:
+          description: Trading volume in quote currency units
           format: double
           type: number
       required:
-      - price
-      - amount
+      - exchange
+      - region
+      - pair
+      - interval
+      - timestamp
+      - close_time
+      - open
+      - high
+      - low
+      - close
+      - is_synthetic
       type: object
     ExchangeFundingItem:
       additionalProperties: false
@@ -1251,120 +1339,19 @@ components:
       - interval
       - funding_interval_hours
       type: object
-    ExchangeCandleItem:
-      additionalProperties: false
-      properties:
-        close:
-          description: Closing price
-          format: double
-          type: number
-        close_time:
-          description: Candle close time in Unix seconds
-          format: int64
-          type: integer
-        exchange:
-          description: Exchange identifier
-          type: string
-        high:
-          description: Highest price during the interval
-          format: double
-          type: number
-        interval:
-          description: Candle interval
-          type: string
-        is_synthetic:
-          description: Whether this candle is a carry-forward row for a no-trade interval
-          type: boolean
-        low:
-          description: Lowest price during the interval
-          format: double
-          type: number
-        open:
-          description: Opening price
-          format: double
-          type: number
-        pair:
-          description: Trading pair like BTC/KRW
-          type: string
-        region:
-          description: Exchange market region
-          type: string
-        timestamp:
-          description: Candle open time in Unix seconds
-          format: int64
-          type: integer
-        trade_count:
-          description: Number of trades in the candle
-          format: int64
-          type: integer
-        volume_base:
-          description: Trading volume in base currency units
-          format: double
-          type: number
-        volume_quote:
-          description: Trading volume in quote currency units
-          format: double
-          type: number
-      required:
-      - exchange
-      - region
-      - pair
-      - interval
-      - timestamp
-      - close_time
-      - open
-      - high
-      - low
-      - close
-      - is_synthetic
-      type: object
-    ExchangeOpenInterestItem:
-      additionalProperties: false
-      properties:
-        exchange:
-          description: Exchange identifier
-          type: string
-        open_interest_amount:
-          description: Open interest in contracts
-          format: double
-          type:
-          - number
-          - 'null'
-        open_interest_usd:
-          description: Open interest in USD
-          format: double
-          type:
-          - number
-          - 'null'
-        pair:
-          description: Trading pair like BTC/USDT
-          type: string
-        timestamp:
-          description: Unix timestamp in seconds
-          format: int64
-          type:
-          - integer
-          - 'null'
-      required:
-      - exchange
-      - pair
-      - open_interest_amount
-      - open_interest_usd
-      - timestamp
-      type: object
-    SimpleListResponseExchangeFundingHistoryItem:
+    SimpleListResponseExchangeKlineResponse:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/SimpleListResponseExchangeFundingHistoryItem.json
+          - https://example.com/schemas/SimpleListResponseExchangeKlineResponse.json
           format: uri
           readOnly: true
           type: string
         data:
           items:
-            $ref: '#/components/schemas/ExchangeFundingHistoryItem'
+            $ref: '#/components/schemas/ExchangeKlineResponse'
           type:
           - array
           - 'null'
@@ -1374,126 +1361,7 @@ components:
       - data
       - meta
       type: object
-    DataAPIErrorDetail:
-      additionalProperties: false
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
-      type: object
-    ExchangeDepthItem:
-      additionalProperties: false
-      properties:
-        ask_depth:
-          description: Total ask-side depth in base currency units
-          format: double
-          type:
-          - number
-          - 'null'
-        asks:
-          description: Sell orders, price ascending
-          items:
-            $ref: '#/components/schemas/ExchangeDepthLevel'
-          type:
-          - array
-          - 'null'
-        bid_depth:
-          description: Total bid-side depth in base currency units
-          format: double
-          type:
-          - number
-          - 'null'
-        bids:
-          description: Buy orders, price descending
-          items:
-            $ref: '#/components/schemas/ExchangeDepthLevel'
-          type:
-          - array
-          - 'null'
-        exchange:
-          description: Exchange identifier
-          type: string
-        mid_price:
-          description: (best_bid + best_ask) / 2
-          format: double
-          type:
-          - number
-          - 'null'
-        pair:
-          description: Trading pair like BTC/USDT
-          type: string
-        spread:
-          description: Best ask - best bid
-          format: double
-          type:
-          - number
-          - 'null'
-        spread_pct:
-          description: Spread as percent of mid price
-          format: double
-          type:
-          - number
-          - 'null'
-      required:
-      - exchange
-      - pair
-      - bids
-      - asks
-      - spread
-      - spread_pct
-      - bid_depth
-      - ask_depth
-      - mid_price
-      type: object
-    SimpleListResponseExchangeMarketItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/SimpleListResponseExchangeMarketItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/ExchangeMarketItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataResponseExchangeCandleItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseExchangeCandleItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/ExchangeCandleItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    OffsetMeta:
+    ObjectResponseMeta:
       additionalProperties: false
       properties:
         cached:
@@ -1506,30 +1374,31 @@ components:
         empty_reason:
           description: Hint explaining why the data array is empty, when applicable
           type: string
-        has_more:
-          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
-          type: boolean
-        limit:
-          description: Maximum number of items returned in this response
-          format: int64
-          type: integer
-        offset:
-          description: Number of items skipped (pagination offset)
-          format: int64
-          type: integer
-        total:
-          description: Total number of matching items (before pagination). Omitted when total is unknown.
-          format: int64
-          type: integer
-        watermark:
-          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
-          format: int64
-          type: integer
       required:
-      - limit
-      - offset
       - credits_used
       - cached
+      type: object
+    SimpleListResponseExchangeLongShortRatioItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseExchangeLongShortRatioItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ExchangeLongShortRatioItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
       type: object
     ExchangeKlineResponse:
       additionalProperties: false
@@ -1594,69 +1463,34 @@ components:
       - period_start
       - period_end
       type: object
-    ExchangeFundingHistoryItem:
-      additionalProperties: false
-      properties:
-        exchange:
-          description: Exchange identifier
-          type: string
-        funding_interval_hours:
-          description: Funding interval in hours when known
-          format: int64
-          type:
-          - integer
-          - 'null'
-        funding_rate:
-          description: Raw funding rate at this settlement. Use funding_rate_8h for cross-exchange comparison when present.
-          format: double
-          type:
-          - number
-          - 'null'
-        funding_rate_1h:
-          description: Funding rate normalized to a 1-hour interval
-          format: double
-          type: number
-        funding_rate_8h:
-          description: Funding rate normalized to an 8-hour interval for cross-exchange comparison
-          format: double
-          type: number
-        funding_rate_annualized:
-          description: Simple annualized funding rate derived from the 1-hour normalized rate
-          format: double
-          type: number
-        funding_rate_raw:
-          description: 'Alias of funding_rate: raw funding rate for the exchange settlement interval'
-          format: double
-          type: number
-        pair:
-          description: Perpetual contract pair like BTC/USDT
-          type: string
-        timestamp:
-          description: Unix timestamp in seconds
-          format: int64
-          type:
-          - integer
-          - 'null'
-      required:
-      - exchange
-      - pair
-      - funding_rate
-      - timestamp
-      - funding_interval_hours
-      type: object
-    SimpleListResponseExchangePriceItem:
+    DataAPIError:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/SimpleListResponseExchangePriceItem.json
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    SimpleListResponseExchangeMarketItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseExchangeMarketItem.json
           format: uri
           readOnly: true
           type: string
         data:
           items:
-            $ref: '#/components/schemas/ExchangePriceItem'
+            $ref: '#/components/schemas/ExchangeMarketItem'
           type:
           - array
           - 'null'
@@ -1666,132 +1500,19 @@ components:
       - data
       - meta
       type: object
-    ExchangePriceItem:
-      additionalProperties: false
-      properties:
-        ask:
-          description: Best ask price
-          format: double
-          type:
-          - number
-          - 'null'
-        bid:
-          description: Best bid price
-          format: double
-          type:
-          - number
-          - 'null'
-        change_24h_pct:
-          description: '24h signed price change percentage. Example: -2.68 means -2.68%'
-          format: double
-          type:
-          - number
-          - 'null'
-        exchange:
-          description: Exchange identifier like binance, okx
-          type: string
-        high_24h:
-          description: 24h high price
-          format: double
-          type:
-          - number
-          - 'null'
-        last:
-          description: Last traded price
-          format: double
-          type:
-          - number
-          - 'null'
-        low_24h:
-          description: 24h low price
-          format: double
-          type:
-          - number
-          - 'null'
-        pair:
-          description: Trading pair like BTC/USDT
-          type: string
-        timestamp:
-          description: Unix timestamp in seconds
-          format: int64
-          type:
-          - integer
-          - 'null'
-        volume_24h_base:
-          description: 24h trading volume in base currency units
-          format: double
-          type:
-          - number
-          - 'null'
-      required:
-      - exchange
-      - pair
-      - last
-      - bid
-      - ask
-      - high_24h
-      - low_24h
-      - volume_24h_base
-      - change_24h_pct
-      - timestamp
-      type: object
-    SimpleListResponseExchangeDepthItem:
+    DataResponseExchangeCandleItem:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/SimpleListResponseExchangeDepthItem.json
+          - https://example.com/schemas/DataResponseExchangeCandleItem.json
           format: uri
           readOnly: true
           type: string
         data:
           items:
-            $ref: '#/components/schemas/ExchangeDepthItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    SimpleListResponseExchangeKlineResponse:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/SimpleListResponseExchangeKlineResponse.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/ExchangeKlineResponse'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataResponseExchangeCoverageItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseExchangeCoverageItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/ExchangeCoverageItem'
+            $ref: '#/components/schemas/ExchangeCandleItem'
           type:
           - array
           - 'null'
@@ -1801,26 +1522,69 @@ components:
       - data
       - meta
       type: object
-    ExchangePerpResponse:
+    ExchangeDepthLevel:
+      additionalProperties: false
+      properties:
+        amount:
+          description: Amount at this level
+          format: double
+          type: number
+        price:
+          description: Price level
+          format: double
+          type: number
+      required:
+      - price
+      - amount
+      type: object
+    ExchangeLongShortRatioItem:
       additionalProperties: false
       properties:
         exchange:
           description: Exchange identifier
           type: string
-        funding:
-          $ref: '#/components/schemas/ExchangeFundingItem'
-          description: Current funding rate data; null when not requested
-        open_interest:
-          $ref: '#/components/schemas/ExchangeOpenInterestItem'
-          description: Current open interest data; null when not requested
+        long_short_ratio:
+          description: 'Ratio of longs to shorts (e.g. 1.5 means 60% long / 40% short). To get percentages: long% = ratio/(ratio+1)*100, short% = 100/(ratio+1)'
+          format: double
+          type:
+          - number
+          - 'null'
         pair:
           description: Perpetual contract pair like BTC/USDT
           type: string
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type:
+          - integer
+          - 'null'
       required:
       - exchange
       - pair
-      - funding
-      - open_interest
+      - long_short_ratio
+      - timestamp
+      type: object
+    SimpleListResponseExchangeFundingHistoryItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseExchangeFundingHistoryItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ExchangeFundingHistoryItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
       type: object
     ExchangeCoverageItem:
       additionalProperties: false
@@ -1935,6 +1699,242 @@ components:
       - type
       - status
       - active
+      type: object
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    ExchangeKlineItem:
+      additionalProperties: false
+      properties:
+        close:
+          description: Closing price
+          format: double
+          type: number
+        high:
+          description: Highest price during the interval
+          format: double
+          type: number
+        low:
+          description: Lowest price during the interval
+          format: double
+          type: number
+        open:
+          description: Opening price
+          format: double
+          type: number
+        timestamp:
+          description: Candle open time in Unix seconds
+          format: int64
+          type:
+          - integer
+          - 'null'
+        volume:
+          description: Trading volume in base currency units
+          format: double
+          type: number
+      required:
+      - timestamp
+      - open
+      - high
+      - low
+      - close
+      - volume
+      type: object
+    ExchangeMarketItem:
+      additionalProperties: false
+      properties:
+        active:
+          description: Whether the market is active
+          type:
+          - boolean
+          - 'null'
+        base:
+          description: Base currency
+          type:
+          - string
+          - 'null'
+        exchange:
+          description: Exchange identifier
+          type: string
+        maker_fee:
+          description: Default maker fee rate
+          format: double
+          type:
+          - number
+          - 'null'
+        pair:
+          description: Trading pair like BTC/USDT
+          type: string
+        quote:
+          description: Quote currency
+          type:
+          - string
+          - 'null'
+        taker_fee:
+          description: Default taker fee rate
+          format: double
+          type:
+          - number
+          - 'null'
+        type:
+          description: 'Market type: spot, swap, future, option'
+          type:
+          - string
+          - 'null'
+      required:
+      - exchange
+      - pair
+      - base
+      - quote
+      - type
+      - active
+      - maker_fee
+      - taker_fee
+      type: object
+    ExchangePerpResponse:
+      additionalProperties: false
+      properties:
+        exchange:
+          description: Exchange identifier
+          type: string
+        funding:
+          $ref: '#/components/schemas/ExchangeFundingItem'
+          description: Current funding rate data; null when not requested
+        open_interest:
+          $ref: '#/components/schemas/ExchangeOpenInterestItem'
+          description: Current open interest data; null when not requested
+        pair:
+          description: Perpetual contract pair like BTC/USDT
+          type: string
+      required:
+      - exchange
+      - pair
+      - funding
+      - open_interest
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    DataResponseExchangeCoverageItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseExchangeCoverageItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ExchangeCoverageItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    SimpleListResponseExchangePriceItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseExchangePriceItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ExchangePriceItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    ExchangeOpenInterestItem:
+      additionalProperties: false
+      properties:
+        exchange:
+          description: Exchange identifier
+          type: string
+        open_interest_amount:
+          description: Open interest in contracts
+          format: double
+          type:
+          - number
+          - 'null'
+        open_interest_usd:
+          description: Open interest in USD
+          format: double
+          type:
+          - number
+          - 'null'
+        pair:
+          description: Trading pair like BTC/USDT
+          type: string
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type:
+          - integer
+          - 'null'
+      required:
+      - exchange
+      - pair
+      - open_interest_amount
+      - open_interest_usd
+      - timestamp
       type: object
   securitySchemes:
     AccessToken:

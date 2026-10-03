@@ -598,290 +598,6 @@ paths:
       - Token
 components:
   schemas:
-    TransferCounterpartyItem:
-      additionalProperties: false
-      properties:
-        amount:
-          description: Decimal-adjusted token amount transferred (summed).
-          type: string
-        amount_usd:
-          description: Summed USD value. Absent when no transfers in the window are USD-priced.
-          format: double
-          type: number
-        counterparty_address:
-          description: Receiver (direction=to) or sender (direction=from) address.
-          type: string
-        first_transfer_at:
-          description: Unix seconds of the first transfer seen in the window.
-          format: int64
-          type: integer
-        label:
-          $ref: '#/components/schemas/WalletLabelItem'
-          description: Entity label for this counterparty. Only present when include=labels.
-        last_transfer_at:
-          description: Unix seconds of the last transfer seen in the window.
-          format: int64
-          type: integer
-        transfer_count:
-          description: Number of transfers in the window.
-          format: int64
-          type: integer
-      required:
-      - counterparty_address
-      - transfer_count
-      - amount
-      - first_transfer_at
-      - last_transfer_at
-      type: object
-    WalletLabelItem:
-      additionalProperties: false
-      properties:
-        address:
-          description: Wallet address
-          type: string
-        entity_name:
-          description: Name of the associated entity like `Binance` or `Aave`
-          type: string
-        entity_type:
-          description: Type of entity like `exchange`, `fund`, or `whale`
-          type: string
-        labels:
-          description: List of labels assigned to this address
-          items:
-            $ref: '#/components/schemas/WalletLabelInfo'
-          type:
-          - array
-          - 'null'
-      required:
-      - address
-      - labels
-      type: object
-    TransferStatsMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data object is empty, when applicable
-          type: string
-        enriched_ratio:
-          description: Fraction of transfers with a USD price (0..1). Low/zero means USD-value fields are partial.
-          format: double
-          type: number
-      required:
-      - credits_used
-      - cached
-      type: object
-    DataAPIError:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
-          type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
-      required:
-      - error
-      type: object
-    DataResponseDexTradeItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseDexTradeItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/DexTradeItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataResponseTokenTransferItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseTokenTransferItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/TokenTransferItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataResponseTransferCounterpartyItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseTransferCounterpartyItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/TransferCounterpartyItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    TokenUnlockPoint:
-      additionalProperties: false
-      properties:
-        allocations:
-          description: Breakdown by allocation
-          items:
-            $ref: '#/components/schemas/TokenUnlockAllocationItem'
-          type:
-          - array
-          - 'null'
-        cumulative_unlocked_amount:
-          description: Cumulative total tokens unlocked up to this timestamp (decimal-adjusted). Use this for unlocked-supply ratios.
-          format: double
-          type: number
-        timestamp:
-          description: Unix timestamp in seconds
-          format: int64
-          type: integer
-        total_supply:
-          description: Token total supply used as the denominator for unlocked_percentage_of_total_supply
-          format: double
-          type: number
-        unlock_amount:
-          description: Legacy alias for cumulative_unlocked_amount. This is cumulative and must not be summed across rows.
-          format: double
-          type: number
-        unlocked_percentage_of_total_supply:
-          description: Cumulative unlocked amount divided by total_supply, expressed as a percentage from 0 to 100
-          format: double
-          type: number
-      required:
-      - timestamp
-      - unlock_amount
-      - cumulative_unlocked_amount
-      type: object
-    TransferStatsBody:
-      additionalProperties: false
-      properties:
-        enriched_ratio:
-          description: Fraction of transfers with a USD price (0..1). Low/zero on recent windows where USD pricing lags ~3 days.
-          format: double
-          type: number
-        first_transfer_at:
-          description: Unix seconds of the first transfer in the window (0 if none).
-          format: int64
-          type: integer
-        last_transfer_at:
-          description: Unix seconds of the last transfer in the window (0 if none).
-          format: int64
-          type: integer
-        series:
-          description: Daily breakdown, newest first. Present only when include=series.
-          items:
-            $ref: '#/components/schemas/TransferSeriesPoint'
-          type:
-          - array
-          - 'null'
-        total_amount:
-          description: Decimal-adjusted total token amount transferred.
-          type: string
-        total_amount_usd:
-          description: Summed USD value. Absent when nothing in the window is USD-priced.
-          format: double
-          type: number
-        total_transfers:
-          description: Total transfers in the window.
-          format: int64
-          type: integer
-        unique_receivers:
-          description: Approximate distinct receivers (uniq, ~1% error).
-          format: int64
-          type: integer
-        unique_senders:
-          description: Approximate distinct senders (uniq, ~1% error).
-          format: int64
-          type: integer
-      required:
-      - total_transfers
-      - unique_senders
-      - unique_receivers
-      - total_amount
-      - first_transfer_at
-      - last_transfer_at
-      type: object
-    TransferStatsResponse:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/TransferStatsResponse.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          $ref: '#/components/schemas/TransferStatsBody'
-        meta:
-          $ref: '#/components/schemas/TransferStatsMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataResponseTokenUnlockPoint:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseTokenUnlockPoint.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/TokenUnlockPoint'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
     TransferSeriesPoint:
       additionalProperties: false
       properties:
@@ -909,30 +625,49 @@ components:
       - transfer_count
       - amount
       type: object
-    TokenUnlockAllocationItem:
+    TokenTransferItem:
       additionalProperties: false
       properties:
         amount:
-          description: Decimal-adjusted allocation amount
+          description: Transfer amount (decimal-adjusted, human-readable)
+          type: string
+        amount_usd:
+          description: Transfer value in USD at the time of the transaction. Not available for all transfers.
           format: double
           type: number
-        name:
-          description: Allocation name
+        block_number:
+          description: Block number in which this transfer was included
+          format: int64
+          type: integer
+        from_address:
+          description: Sender wallet address
+          type: string
+        from_label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity labels for from_address. Only present when the request sets `include=labels`.
+        symbol:
+          description: Token symbol like ETH, USDC, or WETH
+          type: string
+        timestamp:
+          description: Unix timestamp in seconds when the transfer occurred
+          format: int64
+          type: integer
+        to_address:
+          description: Recipient wallet address
+          type: string
+        to_label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity labels for to_address. Only present when the request sets `include=labels`.
+        tx_hash:
+          description: Transaction hash
           type: string
       required:
-      - name
+      - tx_hash
+      - from_address
+      - to_address
       - amount
-      type: object
-    DataAPIErrorDetail:
-      additionalProperties: false
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
+      - timestamp
+      - block_number
       type: object
     DexTradeItem:
       additionalProperties: false
@@ -996,49 +731,228 @@ components:
       - taker
       - tx_hash
       type: object
-    TokenTransferItem:
+    TokenUnlockAllocationItem:
       additionalProperties: false
       properties:
         amount:
-          description: Transfer amount (decimal-adjusted, human-readable)
-          type: string
-        amount_usd:
-          description: Transfer value in USD at the time of the transaction. Not available for all transfers.
+          description: Decimal-adjusted allocation amount
           format: double
           type: number
-        block_number:
-          description: Block number in which this transfer was included
-          format: int64
-          type: integer
-        from_address:
-          description: Sender wallet address
-          type: string
-        from_label:
-          $ref: '#/components/schemas/WalletLabelItem'
-          description: Entity labels for from_address. Only present when the request sets `include=labels`.
-        symbol:
-          description: Token symbol like ETH, USDC, or WETH
-          type: string
-        timestamp:
-          description: Unix timestamp in seconds when the transfer occurred
-          format: int64
-          type: integer
-        to_address:
-          description: Recipient wallet address
-          type: string
-        to_label:
-          $ref: '#/components/schemas/WalletLabelItem'
-          description: Entity labels for to_address. Only present when the request sets `include=labels`.
-        tx_hash:
-          description: Transaction hash
+        name:
+          description: Allocation name
           type: string
       required:
-      - tx_hash
-      - from_address
-      - to_address
+      - name
       - amount
+      type: object
+    TokenUnlockPoint:
+      additionalProperties: false
+      properties:
+        allocations:
+          description: Breakdown by allocation
+          items:
+            $ref: '#/components/schemas/TokenUnlockAllocationItem'
+          type:
+          - array
+          - 'null'
+        cumulative_unlocked_amount:
+          description: Cumulative total tokens unlocked up to this timestamp (decimal-adjusted). Use this for unlocked-supply ratios.
+          format: double
+          type: number
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type: integer
+        total_supply:
+          description: Token total supply used as the denominator for unlocked_percentage_of_total_supply
+          format: double
+          type: number
+        unlock_amount:
+          description: Legacy alias for cumulative_unlocked_amount. This is cumulative and must not be summed across rows.
+          format: double
+          type: number
+        unlocked_percentage_of_total_supply:
+          description: Cumulative unlocked amount divided by total_supply, expressed as a percentage from 0 to 100
+          format: double
+          type: number
+      required:
       - timestamp
-      - block_number
+      - unlock_amount
+      - cumulative_unlocked_amount
+      type: object
+    TransferCounterpartyItem:
+      additionalProperties: false
+      properties:
+        amount:
+          description: Decimal-adjusted token amount transferred (summed).
+          type: string
+        amount_usd:
+          description: Summed USD value. Absent when no transfers in the window are USD-priced.
+          format: double
+          type: number
+        counterparty_address:
+          description: Receiver (direction=to) or sender (direction=from) address.
+          type: string
+        first_transfer_at:
+          description: Unix seconds of the first transfer seen in the window.
+          format: int64
+          type: integer
+        label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity label for this counterparty. Only present when include=labels.
+        last_transfer_at:
+          description: Unix seconds of the last transfer seen in the window.
+          format: int64
+          type: integer
+        transfer_count:
+          description: Number of transfers in the window.
+          format: int64
+          type: integer
+      required:
+      - counterparty_address
+      - transfer_count
+      - amount
+      - first_transfer_at
+      - last_transfer_at
+      type: object
+    WalletLabelItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address
+          type: string
+        entity_name:
+          description: Name of the associated entity like `Binance` or `Aave`
+          type: string
+        entity_type:
+          description: Type of entity like `exchange`, `fund`, or `whale`
+          type: string
+        labels:
+          description: List of labels assigned to this address
+          items:
+            $ref: '#/components/schemas/WalletLabelInfo'
+          type:
+          - array
+          - 'null'
+      required:
+      - address
+      - labels
+      type: object
+    TokenHolderItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address of the token holder
+          type: string
+        balance:
+          description: Token balance (decimal-adjusted, human-readable)
+          type: string
+        entity_name:
+          description: Name of the associated entity like `Binance` or `Aave`
+          type: string
+        entity_type:
+          description: Type of entity like `exchange`, `fund`, or `whale`
+          type: string
+        label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Full entity label record for this address. Only present when the request sets `include=labels`.
+        percentage:
+          description: Share of total supply held as a percentage (5.2 means 5.2%)
+          format: double
+          type: number
+      required:
+      - address
+      - balance
+      type: object
+    DataResponseDexTradeItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseDexTradeItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/DexTradeItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    TransferStatsResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/TransferStatsResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/TransferStatsBody'
+        meta:
+          $ref: '#/components/schemas/TransferStatsMeta'
+      required:
+      - data
+      - meta
+      type: object
+    WalletLabelInfo:
+      additionalProperties: false
+      properties:
+        confidence:
+          description: Confidence score 0.0-1.0
+          format: double
+          type: number
+        label:
+          description: Human-readable label for this address like `Binance Hot Wallet`
+          type: string
+      required:
+      - label
+      type: object
+    DataResponseTransferCounterpartyItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseTransferCounterpartyItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/TransferCounterpartyItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
       type: object
     OffsetMeta:
       additionalProperties: false
@@ -1078,6 +992,131 @@ components:
       - credits_used
       - cached
       type: object
+    DataResponseTokenUnlockPoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseTokenUnlockPoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/TokenUnlockPoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    TransferStatsBody:
+      additionalProperties: false
+      properties:
+        enriched_ratio:
+          description: Fraction of transfers with a USD price (0..1). Low/zero on recent windows where USD pricing lags ~3 days.
+          format: double
+          type: number
+        first_transfer_at:
+          description: Unix seconds of the first transfer in the window (0 if none).
+          format: int64
+          type: integer
+        last_transfer_at:
+          description: Unix seconds of the last transfer in the window (0 if none).
+          format: int64
+          type: integer
+        series:
+          description: Daily breakdown, newest first. Present only when include=series.
+          items:
+            $ref: '#/components/schemas/TransferSeriesPoint'
+          type:
+          - array
+          - 'null'
+        total_amount:
+          description: Decimal-adjusted total token amount transferred.
+          type: string
+        total_amount_usd:
+          description: Summed USD value. Absent when nothing in the window is USD-priced.
+          format: double
+          type: number
+        total_transfers:
+          description: Total transfers in the window.
+          format: int64
+          type: integer
+        unique_receivers:
+          description: Approximate distinct receivers (uniq, ~1% error).
+          format: int64
+          type: integer
+        unique_senders:
+          description: Approximate distinct senders (uniq, ~1% error).
+          format: int64
+          type: integer
+      required:
+      - total_transfers
+      - unique_senders
+      - unique_receivers
+      - total_amount
+      - first_transfer_at
+      - last_transfer_at
+      type: object
+    TransferStatsMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data object is empty, when applicable
+          type: string
+        enriched_ratio:
+          description: Fraction of transfers with a USD price (0..1). Low/zero means USD-value fields are partial.
+          format: double
+          type: number
+      required:
+      - credits_used
+      - cached
+      type: object
+    DataResponseTokenTransferItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseTokenTransferItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/TokenTransferItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
     DataResponseTokenHolderItem:
       additionalProperties: false
       properties:
@@ -1099,45 +1138,6 @@ components:
       required:
       - data
       - meta
-      type: object
-    WalletLabelInfo:
-      additionalProperties: false
-      properties:
-        confidence:
-          description: Confidence score 0.0-1.0
-          format: double
-          type: number
-        label:
-          description: Human-readable label for this address like `Binance Hot Wallet`
-          type: string
-      required:
-      - label
-      type: object
-    TokenHolderItem:
-      additionalProperties: false
-      properties:
-        address:
-          description: Wallet address of the token holder
-          type: string
-        balance:
-          description: Token balance (decimal-adjusted, human-readable)
-          type: string
-        entity_name:
-          description: Name of the associated entity like `Binance` or `Aave`
-          type: string
-        entity_type:
-          description: Type of entity like `exchange`, `fund`, or `whale`
-          type: string
-        label:
-          $ref: '#/components/schemas/WalletLabelItem'
-          description: Full entity label record for this address. Only present when the request sets `include=labels`.
-        percentage:
-          description: Share of total supply held as a percentage (5.2 means 5.2%)
-          format: double
-          type: number
-      required:
-      - address
-      - balance
       type: object
   securitySchemes:
     AccessToken:
