@@ -302,6 +302,8 @@ apis:
   humanURL: https://agents.asksurf.ai/docs/chat/overview
   baseURL: https://api.asksurf.ai/gateway/v1
   tags:
+  - Onchain
+  tags_raw:
   - On Chain
   properties:
   - type: OpenAPI
