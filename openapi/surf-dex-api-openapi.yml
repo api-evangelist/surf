@@ -133,28 +133,6 @@ paths:
       - DEX
 components:
   schemas:
-    SimpleListResponseDexTokenPriceBar:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/SimpleListResponseDexTokenPriceBar.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/DexTokenPriceBar'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
     ObjectResponseMeta:
       additionalProperties: false
       properties:
@@ -172,16 +150,20 @@ components:
       - credits_used
       - cached
       type: object
-    DataAPIErrorDetail:
+    DataAPIError:
       additionalProperties: false
       properties:
-        code:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
           type: string
-        message:
-          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
       required:
-      - code
-      - message
+      - error
       type: object
     DexTokenPriceBar:
       additionalProperties: false
@@ -218,20 +200,38 @@ components:
       - close
       - volume_usd
       type: object
-    DataAPIError:
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    SimpleListResponseDexTokenPriceBar:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/DataAPIError.json
+          - https://example.com/schemas/SimpleListResponseDexTokenPriceBar.json
           format: uri
           readOnly: true
           type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
+        data:
+          items:
+            $ref: '#/components/schemas/DexTokenPriceBar'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
       required:
-      - error
+      - data
+      - meta
       type: object
   securitySchemes:
     AccessToken:

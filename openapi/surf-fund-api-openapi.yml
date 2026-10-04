@@ -265,63 +265,6 @@ paths:
       - Fund
 components:
   schemas:
-    FundPortfolioItem:
-      additionalProperties: false
-      properties:
-        invested_at:
-          description: Investment date (Unix seconds)
-          format: int64
-          type: integer
-        is_lead:
-          description: Whether this fund was the lead investor
-          type: boolean
-        project_id:
-          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup. Prefer over 'q' (fuzzy name search).
-          type: string
-        project_logo:
-          description: Project logo URL
-          type: string
-        project_name:
-          description: Project name
-          type: string
-        project_slug:
-          description: Project slug
-          type: string
-        recent_raise:
-          description: Most recent funding round amount in USD
-          format: double
-          type: number
-        total_raise:
-          description: Total amount raised by the project in USD
-          format: double
-          type: number
-      required:
-      - project_id
-      - project_name
-      - is_lead
-      type: object
-    DataResponseFundPortfolioItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseFundPortfolioItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/FundPortfolioItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
     ObjectResponseMeta:
       additionalProperties: false
       properties:
@@ -339,100 +282,43 @@ components:
       - credits_used
       - cached
       type: object
-    DataObjectResponseFundDetailItem:
+    OffsetMeta:
       additionalProperties: false
       properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataObjectResponseFundDetailItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          $ref: '#/components/schemas/FundDetailItem'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataAPIErrorDetail:
-      additionalProperties: false
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
-      type: object
-    FundResearchItem:
-      additionalProperties: false
-      properties:
-        id:
-          description: Research ID
-          type: string
-        published_at:
-          description: Publication date (Unix seconds)
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
           format: int64
           type: integer
-        title:
-          description: Research title
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
           type: string
-        url:
-          description: Research URL
-          type: string
-      required:
-      - id
-      - title
-      - url
-      - published_at
-      type: object
-    FundXAccountItem:
-      additionalProperties: false
-      properties:
-        display_name:
-          description: Display name
-          type: string
-        followers_count:
-          description: Follower count
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
           format: int64
           type: integer
-        handle:
-          description: X (Twitter) handle without the @ prefix
-          type: string
-        id:
-          description: Numeric X (Twitter) user ID
-          type: string
-        profile_image:
-          description: Profile image URL
-          type: string
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
       required:
-      - id
-      - handle
-      - followers_count
-      type: object
-    FundMemberItem:
-      additionalProperties: false
-      properties:
-        avatar:
-          description: Avatar URL
-          type: string
-        name:
-          description: Member name
-          type: string
-        roles:
-          description: Member roles
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-      required:
-      - name
-      - roles
+      - limit
+      - offset
+      - credits_used
+      - cached
       type: object
     DataResponseFundSearchItem:
       additionalProperties: false
@@ -471,18 +357,134 @@ components:
       required:
       - error
       type: object
-    FundLinkItem:
+    FundSearchItem:
       additionalProperties: false
       properties:
-        type:
-          description: Link type like `web`, `twitter`, or `linkedin`
+        id:
+          description: Surf fund UUID — pass as 'id' parameter to /fund/detail or /fund/portfolio for exact lookup
           type: string
-        value:
-          description: Link URL
+        image:
+          description: Fund logo URL
+          type: string
+        invested_projects_count:
+          description: Total number of unique invested projects (a project with multiple funding rounds counts once)
+          format: int64
+          type: integer
+        name:
+          description: Fund name
+          type: string
+        tier:
+          description: Fund tier ranking (lower is better)
+          format: int64
+          type: integer
+        top_projects:
+          description: Top invested projects (up to 5)
+          items:
+            $ref: '#/components/schemas/FundPortfolioItem'
+          type:
+          - array
+          - 'null'
+        type:
+          description: Fund type
           type: string
       required:
-      - type
-      - value
+      - id
+      - name
+      - tier
+      - invested_projects_count
+      - top_projects
+      type: object
+    FundPortfolioItem:
+      additionalProperties: false
+      properties:
+        invested_at:
+          description: Investment date (Unix seconds)
+          format: int64
+          type: integer
+        is_lead:
+          description: Whether this fund was the lead investor
+          type: boolean
+        project_id:
+          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup. Prefer over 'q' (fuzzy name search).
+          type: string
+        project_logo:
+          description: Project logo URL
+          type: string
+        project_name:
+          description: Project name
+          type: string
+        project_slug:
+          description: Project slug
+          type: string
+        recent_raise:
+          description: Most recent funding round amount in USD
+          format: double
+          type: number
+        total_raise:
+          description: Total amount raised by the project in USD
+          format: double
+          type: number
+      required:
+      - project_id
+      - project_name
+      - is_lead
+      type: object
+    FundResearchItem:
+      additionalProperties: false
+      properties:
+        id:
+          description: Research ID
+          type: string
+        published_at:
+          description: Publication date (Unix seconds)
+          format: int64
+          type: integer
+        title:
+          description: Research title
+          type: string
+        url:
+          description: Research URL
+          type: string
+      required:
+      - id
+      - title
+      - url
+      - published_at
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    FundXAccountItem:
+      additionalProperties: false
+      properties:
+        display_name:
+          description: Display name
+          type: string
+        followers_count:
+          description: Follower count
+          format: int64
+          type: integer
+        handle:
+          description: X (Twitter) handle without the @ prefix
+          type: string
+        id:
+          description: Numeric X (Twitter) user ID
+          type: string
+        profile_image:
+          description: Profile image URL
+          type: string
+      required:
+      - id
+      - handle
+      - followers_count
       type: object
     FundDetailItem:
       additionalProperties: false
@@ -551,80 +553,78 @@ components:
       - recent_researches
       - invested_projects_count
       type: object
-    OffsetMeta:
+    FundLinkItem:
       additionalProperties: false
       properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
+        type:
+          description: Link type like `web`, `twitter`, or `linkedin`
           type: string
-        has_more:
-          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
-          type: boolean
-        limit:
-          description: Maximum number of items returned in this response
-          format: int64
-          type: integer
-        offset:
-          description: Number of items skipped (pagination offset)
-          format: int64
-          type: integer
-        total:
-          description: Total number of matching items (before pagination). Omitted when total is unknown.
-          format: int64
-          type: integer
-        watermark:
-          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
-          format: int64
-          type: integer
+        value:
+          description: Link URL
+          type: string
       required:
-      - limit
-      - offset
-      - credits_used
-      - cached
+      - type
+      - value
       type: object
-    FundSearchItem:
+    DataResponseFundPortfolioItem:
       additionalProperties: false
       properties:
-        id:
-          description: Surf fund UUID — pass as 'id' parameter to /fund/detail or /fund/portfolio for exact lookup
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseFundPortfolioItem.json
+          format: uri
+          readOnly: true
           type: string
-        image:
-          description: Fund logo URL
-          type: string
-        invested_projects_count:
-          description: Total number of unique invested projects (a project with multiple funding rounds counts once)
-          format: int64
-          type: integer
-        name:
-          description: Fund name
-          type: string
-        tier:
-          description: Fund tier ranking (lower is better)
-          format: int64
-          type: integer
-        top_projects:
-          description: Top invested projects (up to 5)
+        data:
           items:
             $ref: '#/components/schemas/FundPortfolioItem'
           type:
           - array
           - 'null'
-        type:
-          description: Fund type
-          type: string
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
       required:
-      - id
+      - data
+      - meta
+      type: object
+    FundMemberItem:
+      additionalProperties: false
+      properties:
+        avatar:
+          description: Avatar URL
+          type: string
+        name:
+          description: Member name
+          type: string
+        roles:
+          description: Member roles
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      required:
       - name
-      - tier
-      - invested_projects_count
-      - top_projects
+      - roles
+      type: object
+    DataObjectResponseFundDetailItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseFundDetailItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/FundDetailItem'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
       type: object
   securitySchemes:
     AccessToken:

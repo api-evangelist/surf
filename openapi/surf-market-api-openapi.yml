@@ -1397,384 +1397,6 @@ paths:
             type: object_or_array
 components:
   schemas:
-    SimpleListResponseMarketFuturesItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/SimpleListResponseMarketFuturesItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/MarketFuturesItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    MarketPriceResponse:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/MarketPriceResponse.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          description: Historical price points
-          items:
-            $ref: '#/components/schemas/MarketMetricPoint'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-          description: Cost and cache metadata for this response
-        project_id:
-          description: Surf project UUID the `--symbol` resolved to, for frontend entity linking. Empty when the symbol is unmapped.
-          type: string
-        summary:
-          $ref: '#/components/schemas/MarketPriceSummary'
-          description: Rollup statistics over the requested time range
-        symbol:
-          description: The queried ticker, normalized.
-          type: string
-      required:
-      - data
-      - summary
-      - meta
-      type: object
-    LiquidationChartItem:
-      additionalProperties: false
-      properties:
-        contributing_exchanges:
-          description: Exchanges that contributed to this liquidation point
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        excluded_exchanges:
-          description: Requested exchanges omitted because liquidation data is unavailable
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        long_liquidation_usd:
-          description: Long-side aggregated liquidation volume (USD)
-          format: double
-          type: number
-        short_liquidation_usd:
-          description: Short-side aggregated liquidation volume (USD)
-          format: double
-          type: number
-        timestamp:
-          description: Unix timestamp in seconds
-          format: int64
-          type: integer
-      required:
-      - timestamp
-      - long_liquidation_usd
-      - short_liquidation_usd
-      type: object
-    SimpleListResponseLiquidationExchangeItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/SimpleListResponseLiquidationExchangeItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/LiquidationExchangeItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    TGEItem:
-      additionalProperties: false
-      properties:
-        current_status:
-          description: Current TGE status
-          type: string
-        exchanges:
-          description: Exchanges where token launched
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        last_event_time:
-          description: Last status change (Unix seconds)
-          format: int64
-          type: integer
-        project_id:
-          description: Surf project UUID
-          type: string
-        project_name:
-          description: Surf project name, for frontend entity linking.
-          type: string
-      required:
-      - project_id
-      - current_status
-      type: object
-    PublicSaleItem:
-      additionalProperties: false
-      properties:
-        allocation_of_supply:
-          description: Percentage of total supply allocated
-          format: double
-          type: number
-        ath_roi:
-          description: All-time-high return on investment multiplier
-          format: double
-          type: number
-        crowdsale_end_date:
-          description: Sale end date (Unix seconds)
-          format: int64
-          type: integer
-        crowdsale_price:
-          description: Token sale price in USD
-          format: double
-          type: number
-        crowdsale_raise:
-          description: Total funds raised in USD
-          format: double
-          type: number
-        crowdsale_start_date:
-          description: Sale start date (Unix seconds)
-          format: int64
-          type: integer
-        crowdsale_status:
-          description: Sale status (UPCOMING, ACTIVE, ENDED)
-          type: string
-        crowdsale_type:
-          description: Sale type (IDO, ICO, IEO, etc.)
-          type: string
-        launchpad_name:
-          description: Launchpad platform name
-          type: string
-        name:
-          description: Project name
-          type: string
-        project_id:
-          description: Surf project UUID, for frontend entity linking.
-          type: string
-        symbol:
-          description: Token symbol
-          type: string
-      type: object
-    DataResponseMarketIndicatorItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseMarketIndicatorItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/MarketIndicatorItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    MarketExchangeFlowExchangeItem:
-      additionalProperties: false
-      properties:
-        name:
-          description: Human-readable exchange name
-          type: string
-        supported_flow_filter:
-          description: Whether this filter is in Hermod's curated exchange-flow allowlist
-          type: boolean
-        symbol:
-          description: Exchange filter value to pass as the `exchange` query parameter
-          type: string
-        type:
-          description: 'Filter type: `aggregate` for upstream exchange categories or `exchange` for individual exchanges'
-          type: string
-      required:
-      - symbol
-      - name
-      - type
-      - supported_flow_filter
-      type: object
-    SimpleListResponseMarketETFFlowItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/SimpleListResponseMarketETFFlowItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/MarketETFFlowItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    SimpleListResponseMarketFearGreedHistoryItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/SimpleListResponseMarketFearGreedHistoryItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/MarketFearGreedHistoryItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    ObjectResponseMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-      required:
-      - credits_used
-      - cached
-      type: object
-    MarketPriceSummary:
-      additionalProperties: false
-      properties:
-        change_abs:
-          description: 'Absolute change in the quote currency: last - first'
-          format: double
-          type: number
-        change_pct:
-          description: 'Percentage change rounded to 4 decimals: (last - first) / first * 100. Zero when first is zero.'
-          format: double
-          type: number
-        first:
-          description: Value of the earliest-timestamp point in the requested time range
-          format: double
-          type: number
-        high:
-          description: Highest value observed in the requested time range
-          format: double
-          type: number
-        last:
-          description: Value of the latest-timestamp point in the requested time range
-          format: double
-          type: number
-        latest_dt:
-          description: Unix seconds of the latest-timestamp point
-          format: int64
-          type: integer
-        low:
-          description: Lowest value observed in the requested time range
-          format: double
-          type: number
-        n_points:
-          description: Number of points in the underlying time-series
-          format: int64
-          type: integer
-      required:
-      - first
-      - last
-      - high
-      - low
-      - change_abs
-      - change_pct
-      - latest_dt
-      - n_points
-      type: object
-    DataResponseMarketTopCoinItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseMarketTopCoinItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/MarketTopCoinItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    SimpleListResponseMarketOptionsItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/SimpleListResponseMarketOptionsItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/MarketOptionsItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
     DataAPIError:
       additionalProperties: false
       properties:
@@ -1789,66 +1411,6 @@ components:
           $ref: '#/components/schemas/DataAPIErrorDetail'
       required:
       - error
-      type: object
-    MarketFearGreedHistoryItem:
-      additionalProperties: false
-      properties:
-        classification:
-          description: Human-readable classification (Extreme Fear, Fear, Neutral, Greed, Extreme Greed)
-          type: string
-        price:
-          description: BTC price in USD at this point in time
-          format: double
-          type: number
-        timestamp:
-          description: Unix timestamp in seconds for this data point
-          format: int64
-          type: integer
-        value:
-          description: Fear and Greed Index score from 0 (extreme fear) to 100 (extreme greed)
-          format: int64
-          type: integer
-      required:
-      - value
-      - classification
-      - price
-      - timestamp
-      type: object
-    ListingEventItem:
-      additionalProperties: false
-      properties:
-        base_symbol:
-          description: Base currency symbol
-          type: string
-        effective_at:
-          description: When the listing/delisting takes effect (Unix seconds)
-          format: int64
-          type: integer
-        event_type:
-          description: LISTING or DELISTING
-          type: string
-        exchange_name:
-          description: Exchange name
-          type: string
-        product:
-          description: Product type (SPOT, PERP, etc.)
-          type: string
-        published_at:
-          description: When the announcement was published (Unix seconds)
-          format: int64
-          type: integer
-        quote_symbol:
-          description: Quote currency symbol
-          type: string
-        trading_pair:
-          description: Trading pair like BTC/USDT
-          type: string
-      required:
-      - exchange_name
-      - product
-      - trading_pair
-      - event_type
-      - effective_at
       type: object
     MarketIndicatorItem:
       additionalProperties: false
@@ -1885,314 +1447,6 @@ components:
       - symbol
       - interval
       - value
-      type: object
-    MarketOptionsItem:
-      additionalProperties: false
-      properties:
-        exchange:
-          description: Options exchange name
-          type: string
-        max_pain_price:
-          description: Max pain price for the nearest expiry in USD. Only available for individual exchanges (Deribit, OKX, Binance, Bybit), not present on the `All` aggregate row.
-          format: double
-          type: number
-        open_interest:
-          description: Total options open interest in USD
-          format: double
-          type: number
-        project_id:
-          description: Surf project UUID this symbol resolved to, for frontend entity linking. Empty when unmapped.
-          type: string
-        put_call_ratio:
-          description: Put/call open interest ratio (put OI / call OI). Values above 1 indicate bearish sentiment. Only available for individual exchanges (Deribit, OKX, Binance, Bybit), not present on the `All` aggregate row.
-          format: double
-          type: number
-        symbol:
-          description: Underlying token symbol like `BTC` or `ETH`
-          type: string
-        updated_at:
-          description: Unix timestamp (seconds) of last update
-          format: int64
-          type: integer
-        volume_24h:
-          description: 24-hour options trading volume in USD
-          format: double
-          type: number
-      required:
-      - symbol
-      - exchange
-      - open_interest
-      - volume_24h
-      - updated_at
-      type: object
-    LiquidationExchangeItem:
-      additionalProperties: false
-      properties:
-        exchange:
-          description: Exchange name like `Binance` or `OKX`. `All` = aggregate across all exchanges
-          type: string
-        liquidation_usd:
-          description: Total liquidation volume (USD)
-          format: double
-          type: number
-        long_liquidation_usd:
-          description: Long-side liquidation volume (USD)
-          format: double
-          type: number
-        short_liquidation_usd:
-          description: Short-side liquidation volume (USD)
-          format: double
-          type: number
-      required:
-      - exchange
-      - liquidation_usd
-      - long_liquidation_usd
-      - short_liquidation_usd
-      type: object
-    SimpleListResponseLiquidationChartItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/SimpleListResponseLiquidationChartItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/LiquidationChartItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataResponseListingEventItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseListingEventItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/ListingEventItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    OffsetMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-        has_more:
-          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
-          type: boolean
-        limit:
-          description: Maximum number of items returned in this response
-          format: int64
-          type: integer
-        offset:
-          description: Number of items skipped (pagination offset)
-          format: int64
-          type: integer
-        total:
-          description: Total number of matching items (before pagination). Omitted when total is unknown.
-          format: int64
-          type: integer
-        watermark:
-          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
-          format: int64
-          type: integer
-      required:
-      - limit
-      - offset
-      - credits_used
-      - cached
-      type: object
-    DataResponseMarketMetricPoint:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseMarketMetricPoint.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/MarketMetricPoint'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    MarketFuturesItem:
-      additionalProperties: false
-      properties:
-        funding_rate:
-          description: Current funding rate as a decimal (`0.0001` = 0.01%)
-          format: double
-          type: number
-        long_short_ratio:
-          description: Ratio of long to short positions
-          format: double
-          type: number
-        open_interest:
-          description: Total open interest in USD
-          format: double
-          type: number
-        project_id:
-          description: Surf project UUID this symbol resolved to, for frontend entity linking. Empty when unmapped.
-          type: string
-        symbol:
-          description: Trading symbol like `BTC` or `ETH`
-          type: string
-        updated_at:
-          description: Unix timestamp (seconds) of last update
-          format: int64
-          type: integer
-        volume_24h:
-          description: 24-hour trading volume in USD
-          format: double
-          type: number
-        volume_change_24h:
-          description: 24-hour volume change in USD (positive=increase, negative=decrease)
-          format: double
-          type: number
-      required:
-      - symbol
-      - open_interest
-      - funding_rate
-      - long_short_ratio
-      - volume_24h
-      - volume_change_24h
-      - updated_at
-      type: object
-    LiquidationOrderItem:
-      additionalProperties: false
-      properties:
-        base_asset:
-          description: Base token symbol like `BTC`
-          type: string
-        exchange:
-          description: Exchange name like `Binance` or `OKX`
-          type: string
-        order_id:
-          description: Deterministic fingerprint for this liquidation row
-          type: string
-        price:
-          description: Liquidation execution price (USD)
-          format: double
-          type: number
-        side:
-          description: 'Liquidation side: `long` or `short`'
-          type: string
-        symbol:
-          description: Full trading pair like `BTCUSDT`
-          type: string
-        timestamp:
-          description: Unix timestamp in seconds
-          format: int64
-          type: integer
-        usd_value:
-          description: Liquidated position size (USD)
-          format: double
-          type: number
-      required:
-      - order_id
-      - exchange
-      - symbol
-      - base_asset
-      - price
-      - usd_value
-      - side
-      - timestamp
-      type: object
-    DataResponsePublicSaleItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponsePublicSaleItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/PublicSaleItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    MarketETFFlowItem:
-      additionalProperties: false
-      properties:
-        etfs:
-          description: Flow breakdown by individual ETF ticker
-          items:
-            $ref: '#/components/schemas/ETFTickerFlow'
-          type:
-          - array
-          - 'null'
-        flow_usd:
-          description: Daily net flow in USD (positive=inflow, negative=outflow)
-          format: double
-          type: number
-        price_usd:
-          description: Token price in USD at close of day
-          format: double
-          type: number
-        project_id:
-          description: Surf project UUID of the underlying, for frontend entity linking. Empty when unmapped.
-          type: string
-        settled:
-          description: Whether this trading day is final. Current-day rows may still be pending upstream settlement.
-          type: boolean
-        symbol:
-          description: Underlying token symbol like `BTC`, `ETH`, `XRP`, `SOL`, or `HYPE`
-          type: string
-        timestamp:
-          description: Unix timestamp in seconds (midnight UTC for the trading day)
-          format: int64
-          type: integer
-      required:
-      - flow_usd
-      - price_usd
-      - timestamp
-      - settled
       type: object
     DataResponseLiquidationOrderItem:
       additionalProperties: false
@@ -2327,16 +1581,164 @@ components:
       - high_24h
       - low_24h
       type: object
-    DataAPIErrorDetail:
+    SimpleListResponseMarketOptionsItem:
       additionalProperties: false
       properties:
-        code:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseMarketOptionsItem.json
+          format: uri
+          readOnly: true
           type: string
-        message:
+        data:
+          items:
+            $ref: '#/components/schemas/MarketOptionsItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    TGEItem:
+      additionalProperties: false
+      properties:
+        current_status:
+          description: Current TGE status
+          type: string
+        exchanges:
+          description: Exchanges where token launched
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        last_event_time:
+          description: Last status change (Unix seconds)
+          format: int64
+          type: integer
+        project_id:
+          description: Surf project UUID
+          type: string
+        project_name:
+          description: Surf project name, for frontend entity linking.
           type: string
       required:
-      - code
-      - message
+      - project_id
+      - current_status
+      type: object
+    MarketPriceResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/MarketPriceResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          description: Historical price points
+          items:
+            $ref: '#/components/schemas/MarketMetricPoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+          description: Cost and cache metadata for this response
+        project_id:
+          description: Surf project UUID the `--symbol` resolved to, for frontend entity linking. Empty when the symbol is unmapped.
+          type: string
+        summary:
+          $ref: '#/components/schemas/MarketPriceSummary'
+          description: Rollup statistics over the requested time range
+        symbol:
+          description: The queried ticker, normalized.
+          type: string
+      required:
+      - data
+      - summary
+      - meta
+      type: object
+    MarketETFFlowItem:
+      additionalProperties: false
+      properties:
+        etfs:
+          description: Flow breakdown by individual ETF ticker
+          items:
+            $ref: '#/components/schemas/ETFTickerFlow'
+          type:
+          - array
+          - 'null'
+        flow_usd:
+          description: Daily net flow in USD (positive=inflow, negative=outflow)
+          format: double
+          type: number
+        price_usd:
+          description: Token price in USD at close of day
+          format: double
+          type: number
+        project_id:
+          description: Surf project UUID of the underlying, for frontend entity linking. Empty when unmapped.
+          type: string
+        settled:
+          description: Whether this trading day is final. Current-day rows may still be pending upstream settlement.
+          type: boolean
+        symbol:
+          description: Underlying token symbol like `BTC`, `ETH`, `XRP`, `SOL`, or `HYPE`
+          type: string
+        timestamp:
+          description: Unix timestamp in seconds (midnight UTC for the trading day)
+          format: int64
+          type: integer
+      required:
+      - flow_usd
+      - price_usd
+      - timestamp
+      - settled
+      type: object
+    DataObjectResponseTGEItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseTGEItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/TGEItem'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    MarketExchangeFlowExchangeItem:
+      additionalProperties: false
+      properties:
+        name:
+          description: Human-readable exchange name
+          type: string
+        supported_flow_filter:
+          description: Whether this filter is in Hermod's curated exchange-flow allowlist
+          type: boolean
+        symbol:
+          description: Exchange filter value to pass as the `exchange` query parameter
+          type: string
+        type:
+          description: 'Filter type: `aggregate` for upstream exchange categories or `exchange` for individual exchanges'
+          type: string
+      required:
+      - symbol
+      - name
+      - type
+      - supported_flow_filter
       type: object
     MarketMetricPoint:
       additionalProperties: false
@@ -2368,37 +1770,89 @@ components:
       - value
       - timestamp
       type: object
-    DataObjectResponseTGEItem:
+    DataResponseMarketTopCoinItem:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/DataObjectResponseTGEItem.json
+          - https://example.com/schemas/DataResponseMarketTopCoinItem.json
           format: uri
           readOnly: true
           type: string
         data:
-          $ref: '#/components/schemas/TGEItem'
+          items:
+            $ref: '#/components/schemas/MarketTopCoinItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    SimpleListResponseLiquidationExchangeItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseLiquidationExchangeItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/LiquidationExchangeItem'
+          type:
+          - array
+          - 'null'
         meta:
           $ref: '#/components/schemas/ObjectResponseMeta'
       required:
       - data
       - meta
       type: object
-    ETFTickerFlow:
+    LiquidationOrderItem:
       additionalProperties: false
       properties:
-        flow_usd:
-          description: Daily net flow in USD for this ticker
+        base_asset:
+          description: Base token symbol like `BTC`
+          type: string
+        exchange:
+          description: Exchange name like `Binance` or `OKX`
+          type: string
+        order_id:
+          description: Deterministic fingerprint for this liquidation row
+          type: string
+        price:
+          description: Liquidation execution price (USD)
           format: double
           type: number
-        ticker:
-          description: ETF ticker symbol like `IBIT`, `GBTC`, or `ETHA`
+        side:
+          description: 'Liquidation side: `long` or `short`'
           type: string
+        symbol:
+          description: Full trading pair like `BTCUSDT`
+          type: string
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type: integer
+        usd_value:
+          description: Liquidated position size (USD)
+          format: double
+          type: number
       required:
-      - ticker
-      - flow_usd
+      - order_id
+      - exchange
+      - symbol
+      - base_asset
+      - price
+      - usd_value
+      - side
+      - timestamp
       type: object
     IndicatorValues:
       additionalProperties: false
@@ -2486,6 +1940,552 @@ components:
           description: Supertrend line value
           format: double
           type: number
+      type: object
+    DataResponseMarketMetricPoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseMarketMetricPoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MarketMetricPoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    SimpleListResponseMarketFearGreedHistoryItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseMarketFearGreedHistoryItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MarketFearGreedHistoryItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    MarketPriceSummary:
+      additionalProperties: false
+      properties:
+        change_abs:
+          description: 'Absolute change in the quote currency: last - first'
+          format: double
+          type: number
+        change_pct:
+          description: 'Percentage change rounded to 4 decimals: (last - first) / first * 100. Zero when first is zero.'
+          format: double
+          type: number
+        first:
+          description: Value of the earliest-timestamp point in the requested time range
+          format: double
+          type: number
+        high:
+          description: Highest value observed in the requested time range
+          format: double
+          type: number
+        last:
+          description: Value of the latest-timestamp point in the requested time range
+          format: double
+          type: number
+        latest_dt:
+          description: Unix seconds of the latest-timestamp point
+          format: int64
+          type: integer
+        low:
+          description: Lowest value observed in the requested time range
+          format: double
+          type: number
+        n_points:
+          description: Number of points in the underlying time-series
+          format: int64
+          type: integer
+      required:
+      - first
+      - last
+      - high
+      - low
+      - change_abs
+      - change_pct
+      - latest_dt
+      - n_points
+      type: object
+    ETFTickerFlow:
+      additionalProperties: false
+      properties:
+        flow_usd:
+          description: Daily net flow in USD for this ticker
+          format: double
+          type: number
+        ticker:
+          description: ETF ticker symbol like `IBIT`, `GBTC`, or `ETHA`
+          type: string
+      required:
+      - ticker
+      - flow_usd
+      type: object
+    DataResponseMarketIndicatorItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseMarketIndicatorItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MarketIndicatorItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    MarketOptionsItem:
+      additionalProperties: false
+      properties:
+        exchange:
+          description: Options exchange name
+          type: string
+        max_pain_price:
+          description: Max pain price for the nearest expiry in USD. Only available for individual exchanges (Deribit, OKX, Binance, Bybit), not present on the `All` aggregate row.
+          format: double
+          type: number
+        open_interest:
+          description: Total options open interest in USD
+          format: double
+          type: number
+        project_id:
+          description: Surf project UUID this symbol resolved to, for frontend entity linking. Empty when unmapped.
+          type: string
+        put_call_ratio:
+          description: Put/call open interest ratio (put OI / call OI). Values above 1 indicate bearish sentiment. Only available for individual exchanges (Deribit, OKX, Binance, Bybit), not present on the `All` aggregate row.
+          format: double
+          type: number
+        symbol:
+          description: Underlying token symbol like `BTC` or `ETH`
+          type: string
+        updated_at:
+          description: Unix timestamp (seconds) of last update
+          format: int64
+          type: integer
+        volume_24h:
+          description: 24-hour options trading volume in USD
+          format: double
+          type: number
+      required:
+      - symbol
+      - exchange
+      - open_interest
+      - volume_24h
+      - updated_at
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    MarketFearGreedHistoryItem:
+      additionalProperties: false
+      properties:
+        classification:
+          description: Human-readable classification (Extreme Fear, Fear, Neutral, Greed, Extreme Greed)
+          type: string
+        price:
+          description: BTC price in USD at this point in time
+          format: double
+          type: number
+        timestamp:
+          description: Unix timestamp in seconds for this data point
+          format: int64
+          type: integer
+        value:
+          description: Fear and Greed Index score from 0 (extreme fear) to 100 (extreme greed)
+          format: int64
+          type: integer
+      required:
+      - value
+      - classification
+      - price
+      - timestamp
+      type: object
+    DataResponsePublicSaleItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponsePublicSaleItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/PublicSaleItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    MarketFuturesItem:
+      additionalProperties: false
+      properties:
+        funding_rate:
+          description: Current funding rate as a decimal (`0.0001` = 0.01%)
+          format: double
+          type: number
+        long_short_ratio:
+          description: Ratio of long to short positions
+          format: double
+          type: number
+        open_interest:
+          description: Total open interest in USD
+          format: double
+          type: number
+        project_id:
+          description: Surf project UUID this symbol resolved to, for frontend entity linking. Empty when unmapped.
+          type: string
+        symbol:
+          description: Trading symbol like `BTC` or `ETH`
+          type: string
+        updated_at:
+          description: Unix timestamp (seconds) of last update
+          format: int64
+          type: integer
+        volume_24h:
+          description: 24-hour trading volume in USD
+          format: double
+          type: number
+        volume_change_24h:
+          description: 24-hour volume change in USD (positive=increase, negative=decrease)
+          format: double
+          type: number
+      required:
+      - symbol
+      - open_interest
+      - funding_rate
+      - long_short_ratio
+      - volume_24h
+      - volume_change_24h
+      - updated_at
+      type: object
+    ListingEventItem:
+      additionalProperties: false
+      properties:
+        base_symbol:
+          description: Base currency symbol
+          type: string
+        effective_at:
+          description: When the listing/delisting takes effect (Unix seconds)
+          format: int64
+          type: integer
+        event_type:
+          description: LISTING or DELISTING
+          type: string
+        exchange_name:
+          description: Exchange name
+          type: string
+        product:
+          description: Product type (SPOT, PERP, etc.)
+          type: string
+        published_at:
+          description: When the announcement was published (Unix seconds)
+          format: int64
+          type: integer
+        quote_symbol:
+          description: Quote currency symbol
+          type: string
+        trading_pair:
+          description: Trading pair like BTC/USDT
+          type: string
+      required:
+      - exchange_name
+      - product
+      - trading_pair
+      - event_type
+      - effective_at
+      type: object
+    LiquidationExchangeItem:
+      additionalProperties: false
+      properties:
+        exchange:
+          description: Exchange name like `Binance` or `OKX`. `All` = aggregate across all exchanges
+          type: string
+        liquidation_usd:
+          description: Total liquidation volume (USD)
+          format: double
+          type: number
+        long_liquidation_usd:
+          description: Long-side liquidation volume (USD)
+          format: double
+          type: number
+        short_liquidation_usd:
+          description: Short-side liquidation volume (USD)
+          format: double
+          type: number
+      required:
+      - exchange
+      - liquidation_usd
+      - long_liquidation_usd
+      - short_liquidation_usd
+      type: object
+    SimpleListResponseMarketETFFlowItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseMarketETFFlowItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MarketETFFlowItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
+    LiquidationChartItem:
+      additionalProperties: false
+      properties:
+        contributing_exchanges:
+          description: Exchanges that contributed to this liquidation point
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        excluded_exchanges:
+          description: Requested exchanges omitted because liquidation data is unavailable
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        long_liquidation_usd:
+          description: Long-side aggregated liquidation volume (USD)
+          format: double
+          type: number
+        short_liquidation_usd:
+          description: Short-side aggregated liquidation volume (USD)
+          format: double
+          type: number
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type: integer
+      required:
+      - timestamp
+      - long_liquidation_usd
+      - short_liquidation_usd
+      type: object
+    PublicSaleItem:
+      additionalProperties: false
+      properties:
+        allocation_of_supply:
+          description: Percentage of total supply allocated
+          format: double
+          type: number
+        ath_roi:
+          description: All-time-high return on investment multiplier
+          format: double
+          type: number
+        crowdsale_end_date:
+          description: Sale end date (Unix seconds)
+          format: int64
+          type: integer
+        crowdsale_price:
+          description: Token sale price in USD
+          format: double
+          type: number
+        crowdsale_raise:
+          description: Total funds raised in USD
+          format: double
+          type: number
+        crowdsale_start_date:
+          description: Sale start date (Unix seconds)
+          format: int64
+          type: integer
+        crowdsale_status:
+          description: Sale status (UPCOMING, ACTIVE, ENDED)
+          type: string
+        crowdsale_type:
+          description: Sale type (IDO, ICO, IEO, etc.)
+          type: string
+        launchpad_name:
+          description: Launchpad platform name
+          type: string
+        name:
+          description: Project name
+          type: string
+        project_id:
+          description: Surf project UUID, for frontend entity linking.
+          type: string
+        symbol:
+          description: Token symbol
+          type: string
+      type: object
+    SimpleListResponseMarketFuturesItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseMarketFuturesItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MarketFuturesItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseListingEventItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseListingEventItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/ListingEventItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    SimpleListResponseLiquidationChartItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SimpleListResponseLiquidationChartItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/LiquidationChartItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
       type: object
   securitySchemes:
     AccessToken:

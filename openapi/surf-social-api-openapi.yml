@@ -806,188 +806,6 @@ paths:
       - Social
 components:
   schemas:
-    SocialMindsharePoint:
-      additionalProperties: false
-      properties:
-        timestamp:
-          description: Unix timestamp in seconds
-          format: int64
-          type: integer
-        value:
-          description: Mindshare view count at this timestamp
-          format: int64
-          type: integer
-      required:
-      - timestamp
-      - value
-      type: object
-    SocialSentimentItem:
-      additionalProperties: false
-      properties:
-        insufficient_social_data:
-          description: True when fewer than the minimum number of scored tweets were available in the timeframe (or all view counts were 0). The numeric score is then a neutral fallback (0). Absent (or false) for normal responses.
-          type: boolean
-        project_id:
-          description: Surf project UUID
-          type: string
-        project_name:
-          description: Project name
-          type: string
-        sentiment_score:
-          description: Sentiment score from -1.0 (bearish) to 1.0 (bullish). Treat as unreliable when insufficient_social_data=true.
-          format: double
-          type: number
-        symbol:
-          description: Token symbol
-          type: string
-      required:
-      - project_id
-      - project_name
-      - sentiment_score
-      type: object
-    DataObjectResponseSocialSentimentItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataObjectResponseSocialSentimentItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          $ref: '#/components/schemas/SocialSentimentItem'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    DataObjectResponseXUser:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataObjectResponseXUser.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          $ref: '#/components/schemas/XUser'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
-    FollowerGeoItem:
-      additionalProperties: false
-      properties:
-        follower_count:
-          description: Number of followers in this location
-          format: int64
-          type: integer
-        location:
-          description: Geographic location name like a country or region
-          type: string
-        percentage:
-          description: Percentage of total followers in this location (0-100)
-          format: double
-          type: number
-      required:
-      - location
-      - follower_count
-      - percentage
-      type: object
-    ObjectResponseMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-      required:
-      - credits_used
-      - cached
-      type: object
-    MindshareTagPercentPoint:
-      additionalProperties: false
-      properties:
-        percent:
-          description: Project share within this tag at this timestamp, scaled 0~100 (e.g. 15.23 = 15.23%)
-          format: double
-          type: number
-        timestamp:
-          description: Bucket start Unix timestamp in seconds
-          format: int64
-          type: integer
-      required:
-      - timestamp
-      - percent
-      type: object
-    XMedia:
-      additionalProperties: false
-      properties:
-        type:
-          description: 'Media type: photo, video, or animated_gif'
-          type: string
-        url:
-          description: Direct URL to the media asset
-          type: string
-      required:
-      - type
-      - url
-      type: object
-    SmartFollowerItem:
-      additionalProperties: false
-      properties:
-        avatar:
-          description: Profile image URL
-          type: string
-        description:
-          description: Human-readable description of the follower's role
-          type: string
-        followers_count:
-          description: Number of followers this account has
-          format: int64
-          type: integer
-        handle:
-          description: X (Twitter) handle without the @ prefix
-          type: string
-        name:
-          description: Display name of the follower
-          type: string
-        rank:
-          description: Rank position among smart followers (1 = highest)
-          format: int32
-          type: integer
-        score:
-          description: Smart follower influence score
-          format: double
-          type: number
-        tag:
-          description: Smart follower category tag like VC, KOL, or Developer
-          type: string
-        twitter_id:
-          description: Numeric X (Twitter) user ID
-          type: string
-      required:
-      - twitter_id
-      - tag
-      - name
-      - handle
-      - avatar
-      - followers_count
-      - rank
-      - score
-      type: object
     DataAPIError:
       additionalProperties: false
       properties:
@@ -1002,326 +820,6 @@ components:
           $ref: '#/components/schemas/DataAPIErrorDetail'
       required:
       - error
-      type: object
-    CursorDataResponseXTweet:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/CursorDataResponseXTweet.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/XTweet'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/CursorMeta'
-      required:
-      - data
-      - meta
-      type: object
-    XAuthor:
-      additionalProperties: false
-      properties:
-        avatar:
-          description: Profile picture URL
-          type: string
-        handle:
-          description: X/Twitter handle without the @ prefix (e.g. 'cz_binance')
-          type: string
-        name:
-          description: Display name on X/Twitter
-          type: string
-        user_id:
-          description: Numeric X/Twitter user ID as a string
-          type: string
-      required:
-      - user_id
-      - handle
-      - name
-      type: object
-    CursorDataResponseXUser:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/CursorDataResponseXUser.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/XUser'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/CursorMeta'
-      required:
-      - data
-      - meta
-      type: object
-    FollowerGeoData:
-      additionalProperties: false
-      properties:
-        locations:
-          description: Follower count breakdown by geographic location
-          items:
-            $ref: '#/components/schemas/FollowerGeoItem'
-          type:
-          - array
-          - 'null'
-        total_follower_count:
-          description: Total number of followers across all locations
-          format: int64
-          type: integer
-      required:
-      - total_follower_count
-      - locations
-      type: object
-    DataResponseMindshareTopProject:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseMindshareTopProject.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/MindshareTopProject'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    MindshareTopTwitterInfo:
-      additionalProperties: false
-      properties:
-        avatar_url:
-          description: Profile image URL
-          type: string
-        display_name:
-          description: X (Twitter) display name
-          type: string
-        twitter_id:
-          description: Numeric X (Twitter) user ID
-          type: string
-        x_handle:
-          description: X (Twitter) handle without the @ prefix
-          type: string
-      required:
-      - twitter_id
-      - display_name
-      - x_handle
-      type: object
-    SmartFollowersData:
-      additionalProperties: false
-      properties:
-        count:
-          description: Total number of smart followers
-          format: int64
-          type: integer
-        followers:
-          description: List of top smart followers sorted by influence score
-          items:
-            $ref: '#/components/schemas/SmartFollowerItem'
-          type:
-          - array
-          - 'null'
-      required:
-      - count
-      - followers
-      type: object
-    OffsetMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-        has_more:
-          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
-          type: boolean
-        limit:
-          description: Maximum number of items returned in this response
-          format: int64
-          type: integer
-        offset:
-          description: Number of items skipped (pagination offset)
-          format: int64
-          type: integer
-        total:
-          description: Total number of matching items (before pagination). Omitted when total is unknown.
-          format: int64
-          type: integer
-        watermark:
-          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
-          format: int64
-          type: integer
-      required:
-      - limit
-      - offset
-      - credits_used
-      - cached
-      type: object
-    MindshareTopProject:
-      additionalProperties: false
-      properties:
-        project:
-          $ref: '#/components/schemas/MindshareTopProjectInfo'
-          description: Project metadata
-        rank:
-          description: Rank position in the mindshare leaderboard
-          format: int64
-          type: integer
-        sentiment:
-          description: 'Sentiment polarity: positive or negative'
-          type: string
-        sentiment_score:
-          description: Weighted sentiment score from -1 (very negative) to 1 (very positive)
-          format: double
-          type: number
-        tags:
-          description: Project category tags
-          items:
-            type: string
-          type:
-          - array
-          - 'null'
-        token:
-          $ref: '#/components/schemas/MindshareTopTokenInfo'
-          description: Token metadata
-        trending_short_reason:
-          description: 'Deprecated: no longer populated.'
-          type: string
-        trending_summary:
-          description: 'Deprecated: no longer populated.'
-          type: string
-        twitter:
-          $ref: '#/components/schemas/MindshareTopTwitterInfo'
-          description: X (Twitter) account metadata
-      required:
-      - rank
-      type: object
-    DataResponseSmartFollowerHistoryPoint:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseSmartFollowerHistoryPoint.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/SmartFollowerHistoryPoint'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    SmartFollowerHistoryPoint:
-      additionalProperties: false
-      properties:
-        count:
-          description: Number of smart followers on this date
-          format: int32
-          type: integer
-        date:
-          description: Date in YYYY-MM-DD format
-          type: string
-      required:
-      - date
-      - count
-      type: object
-    ProjectTagMindshareSeries:
-      additionalProperties: false
-      properties:
-        points:
-          description: Sparse time-series of this tag's mindshare percentage
-          items:
-            $ref: '#/components/schemas/MindshareTagPercentPoint'
-          type:
-          - array
-          - 'null'
-        rank:
-          description: Project's rank within this tag (1 = top) from Argus's 7d rank snapshot. Absent when Argus has no rank row for this (project, tag) pair.
-          format: int64
-          type: integer
-        share_ratio:
-          description: Project's share of total views within this tag over the rank window (0~1). Distinct from `points[].percent` which is the project's own per-tag percentage time-series. Absent when rank data is unavailable.
-          format: double
-          type: number
-        tag:
-          description: Tag / category name, e.g. 'AI', 'DeFi'
-          type: string
-      required:
-      - tag
-      - points
-      type: object
-    DataResponseXTweet:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseXTweet.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/XTweet'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    MindshareTopTokenInfo:
-      additionalProperties: false
-      properties:
-        id:
-          description: Surf token UUID
-          type: string
-        image:
-          description: Token image URL
-          type: string
-        name:
-          description: Token name
-          type: string
-        symbol:
-          description: Token ticker symbol
-          type: string
-      required:
-      - name
       type: object
     XTweet:
       additionalProperties: false
@@ -1372,40 +870,169 @@ components:
       - author
       - stats
       type: object
-    DataAPIErrorDetail:
+    MindshareTopProject:
       additionalProperties: false
       properties:
-        code:
+        project:
+          $ref: '#/components/schemas/MindshareTopProjectInfo'
+          description: Project metadata
+        rank:
+          description: Rank position in the mindshare leaderboard
+          format: int64
+          type: integer
+        sentiment:
+          description: 'Sentiment polarity: positive or negative'
           type: string
-        message:
+        sentiment_score:
+          description: Weighted sentiment score from -1 (very negative) to 1 (very positive)
+          format: double
+          type: number
+        tags:
+          description: Project category tags
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        token:
+          $ref: '#/components/schemas/MindshareTopTokenInfo'
+          description: Token metadata
+        trending_short_reason:
+          description: 'Deprecated: no longer populated.'
           type: string
+        trending_summary:
+          description: 'Deprecated: no longer populated.'
+          type: string
+        twitter:
+          $ref: '#/components/schemas/MindshareTopTwitterInfo'
+          description: X (Twitter) account metadata
       required:
-      - code
-      - message
+      - rank
       type: object
-    SocialMindshareBody:
+    DataObjectResponseSocialSentimentItem:
       additionalProperties: false
       properties:
         $schema:
           description: A URL to the JSON Schema for this object.
           examples:
-          - https://example.com/schemas/SocialMindshareBody.json
+          - https://example.com/schemas/DataObjectResponseSocialSentimentItem.json
           format: uri
           readOnly: true
           type: string
         data:
-          items:
-            $ref: '#/components/schemas/SocialMindsharePoint'
-          type:
-          - array
-          - 'null'
+          $ref: '#/components/schemas/SocialSentimentItem'
         meta:
-          $ref: '#/components/schemas/OffsetMeta'
-        tag_percents:
-          description: Per-tag mindshare percentage time-series. Only present when `include_tag_percents=true` was passed. Empty array means the project has no tag data; omitted means the field was not requested. Tags are sorted by the last point's percent descending, with tag-name ascending as tiebreaker.
-          items:
-            $ref: '#/components/schemas/ProjectTagMindshareSeries'
-          type: array
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataObjectResponseXUser:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseXUser.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/XUser'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    SocialSentimentItem:
+      additionalProperties: false
+      properties:
+        insufficient_social_data:
+          description: True when fewer than the minimum number of scored tweets were available in the timeframe (or all view counts were 0). The numeric score is then a neutral fallback (0). Absent (or false) for normal responses.
+          type: boolean
+        project_id:
+          description: Surf project UUID
+          type: string
+        project_name:
+          description: Project name
+          type: string
+        sentiment_score:
+          description: Sentiment score from -1.0 (bearish) to 1.0 (bullish). Treat as unreliable when insufficient_social_data=true.
+          format: double
+          type: number
+        symbol:
+          description: Token symbol
+          type: string
+      required:
+      - project_id
+      - project_name
+      - sentiment_score
+      type: object
+    XAuthor:
+      additionalProperties: false
+      properties:
+        avatar:
+          description: Profile picture URL
+          type: string
+        handle:
+          description: X/Twitter handle without the @ prefix (e.g. 'cz_binance')
+          type: string
+        name:
+          description: Display name on X/Twitter
+          type: string
+        user_id:
+          description: Numeric X/Twitter user ID as a string
+          type: string
+      required:
+      - user_id
+      - handle
+      - name
+      type: object
+    SocialMindsharePoint:
+      additionalProperties: false
+      properties:
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type: integer
+        value:
+          description: Mindshare view count at this timestamp
+          format: int64
+          type: integer
+      required:
+      - timestamp
+      - value
+      type: object
+    MindshareTagPercentPoint:
+      additionalProperties: false
+      properties:
+        percent:
+          description: Project share within this tag at this timestamp, scaled 0~100 (e.g. 15.23 = 15.23%)
+          format: double
+          type: number
+        timestamp:
+          description: Bucket start Unix timestamp in seconds
+          format: int64
+          type: integer
+      required:
+      - timestamp
+      - percent
+      type: object
+    DataObjectResponseSocialDetailBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseSocialDetailBody.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/SocialDetailBody'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
       required:
       - data
       - meta
@@ -1433,6 +1060,31 @@ components:
           type: string
       required:
       - twitter_id
+      type: object
+    ProjectTagMindshareSeries:
+      additionalProperties: false
+      properties:
+        points:
+          description: Sparse time-series of this tag's mindshare percentage
+          items:
+            $ref: '#/components/schemas/MindshareTagPercentPoint'
+          type:
+          - array
+          - 'null'
+        rank:
+          description: Project's rank within this tag (1 = top) from Argus's 7d rank snapshot. Absent when Argus has no rank row for this (project, tag) pair.
+          format: int64
+          type: integer
+        share_ratio:
+          description: Project's share of total views within this tag over the rank window (0~1). Distinct from `points[].percent` which is the project's own per-tag percentage time-series. Absent when rank data is unavailable.
+          format: double
+          type: number
+        tag:
+          description: Tag / category name, e.g. 'AI', 'DeFi'
+          type: string
+      required:
+      - tag
+      - points
       type: object
     CursorMeta:
       additionalProperties: false
@@ -1467,21 +1119,397 @@ components:
       - credits_used
       - cached
       type: object
-    MindshareTopProjectInfo:
+    XMedia:
+      additionalProperties: false
+      properties:
+        type:
+          description: 'Media type: photo, video, or animated_gif'
+          type: string
+        url:
+          description: Direct URL to the media asset
+          type: string
+      required:
+      - type
+      - url
+      type: object
+    FollowerGeoItem:
+      additionalProperties: false
+      properties:
+        follower_count:
+          description: Number of followers in this location
+          format: int64
+          type: integer
+        location:
+          description: Geographic location name like a country or region
+          type: string
+        percentage:
+          description: Percentage of total followers in this location (0-100)
+          format: double
+          type: number
+      required:
+      - location
+      - follower_count
+      - percentage
+      type: object
+    DataResponseMindshareTopProject:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseMindshareTopProject.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/MindshareTopProject'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    SocialMindshareBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/SocialMindshareBody.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/SocialMindsharePoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+        tag_percents:
+          description: Per-tag mindshare percentage time-series. Only present when `include_tag_percents=true` was passed. Empty array means the project has no tag data; omitted means the field was not requested. Tags are sorted by the last point's percent descending, with tag-name ascending as tiebreaker.
+          items:
+            $ref: '#/components/schemas/ProjectTagMindshareSeries'
+          type: array
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseXTweet:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseXTweet.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/XTweet'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    DataResponseSmartFollowerHistoryPoint:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseSmartFollowerHistoryPoint.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/SmartFollowerHistoryPoint'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    MindshareTopTokenInfo:
       additionalProperties: false
       properties:
         id:
-          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup
+          description: Surf token UUID
+          type: string
+        image:
+          description: Token image URL
           type: string
         name:
-          description: Project name
+          description: Token name
           type: string
-        slug:
-          description: URL-friendly project slug
+        symbol:
+          description: Token ticker symbol
           type: string
       required:
-      - id
       - name
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    XStats:
+      additionalProperties: false
+      properties:
+        likes:
+          description: Number of likes (hearts)
+          format: int64
+          type: integer
+        replies:
+          description: Number of replies
+          format: int64
+          type: integer
+        reposts:
+          description: Number of retweets/reposts
+          format: int64
+          type: integer
+        views:
+          description: Total view count
+          format: int64
+          type: integer
+      required:
+      - views
+      - likes
+      - reposts
+      - replies
+      type: object
+    SmartFollowerItem:
+      additionalProperties: false
+      properties:
+        avatar:
+          description: Profile image URL
+          type: string
+        description:
+          description: Human-readable description of the follower's role
+          type: string
+        followers_count:
+          description: Number of followers this account has
+          format: int64
+          type: integer
+        handle:
+          description: X (Twitter) handle without the @ prefix
+          type: string
+        name:
+          description: Display name of the follower
+          type: string
+        rank:
+          description: Rank position among smart followers (1 = highest)
+          format: int32
+          type: integer
+        score:
+          description: Smart follower influence score
+          format: double
+          type: number
+        tag:
+          description: Smart follower category tag like VC, KOL, or Developer
+          type: string
+        twitter_id:
+          description: Numeric X (Twitter) user ID
+          type: string
+      required:
+      - twitter_id
+      - tag
+      - name
+      - handle
+      - avatar
+      - followers_count
+      - rank
+      - score
+      type: object
+    CursorDataResponseXUser:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/CursorDataResponseXUser.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/XUser'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/CursorMeta'
+      required:
+      - data
+      - meta
+      type: object
+    SmartFollowerHistoryPoint:
+      additionalProperties: false
+      properties:
+        count:
+          description: Number of smart followers on this date
+          format: int32
+          type: integer
+        date:
+          description: Date in YYYY-MM-DD format
+          type: string
+      required:
+      - date
+      - count
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
+      type: object
+    SmartFollowersData:
+      additionalProperties: false
+      properties:
+        count:
+          description: Total number of smart followers
+          format: int64
+          type: integer
+        followers:
+          description: List of top smart followers sorted by influence score
+          items:
+            $ref: '#/components/schemas/SmartFollowerItem'
+          type:
+          - array
+          - 'null'
+      required:
+      - count
+      - followers
+      type: object
+    MindshareTopTwitterInfo:
+      additionalProperties: false
+      properties:
+        avatar_url:
+          description: Profile image URL
+          type: string
+        display_name:
+          description: X (Twitter) display name
+          type: string
+        twitter_id:
+          description: Numeric X (Twitter) user ID
+          type: string
+        x_handle:
+          description: X (Twitter) handle without the @ prefix
+          type: string
+      required:
+      - twitter_id
+      - display_name
+      - x_handle
+      type: object
+    CursorDataResponseXTweet:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/CursorDataResponseXTweet.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/XTweet'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/CursorMeta'
+      required:
+      - data
+      - meta
+      type: object
+    SentimentData:
+      additionalProperties: false
+      properties:
+        insufficient_social_data:
+          description: True when fewer than the minimum number of scored tweets were available in the timeframe (or all view counts were 0). The score is null in that case rather than a meaningful neutral. Absent (or false) for normal responses.
+          type: boolean
+        score:
+          description: Sentiment score from -1 (very negative) to 1 (very positive). Null when insufficient_social_data is true.
+          format: double
+          type:
+          - number
+          - 'null'
+        time_range:
+          description: Time range for the sentiment analysis like 7d or 30d
+          type: string
+      required:
+      - score
+      - time_range
       type: object
     XUser:
       additionalProperties: false
@@ -1516,67 +1544,39 @@ components:
       - followers_count
       - following_count
       type: object
-    SentimentData:
+    FollowerGeoData:
       additionalProperties: false
       properties:
-        insufficient_social_data:
-          description: True when fewer than the minimum number of scored tweets were available in the timeframe (or all view counts were 0). The score is null in that case rather than a meaningful neutral. Absent (or false) for normal responses.
-          type: boolean
-        score:
-          description: Sentiment score from -1 (very negative) to 1 (very positive). Null when insufficient_social_data is true.
-          format: double
+        locations:
+          description: Follower count breakdown by geographic location
+          items:
+            $ref: '#/components/schemas/FollowerGeoItem'
           type:
-          - number
+          - array
           - 'null'
-        time_range:
-          description: Time range for the sentiment analysis like 7d or 30d
-          type: string
+        total_follower_count:
+          description: Total number of followers across all locations
+          format: int64
+          type: integer
       required:
-      - score
-      - time_range
+      - total_follower_count
+      - locations
       type: object
-    XStats:
+    MindshareTopProjectInfo:
       additionalProperties: false
       properties:
-        likes:
-          description: Number of likes (hearts)
-          format: int64
-          type: integer
-        replies:
-          description: Number of replies
-          format: int64
-          type: integer
-        reposts:
-          description: Number of retweets/reposts
-          format: int64
-          type: integer
-        views:
-          description: Total view count
-          format: int64
-          type: integer
-      required:
-      - views
-      - likes
-      - reposts
-      - replies
-      type: object
-    DataObjectResponseSocialDetailBody:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataObjectResponseSocialDetailBody.json
-          format: uri
-          readOnly: true
+        id:
+          description: Surf project UUID — pass as 'id' parameter to /project/detail, /project/events, or /project/defi/metrics for exact lookup
           type: string
-        data:
-          $ref: '#/components/schemas/SocialDetailBody'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
+        name:
+          description: Project name
+          type: string
+        slug:
+          description: URL-friendly project slug
+          type: string
       required:
-      - data
-      - meta
+      - id
+      - name
       type: object
   securitySchemes:
     AccessToken:

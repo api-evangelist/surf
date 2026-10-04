@@ -171,24 +171,6 @@ paths:
       - News
 components:
   schemas:
-    DataObjectResponseNewsArticleDetailItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataObjectResponseNewsArticleDetailItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          $ref: '#/components/schemas/NewsArticleDetailItem'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
-      required:
-      - data
-      - meta
-      type: object
     ObjectResponseMeta:
       additionalProperties: false
       properties:
@@ -205,6 +187,59 @@ components:
       required:
       - credits_used
       - cached
+      type: object
+    OffsetMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+        has_more:
+          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
+          type: boolean
+        limit:
+          description: Maximum number of items returned in this response
+          format: int64
+          type: integer
+        offset:
+          description: Number of items skipped (pagination offset)
+          format: int64
+          type: integer
+        total:
+          description: Total number of matching items (before pagination). Omitted when total is unknown.
+          format: int64
+          type: integer
+        watermark:
+          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
+          format: int64
+          type: integer
+      required:
+      - limit
+      - offset
+      - credits_used
+      - cached
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
       type: object
     NewsArticleDetailItem:
       additionalProperties: false
@@ -242,6 +277,35 @@ components:
       - title
       - content
       - published_at
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    DataObjectResponseNewsArticleDetailItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseNewsArticleDetailItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/NewsArticleDetailItem'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
       type: object
     NewsArticleItem:
       additionalProperties: false
@@ -285,17 +349,6 @@ components:
       - title
       - published_at
       type: object
-    DataAPIErrorDetail:
-      additionalProperties: false
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
-      type: object
     DataResponseNewsArticleItem:
       additionalProperties: false
       properties:
@@ -317,59 +370,6 @@ components:
       required:
       - data
       - meta
-      type: object
-    DataAPIError:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
-          type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
-      required:
-      - error
-      type: object
-    OffsetMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-        has_more:
-          description: Whether more items may exist beyond this response. For offset-paged endpoints, continue with a larger offset. For time-series endpoints without offset/cursor controls, true means the requested time range hit an upstream cap; narrow from/to to continue. Omitted when exhaustion cannot be proven.
-          type: boolean
-        limit:
-          description: Maximum number of items returned in this response
-          format: int64
-          type: integer
-        offset:
-          description: Number of items skipped (pagination offset)
-          format: int64
-          type: integer
-        total:
-          description: Total number of matching items (before pagination). Omitted when total is unknown.
-          format: int64
-          type: integer
-        watermark:
-          description: Warehouse watermark (Unix seconds) this response was computed at, on warehouse-backed endpoints (e.g. Hyperliquid /trades/aggregate) — rows up to this time come from the warehouse, newer rows from the live tail. Omitted elsewhere.
-          format: int64
-          type: integer
-      required:
-      - limit
-      - offset
-      - credits_used
-      - cached
       type: object
   securitySchemes:
     AccessToken:
