@@ -234,22 +234,25 @@ paths:
       - Signal
 components:
   schemas:
-    ObjectResponseMeta:
+    SignalDerivativeComponent:
       additionalProperties: false
       properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
+        metric:
+          description: Derivative component metric
           type: string
+        score:
+          description: Component score
+          format: double
+          type: number
+        used:
+          description: Whether the component contributed to the derivative score
+          type: boolean
+        weight:
+          description: Component weight
+          format: double
+          type: number
       required:
-      - credits_used
-      - cached
+      - used
       type: object
     OffsetMeta:
       additionalProperties: false
@@ -289,54 +292,16 @@ components:
       - credits_used
       - cached
       type: object
-    DataAPIError:
+    DataAPIErrorDetail:
       additionalProperties: false
       properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
+        code:
           type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
-      required:
-      - error
-      type: object
-    DataObjectResponseSignalProject:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataObjectResponseSignalProject.json
-          format: uri
-          readOnly: true
+        message:
           type: string
-        data:
-          $ref: '#/components/schemas/SignalProject'
-        meta:
-          $ref: '#/components/schemas/ObjectResponseMeta'
       required:
-      - data
-      - meta
-      type: object
-    SignalPriceChange:
-      additionalProperties: false
-      properties:
-        1h:
-          description: 1 hour price change percent
-          format: double
-          type: number
-        24h:
-          description: 24 hour price change percent
-          format: double
-          type: number
-        7d:
-          description: 7 day price change percent
-          format: double
-          type: number
+      - code
+      - message
       type: object
     SignalDimensions:
       additionalProperties: false
@@ -364,59 +329,6 @@ components:
           description: Social dimension score
           format: double
           type: number
-      type: object
-    DataAPIErrorDetail:
-      additionalProperties: false
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
-      type: object
-    DataResponseSignalProject:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseSignalProject.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/SignalProject'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
-      type: object
-    SignalDerivativeComponent:
-      additionalProperties: false
-      properties:
-        metric:
-          description: Derivative component metric
-          type: string
-        score:
-          description: Component score
-          format: double
-          type: number
-        used:
-          description: Whether the component contributed to the derivative score
-          type: boolean
-        weight:
-          description: Component weight
-          format: double
-          type: number
-      required:
-      - used
       type: object
     SignalProject:
       additionalProperties: false
@@ -596,6 +508,94 @@ components:
         strength:
           description: Directional state strength
           type: string
+      type: object
+    SignalPriceChange:
+      additionalProperties: false
+      properties:
+        1h:
+          description: 1 hour price change percent
+          format: double
+          type: number
+        24h:
+          description: 24 hour price change percent
+          format: double
+          type: number
+        7d:
+          description: 7 day price change percent
+          format: double
+          type: number
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    DataObjectResponseSignalProject:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataObjectResponseSignalProject.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          $ref: '#/components/schemas/SignalProject'
+        meta:
+          $ref: '#/components/schemas/ObjectResponseMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataResponseSignalProject:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseSignalProject.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/SignalProject'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
       type: object
   securitySchemes:
     AccessToken:

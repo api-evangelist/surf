@@ -467,42 +467,39 @@ paths:
       - Wallet
 components:
   schemas:
-    DataResponseWalletLabelItem:
+    WalletDetailError:
       additionalProperties: false
       properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseWalletLabelItem.json
-          format: uri
-          readOnly: true
+        field:
+          description: Field name that failed to load like `evm_balance`, `sol_balance`, `evm_tokens`, `sol_tokens`, `labels`, `nft`, `active_chains`, or `approvals`
           type: string
-        data:
+        message:
+          description: Error message describing why the field could not be loaded
+          type: string
+      required:
+      - field
+      - message
+      type: object
+    EvmBalanceItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address
+          type: string
+        chain_balances:
+          description: Per-chain balance breakdown, sorted by value descending (EVM only)
           items:
-            $ref: '#/components/schemas/WalletLabelItem'
+            $ref: '#/components/schemas/WalletChainItem'
           type:
           - array
           - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
+        total_usd:
+          description: Total portfolio value in USD (EVM only)
+          format: double
+          type: number
       required:
-      - data
-      - meta
-      type: object
-    DataAPIError:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataAPIError.json
-          format: uri
-          readOnly: true
-          type: string
-        error:
-          $ref: '#/components/schemas/DataAPIErrorDetail'
-      required:
-      - error
+      - address
+      - total_usd
       type: object
     DataObjectResponseWalletDetailBody:
       additionalProperties: false
@@ -522,105 +519,47 @@ components:
       - data
       - meta
       type: object
-    SolTokenItem:
+    WalletNFTItem:
       additionalProperties: false
       properties:
-        balance:
-          description: Decimal-adjusted token balance as a string
+        chain:
+          description: Canonical chain name like `ethereum` or `polygon`
           type: string
-        decimals:
-          description: Token decimal places (Solana only)
-          format: int64
-          type: integer
-        is_verified:
-          description: Whether the token contract is verified
-          type: boolean
-        logo_url:
-          description: Token logo image URL
+        collection_name:
+          description: NFT collection name
+          type: string
+        contract_address:
+          description: NFT contract address
+          type: string
+        image_url:
+          description: NFT image or thumbnail URL
           type: string
         name:
-          description: Full token name
+          description: NFT item name or title
           type: string
-        symbol:
-          description: Token ticker symbol
+        token_id:
+          description: NFT token ID within the collection
           type: string
-        token_address:
-          description: SPL token mint address (Solana only)
-          type: string
-      required:
-      - token_address
-      - symbol
-      - balance
-      - decimals
-      - is_verified
-      type: object
-    WalletApprovalItem:
-      additionalProperties: false
-      properties:
-        balance:
-          description: Current token balance
+        usd_price:
+          description: Latest trading price in USD
           format: double
           type: number
-        chain:
-          description: Canonical chain name
-          type: string
-        name:
-          description: Full token name
-          type: string
-        spenders:
-          description: List of approved spender contracts
-          items:
-            $ref: '#/components/schemas/WalletApprovalSpender'
-          type:
-          - array
-          - 'null'
-        symbol:
-          description: Token ticker symbol
-          type: string
-        token_address:
-          description: Token contract address
-          type: string
       required:
-      - token_address
-      - symbol
-      - chain
-      - balance
-      - spenders
+      - contract_address
+      - token_id
       type: object
-    WalletDetailError:
+    WalletLabelInfo:
       additionalProperties: false
       properties:
-        field:
-          description: Field name that failed to load like `evm_balance`, `sol_balance`, `evm_tokens`, `sol_tokens`, `labels`, `nft`, `active_chains`, or `approvals`
-          type: string
-        message:
-          description: Error message describing why the field could not be loaded
+        confidence:
+          description: Confidence score 0.0-1.0
+          format: double
+          type: number
+        label:
+          description: Human-readable label for this address like `Binance Hot Wallet`
           type: string
       required:
-      - field
-      - message
-      type: object
-    DataResponseWalletHistoryItem:
-      additionalProperties: false
-      properties:
-        $schema:
-          description: A URL to the JSON Schema for this object.
-          examples:
-          - https://example.com/schemas/DataResponseWalletHistoryItem.json
-          format: uri
-          readOnly: true
-          type: string
-        data:
-          items:
-            $ref: '#/components/schemas/WalletHistoryItem'
-          type:
-          - array
-          - 'null'
-        meta:
-          $ref: '#/components/schemas/OffsetMeta'
-      required:
-      - data
-      - meta
+      - label
       type: object
     DataResponseWalletNetWorthPoint:
       additionalProperties: false
@@ -643,6 +582,65 @@ components:
       required:
       - data
       - meta
+      type: object
+    WalletProtocolPosition:
+      additionalProperties: false
+      properties:
+        balance_usd:
+          description: Total USD value of this position
+          format: double
+          type: number
+        borrow_tokens:
+          description: Tokens borrowed in this position
+          items:
+            $ref: '#/components/schemas/WalletProtocolToken'
+          type:
+          - array
+          - 'null'
+        lp_tokens:
+          description: LP tokens in this position
+          items:
+            $ref: '#/components/schemas/WalletProtocolToken'
+          type:
+          - array
+          - 'null'
+        name:
+          description: Position name or type like `Lending` or `Staking`
+          type: string
+        reward_tokens:
+          description: Unclaimed reward tokens in this position
+          items:
+            $ref: '#/components/schemas/WalletProtocolToken'
+          type:
+          - array
+          - 'null'
+        supply_tokens:
+          description: Tokens supplied/deposited in this position
+          items:
+            $ref: '#/components/schemas/WalletProtocolToken'
+          type:
+          - array
+          - 'null'
+      required:
+      - name
+      - balance_usd
+      type: object
+    ObjectResponseMeta:
+      additionalProperties: false
+      properties:
+        cached:
+          description: Whether this response was served from cache
+          type: boolean
+        credits_used:
+          description: Credits deducted for this request
+          format: int64
+          type: integer
+        empty_reason:
+          description: Hint explaining why the data array is empty, when applicable
+          type: string
+      required:
+      - credits_used
+      - cached
       type: object
     WalletHistoryItem:
       additionalProperties: false
@@ -719,137 +717,40 @@ components:
       - usd_value
       - is_verified
       type: object
-    WalletProtocolPosition:
+    WalletApprovalSpender:
       additionalProperties: false
       properties:
-        balance_usd:
-          description: Total USD value of this position
+        allowance:
+          description: Approved token amount (use -1 for unlimited)
           format: double
           type: number
-        borrow_tokens:
-          description: Tokens borrowed in this position
-          items:
-            $ref: '#/components/schemas/WalletProtocolToken'
-          type:
-          - array
-          - 'null'
-        lp_tokens:
-          description: LP tokens in this position
-          items:
-            $ref: '#/components/schemas/WalletProtocolToken'
-          type:
-          - array
-          - 'null'
-        name:
-          description: Position name or type like `Lending` or `Staking`
+        spender_address:
+          description: Address of the approved spender contract
           type: string
-        reward_tokens:
-          description: Unclaimed reward tokens in this position
-          items:
-            $ref: '#/components/schemas/WalletProtocolToken'
-          type:
-          - array
-          - 'null'
-        supply_tokens:
-          description: Tokens supplied/deposited in this position
-          items:
-            $ref: '#/components/schemas/WalletProtocolToken'
-          type:
-          - array
-          - 'null'
-      required:
-      - name
-      - balance_usd
-      type: object
-    WalletLabelInfo:
-      additionalProperties: false
-      properties:
-        confidence:
-          description: Confidence score 0.0-1.0
-          format: double
-          type: number
-        label:
-          description: Human-readable label for this address like `Binance Hot Wallet`
+        spender_name:
+          description: Human-readable name of the spender, absent for unrecognized contracts
           type: string
       required:
-      - label
+      - spender_address
+      - allowance
       type: object
-    WalletNFTItem:
+    WalletChainItem:
       additionalProperties: false
       properties:
         chain:
           description: Canonical chain name like `ethereum` or `polygon`
           type: string
-        collection_name:
-          description: NFT collection name
-          type: string
-        contract_address:
-          description: NFT contract address
-          type: string
-        image_url:
-          description: NFT image or thumbnail URL
-          type: string
-        name:
-          description: NFT item name or title
-          type: string
-        token_id:
-          description: NFT token ID within the collection
-          type: string
-        usd_price:
-          description: Latest trading price in USD
-          format: double
-          type: number
-      required:
-      - contract_address
-      - token_id
-      type: object
-    WalletTransferItem:
-      additionalProperties: false
-      properties:
-        activity_type:
-          description: Transfer activity type (Solana only, e.g. ACTIVITY_SPL_TRANSFER)
-          type: string
-        amount:
-          description: Decimal-adjusted transfer amount as a string
-          type: string
-        amount_usd:
-          description: Transfer value in USD at the time of the transaction
-          format: double
-          type: number
-        flow:
-          description: 'Transfer direction relative to the queried wallet: `in` or `out`'
-          type: string
-        from_address:
-          description: Sender wallet address
-          type: string
-        from_label:
-          $ref: '#/components/schemas/WalletLabelItem'
-          description: Entity labels for from_address. Only present when the request sets `include=labels`.
-        timestamp:
-          description: Unix timestamp in seconds when the transfer occurred
+        chain_id:
+          description: EVM chain ID like `1` for Ethereum or `137` for Polygon
           format: int64
           type: integer
-        to_address:
-          description: Recipient wallet address
-          type: string
-        to_label:
-          $ref: '#/components/schemas/WalletLabelItem'
-          description: Entity labels for to_address. Only present when the request sets `include=labels`.
-        token_address:
-          description: Token contract address (EVM) or SPL mint address (Solana)
-          type: string
-        token_symbol:
-          description: Token ticker symbol (available for EVM chains from on-chain data)
-          type: string
-        tx_hash:
-          description: Transaction hash (EVM) or transaction signature (Solana)
-          type: string
+        usd_value:
+          description: Total USD value of assets on this chain
+          format: double
+          type: number
       required:
-      - tx_hash
-      - from_address
-      - to_address
-      - amount
-      - timestamp
+      - chain
+      - usd_value
       type: object
     WalletLabelItem:
       additionalProperties: false
@@ -874,26 +775,92 @@ components:
       - address
       - labels
       type: object
-    EvmBalanceItem:
+    DataResponseWalletLabelItem:
       additionalProperties: false
       properties:
-        address:
-          description: Wallet address
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseWalletLabelItem.json
+          format: uri
+          readOnly: true
           type: string
-        chain_balances:
-          description: Per-chain balance breakdown, sorted by value descending (EVM only)
+        data:
           items:
-            $ref: '#/components/schemas/WalletChainItem'
+            $ref: '#/components/schemas/WalletLabelItem'
           type:
           - array
           - 'null'
-        total_usd:
-          description: Total portfolio value in USD (EVM only)
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    WalletApprovalItem:
+      additionalProperties: false
+      properties:
+        balance:
+          description: Current token balance
           format: double
           type: number
+        chain:
+          description: Canonical chain name
+          type: string
+        name:
+          description: Full token name
+          type: string
+        spenders:
+          description: List of approved spender contracts
+          items:
+            $ref: '#/components/schemas/WalletApprovalSpender'
+          type:
+          - array
+          - 'null'
+        symbol:
+          description: Token ticker symbol
+          type: string
+        token_address:
+          description: Token contract address
+          type: string
       required:
-      - address
-      - total_usd
+      - token_address
+      - symbol
+      - chain
+      - balance
+      - spenders
+      type: object
+    SolTokenItem:
+      additionalProperties: false
+      properties:
+        balance:
+          description: Decimal-adjusted token balance as a string
+          type: string
+        decimals:
+          description: Token decimal places (Solana only)
+          format: int64
+          type: integer
+        is_verified:
+          description: Whether the token contract is verified
+          type: boolean
+        logo_url:
+          description: Token logo image URL
+          type: string
+        name:
+          description: Full token name
+          type: string
+        symbol:
+          description: Token ticker symbol
+          type: string
+        token_address:
+          description: SPL token mint address (Solana only)
+          type: string
+      required:
+      - token_address
+      - symbol
+      - balance
+      - decimals
+      - is_verified
       type: object
     OffsetMeta:
       additionalProperties: false
@@ -933,128 +900,6 @@ components:
       - credits_used
       - cached
       type: object
-    WalletApprovalSpender:
-      additionalProperties: false
-      properties:
-        allowance:
-          description: Approved token amount (use -1 for unlimited)
-          format: double
-          type: number
-        spender_address:
-          description: Address of the approved spender contract
-          type: string
-        spender_name:
-          description: Human-readable name of the spender, absent for unrecognized contracts
-          type: string
-      required:
-      - spender_address
-      - allowance
-      type: object
-    DataAPIErrorDetail:
-      additionalProperties: false
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
-      type: object
-    WalletProtocolToken:
-      additionalProperties: false
-      properties:
-        amount:
-          description: Token amount held in this position
-          format: double
-          type: number
-        chain:
-          description: Canonical chain name like `ethereum` or `polygon`
-          type: string
-        name:
-          description: Full token name
-          type: string
-        price:
-          description: Current token price in USD
-          format: double
-          type: number
-        symbol:
-          description: Token ticker symbol
-          type: string
-        token_address:
-          description: Token contract address
-          type: string
-      required:
-      - symbol
-      - amount
-      - price
-      - chain
-      type: object
-    WalletProtocolItem:
-      additionalProperties: false
-      properties:
-        chain:
-          description: Canonical chain name where the protocol operates
-          type: string
-        logo_url:
-          description: Protocol logo image URL
-          type: string
-        positions:
-          description: Individual positions held in this protocol
-          items:
-            $ref: '#/components/schemas/WalletProtocolPosition'
-          type:
-          - array
-          - 'null'
-        protocol_name:
-          description: Human-readable protocol name
-          type: string
-        site_url:
-          description: Protocol website URL
-          type: string
-        total_usd:
-          description: Total USD value across all positions in this protocol
-          format: double
-          type: number
-      required:
-      - protocol_name
-      - chain
-      - total_usd
-      - positions
-      type: object
-    WalletChainItem:
-      additionalProperties: false
-      properties:
-        chain:
-          description: Canonical chain name like `ethereum` or `polygon`
-          type: string
-        chain_id:
-          description: EVM chain ID like `1` for Ethereum or `137` for Polygon
-          format: int64
-          type: integer
-        usd_value:
-          description: Total USD value of assets on this chain
-          format: double
-          type: number
-      required:
-      - chain
-      - usd_value
-      type: object
-    WalletNetWorthPoint:
-      additionalProperties: false
-      properties:
-        timestamp:
-          description: Unix timestamp in seconds
-          format: int64
-          type: integer
-        usd_value:
-          description: Total portfolio value in USD at this point in time
-          format: double
-          type: number
-      required:
-      - timestamp
-      - usd_value
-      type: object
     DataResponseWalletTransferItem:
       additionalProperties: false
       properties:
@@ -1076,23 +921,6 @@ components:
       required:
       - data
       - meta
-      type: object
-    ObjectResponseMeta:
-      additionalProperties: false
-      properties:
-        cached:
-          description: Whether this response was served from cache
-          type: boolean
-        credits_used:
-          description: Credits deducted for this request
-          format: int64
-          type: integer
-        empty_reason:
-          description: Hint explaining why the data array is empty, when applicable
-          type: string
-      required:
-      - credits_used
-      - cached
       type: object
     WalletDetailBody:
       additionalProperties: false
@@ -1149,6 +977,114 @@ components:
           - array
           - 'null'
       type: object
+    DataResponseWalletHistoryItem:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataResponseWalletHistoryItem.json
+          format: uri
+          readOnly: true
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/WalletHistoryItem'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/OffsetMeta'
+      required:
+      - data
+      - meta
+      type: object
+    DataAPIErrorDetail:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    SolBalanceItem:
+      additionalProperties: false
+      properties:
+        address:
+          description: Wallet address
+          type: string
+        sol_balance:
+          description: Decimal-adjusted native SOL balance as a string (Solana only)
+          type: string
+      required:
+      - address
+      - sol_balance
+      type: object
+    WalletProtocolItem:
+      additionalProperties: false
+      properties:
+        chain:
+          description: Canonical chain name where the protocol operates
+          type: string
+        logo_url:
+          description: Protocol logo image URL
+          type: string
+        positions:
+          description: Individual positions held in this protocol
+          items:
+            $ref: '#/components/schemas/WalletProtocolPosition'
+          type:
+          - array
+          - 'null'
+        protocol_name:
+          description: Human-readable protocol name
+          type: string
+        site_url:
+          description: Protocol website URL
+          type: string
+        total_usd:
+          description: Total USD value across all positions in this protocol
+          format: double
+          type: number
+      required:
+      - protocol_name
+      - chain
+      - total_usd
+      - positions
+      type: object
+    DataAPIError:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+          - https://example.com/schemas/DataAPIError.json
+          format: uri
+          readOnly: true
+          type: string
+        error:
+          $ref: '#/components/schemas/DataAPIErrorDetail'
+      required:
+      - error
+      type: object
+    WalletNetWorthPoint:
+      additionalProperties: false
+      properties:
+        timestamp:
+          description: Unix timestamp in seconds
+          format: int64
+          type: integer
+        usd_value:
+          description: Total portfolio value in USD at this point in time
+          format: double
+          type: number
+      required:
+      - timestamp
+      - usd_value
+      type: object
     DataResponseWalletProtocolItem:
       additionalProperties: false
       properties:
@@ -1171,18 +1107,82 @@ components:
       - data
       - meta
       type: object
-    SolBalanceItem:
+    WalletProtocolToken:
       additionalProperties: false
       properties:
-        address:
-          description: Wallet address
+        amount:
+          description: Token amount held in this position
+          format: double
+          type: number
+        chain:
+          description: Canonical chain name like `ethereum` or `polygon`
           type: string
-        sol_balance:
-          description: Decimal-adjusted native SOL balance as a string (Solana only)
+        name:
+          description: Full token name
+          type: string
+        price:
+          description: Current token price in USD
+          format: double
+          type: number
+        symbol:
+          description: Token ticker symbol
+          type: string
+        token_address:
+          description: Token contract address
           type: string
       required:
-      - address
-      - sol_balance
+      - symbol
+      - amount
+      - price
+      - chain
+      type: object
+    WalletTransferItem:
+      additionalProperties: false
+      properties:
+        activity_type:
+          description: Transfer activity type (Solana only, e.g. ACTIVITY_SPL_TRANSFER)
+          type: string
+        amount:
+          description: Decimal-adjusted transfer amount as a string
+          type: string
+        amount_usd:
+          description: Transfer value in USD at the time of the transaction
+          format: double
+          type: number
+        flow:
+          description: 'Transfer direction relative to the queried wallet: `in` or `out`'
+          type: string
+        from_address:
+          description: Sender wallet address
+          type: string
+        from_label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity labels for from_address. Only present when the request sets `include=labels`.
+        timestamp:
+          description: Unix timestamp in seconds when the transfer occurred
+          format: int64
+          type: integer
+        to_address:
+          description: Recipient wallet address
+          type: string
+        to_label:
+          $ref: '#/components/schemas/WalletLabelItem'
+          description: Entity labels for to_address. Only present when the request sets `include=labels`.
+        token_address:
+          description: Token contract address (EVM) or SPL mint address (Solana)
+          type: string
+        token_symbol:
+          description: Token ticker symbol (available for EVM chains from on-chain data)
+          type: string
+        tx_hash:
+          description: Transaction hash (EVM) or transaction signature (Solana)
+          type: string
+      required:
+      - tx_hash
+      - from_address
+      - to_address
+      - amount
+      - timestamp
       type: object
   securitySchemes:
     AccessToken:
