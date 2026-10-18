@@ -50,7 +50,7 @@ created: '2026-07-17'
 modified: '2026-10-06'
 tags:
 - Company
-- Crypto
+- Cryptocurrency
 - Blockchain
 - Market Data
 - On-Chain Analytics
@@ -80,7 +80,7 @@ apis:
   humanURL: https://agents.asksurf.ai/docs/chat/overview
   baseURL: https://api.asksurf.ai/gateway/v1
   tags:
-  - Crypto
+  - Cryptocurrency
   - Artificial Intelligence
   - LLM
   tags_raw:
@@ -93,6 +93,8 @@ apis:
   humanURL: https://agents.asksurf.ai/docs/data-api/overview
   baseURL: https://api.asksurf.ai/gateway/v1
   tags:
+  - Decentralized Exchange
+  tags_raw:
   - DEX
   properties:
   - type: OpenAPI
@@ -302,6 +304,8 @@ apis:
   humanURL: https://agents.asksurf.ai/docs/chat/overview
   baseURL: https://api.asksurf.ai/gateway/v1
   tags:
+  - Onchain
+  tags_raw:
   - On Chain
   properties:
   - type: OpenAPI
